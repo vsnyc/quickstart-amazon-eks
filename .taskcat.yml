@@ -129,6 +129,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       ClusterAutoScaler: Enabled
       TestSuite: Enabled
+      ProvisionBastionHost: Disabled
     regions:
     - af-south-1
   windows:
