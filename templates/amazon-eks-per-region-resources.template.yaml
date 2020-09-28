@@ -247,7 +247,7 @@ Resources:
     Type: Custom::RegisterType
     Properties:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
-      Version: "3.0.2"
+      Version: "3.0.3"
       TypeName: "AWSQS::EKS::Cluster"
       SchemaHandlerPackage: !Sub ["s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/EksClusterResource/awsqs-eks-cluster.zip", {Prefix: !FindInMap [Config, Prefix, Value]}]
       IamPolicy:
@@ -272,7 +272,7 @@ Resources:
     Properties:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       TypeName: "AWSQS::Kubernetes::Helm"
-      Version: "3.0.3"
+      Version: "3.0.4"
       SchemaHandlerPackage: !Sub ["s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip", {Prefix: !FindInMap [Config, Prefix, Value]}]
       IamPolicy:
         Version: '2012-10-17'
@@ -304,7 +304,7 @@ Resources:
     Properties:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       TypeName: "AWSQS::Kubernetes::Get"
-      Version: "3.0.0"
+      Version: "3.0.1"
       SchemaHandlerPackage: !Sub ["s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_get.zip", {Prefix: !FindInMap [Config, Prefix, Value]}]
       IamPolicy:
         Version: '2012-10-17'
@@ -330,7 +330,7 @@ Resources:
     Properties:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       TypeName: "AWSQS::Kubernetes::Resource"
-      Version: "3.0.0"
+      Version: "3.0.1"
       SchemaHandlerPackage: !Sub ["s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_apply.zip", {Prefix: !FindInMap [Config, Prefix, Value]}]
       IamPolicy:
         Version: '2012-10-17'
