@@ -321,8 +321,8 @@ Parameters:
   ALBIngressController:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
-    Default: "Disabled"
-    Description: Choose "Enabled" to deploy the ALB ingress controller.
+    Default: "Enabled"
+    Description: Choose "Disabled" to skip deploying the ALB ingress controller.
   FargateNamespaces:
     Type: String
     Default: ""
