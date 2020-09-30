@@ -2,10 +2,14 @@
 
 === Sign in to your AWS account
 
-. Sign in to your AWS account at https://aws.amazon.com with an IAM user role that has the necessary permissions. For more information, see link:#planning-the-deployment[Planning the deployment], earlier in this guide.
-. Ensure that your AWS account is configured correctly, as discussed in the link:#technical-requirements[Technical requirements] section.
+. Sign in to your AWS account at https://aws.amazon.com with an IAM user role that has the necessary permissions. For more information, see
+//TODO Planning_the_deployment anchor link does not resolve.
+ link:#planning-the-deployment[Planning the deployment], earlier in this guide.
+. Ensure that your AWS account is configured correctly, as discussed in the
+//TODO Technical_requirements anchor link does not resolve.
+ link:#technical-requirements[Technical requirements] section.
 . Use the Region selector in the navigation bar to choose the AWS Region where you want to deploy Amazon EKS.
-. Select the key pair that you created earlier. In the navigation pane of the https://console.aws.amazon.com/ec2/[Amazon EC2 console], choose *Key Pairs*, and then choose your key pair from the list.
+. Select the key pair that you created earlier. In the navigation pane of the https://console.aws.amazon.com/ec2/[Amazon EC2 console^], choose *Key Pairs*, and then choose your key pair from the list.
 
 
 // Optional based on Marketplace listing. Not to be edited
@@ -27,41 +31,43 @@ endif::marketplace_subscription[]
 
 === Launch the Quick Start
 
-. Optionally, if you want to configure advanced parameters, launch the https://fwd.aws/6dEQ7[advanced configuration template].
-. Choose one of the following options to launch the AWS CloudFormation template into your AWS account. For help with choosing an option, see link:#deployment_options[Deployment options], earlier in this guide.
+. Optionally, if you want to configure advanced parameters, launch the https://fwd.aws/6dEQ7[advanced configuration template^].
+. Choose one of the following options to launch the AWS CloudFormation template into your AWS account. For help with choosing an option, see link:#_deployment_options[Deployment options], earlier in this guide.
 [cols=",",",]
 |===
-|https://fwd.aws/6dEQ7[Deploy Amazon EKS into a new VPC]
-|https://fwd.aws/e37MA[Deploy Amazon EKS into an existing VPC]
-|https://fwd.aws/FIXME[Enable EKS based Quick Starts on an existing EKS cluster]
+|https://fwd.aws/6dEQ7[Deploy Amazon EKS into a new VPC^]
+|https://fwd.aws/e37MA[Deploy Amazon EKS into an existing VPC^]
+//TODO Fix below link.
+|https://fwd.aws/FIXME[Enable EKS based Quick Starts on an existing EKS cluster^]
 |===
-Deployment can take between 25 and 90 minutes //TODO the _settings say 30–60 minutes - please advise.
+Deployment can take between 25 and 90 minutes 
+//TODO the _settings say 30–60 minutes - please advise.
 to complete, depending on the chosen deployment option and parameter values.
 
-NOTE: If you deploy Amazon EKS into an existing VPC, ensure that your VPC has private subnets in different Availability Zones for the workload instances. The subnets require egress internet access using a NAT Gateway or an HTTP proxy. If you want to use the Kubernetes integration with Elastic Load Balancing, you must tag each private subnet with `kubernetes.io/role/internal-elb=true` and each public subnet with `kubernetes.io/role/elb=true`.
+NOTE: If you deploy Amazon EKS into an existing VPC, ensure that your VPC has private subnets in different Availability Zones for the workload instances. The subnets require egress internet access using a NAT gateway or an HTTP proxy. If you want to use the Kubernetes integration with Elastic Load Balancing, you must tag each private subnet with `kubernetes.io/role/internal-elb=true` and each public subnet with `kubernetes.io/role/elb=true`.
 
 [start=3]
 . Check the Region that’s displayed in the upper-right corner of the navigation bar, and change it if necessary. This is where the network infrastructure for Amazon EKS is built. The template launches in the US East (Ohio) Region by default.
 
-NOTE: Some services are not supported in all AWS Regions. For a current list of supported Regions, see https://docs.aws.amazon.com/general/latest/gr/eks.html[Amazon Elastic Kubernetes Service endpoints and quotas].
+NOTE: Some services are not supported in all AWS Regions. For a current list of supported Regions, see https://docs.aws.amazon.com/general/latest/gr/eks.html[Amazon Elastic Kubernetes Service endpoints and quotas^].
 
 [start=4]
-. On the *Select Template* page, keep the default setting for the template URL, and then choose *Next*.
-. On the *Specify Details* page, change the stack name if needed. Review the parameters for the template, and provide values for any parameters that require input. For all other parameters, review the default settings, and customize them as necessary.
+. On the *Select template* page, keep the default setting for the template URL, and then choose *Next*.
+. On the *Specify stack details* page, change the stack name if needed. Review the parameters for the template, and provide values for any parameters that require input. For all other parameters, review the default settings, and customize them as necessary.
 
-NOTE: If Amazon EKS is already deployed in your account, ensure that the `Per account shared resources` parameter is set to `No`. If you deploy a new Amazon EKS instance in the same Region as a previously deployed instance, set `Per region shared resources` to `No`.
+NOTE: If Amazon EKS is already deployed in your account, ensure that the `Per account shared resources` parameter is set to *No*. If you deploy a new Amazon EKS instance in the same Region as a previously deployed instance, set `Per region shared resources` to *No*.
 
 NOTE: If you created and intend to use an advanced configuration stack, ensure that you set the value for `Config set name` to match the value you used when you launched the advanced configuration stack.
 
 NOTE: Unless you are customizing this Quick Start's templates for your own deployment projects, we recommend that you keep the default settings for the parameters labeled `Quick Start S3 bucket name`, `Quick Start S3 bucket
 Region`, and `Quick Start S3 key prefix`. Changing these parameter settings automatically updates code references to point to a new Quick Start location. For more information, see the https://aws-quickstart.github.io/option1.html[AWS Quick Start Contributor’s Guide^].
 
-In the following tables, parameters are listed by category and described separately for the deployment options. When you finish reviewing and customizing the parameters, choose *Next*.
+In the following tables, parameters are listed by category and described separately for each deployment option. When you finish reviewing and customizing the parameters, choose *Next*.
 
 include::../{generateddir}/parameters/index.adoc[]
 
 [start=6]
-. On the *Options* page, you can https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html[specify tags^] (key-value pairs) for resources in your stack and https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-add-tags.html[set advanced options^]. When you’re done, choose *Next*.
+. On the *Configure stack options* page, you can https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html[specify tags^] (key-value pairs) for resources in your stack and https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-add-tags.html[set advanced options^]. When you’re done, choose *Next*.
 . On the *Review* page, review and confirm the template settings. Under *Capabilities*, select the two check boxes to acknowledge that the template creates IAM resources and might require the ability to automatically expand macros.
 . Choose *Create stack* to deploy the stack.
 ifndef::partner-product-short-name[. Monitor the status of the stack. When the status is *CREATE_COMPLETE*, the {partner-product-name} deployment is ready.]
