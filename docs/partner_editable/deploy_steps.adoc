@@ -37,12 +37,9 @@ endif::marketplace_subscription[]
 |===
 |https://fwd.aws/6dEQ7[Deploy Amazon EKS into a new VPC^]
 |https://fwd.aws/e37MA[Deploy Amazon EKS into an existing VPC^]
-//TODO Fix below link.
-|https://fwd.aws/FIXME[Enable EKS based Quick Starts on an existing EKS cluster^]
+|https://fwd.aws/VBeX6[Enable EKS based Quick Starts on an existing EKS cluster^]
 |===
-Deployment can take between 25 and 90 minutes 
-//TODO the _settings say 30–60 minutes - please advise.
-to complete, depending on the chosen deployment option and parameter values.
+Deployment can take between {deployment_time} to complete, depending on the chosen deployment option and parameter values.
 
 NOTE: If you deploy Amazon EKS into an existing VPC, ensure that your VPC has private subnets in different Availability Zones for the workload instances. The subnets require egress internet access using a NAT gateway or an HTTP proxy. If you want to use the Kubernetes integration with Elastic Load Balancing, you must tag each private subnet with `kubernetes.io/role/internal-elb=true` and each public subnet with `kubernetes.io/role/elb=true`.
 

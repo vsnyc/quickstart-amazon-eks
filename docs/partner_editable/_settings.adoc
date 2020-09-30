@@ -5,7 +5,7 @@
 :doc-year: 2020
 // :partner-contributors:
 :quickstart-contributors: Jay McConnell, Troy Ameigh, and Andrew Gargan, AWS Quick Start team
-:deployment_time: 30–60 minutes
+:deployment_time: 25 and 90 minutes
 :default_deployment_region: us-east-2
 :disable_licenses:
 :disable_regions:
