@@ -13,6 +13,7 @@
 :custom_number_of_deploy_steps:
 // hard coding this to work around issues with the draft rendering
 :production_build:
+:parameters_as_appendix:
 // Uncomment these two attributes if you are leveraging
 // - an AWS Marketplace listing.
 // Additional content will be auto-generated based on these attributes.
