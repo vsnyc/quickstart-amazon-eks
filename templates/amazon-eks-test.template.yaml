@@ -37,7 +37,7 @@ Resources:
               containers:
               - name: test-job
                 image: amazonlinux:2
-                command: ["sleep", "120"]
+                command: ["ping", "-c", "120", "aws.amazon.com"]
               restartPolicy: OnFailure
           backoffLimit: 4
   TestApplyOnWindows:
@@ -60,7 +60,7 @@ Resources:
               containers:
               - name: windows-test-container
                 image: mcr.microsoft.com/windows/servercore:ltsc2019
-                command: ["hostname"]
+                command: ["ping", "aws.amazon.com"]
               restartPolicy: OnFailure
           backoffLimit: 4
 Outputs:
