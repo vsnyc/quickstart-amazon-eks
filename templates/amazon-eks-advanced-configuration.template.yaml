@@ -29,7 +29,7 @@ Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
-          default: Quick Start Configuration
+          default: Quick Start configuration
         Parameters:
           - ConfigSetName
       - Label:
@@ -136,24 +136,24 @@ Metadata:
       NodeInstanceType4:
         default: Instance type 4
       OnDemandPercentage:
-        default: On demand percentage
+        default: On-demand percentage
 Parameters:
   ConfigSetName:
     Type: String
-    Description: "(Optional) This name is used to map advanced parameters to an EKS cluster. In order to apply the parameters defined
-      here, the same name must be used when launching the main EKS Quick Start."
+    Description: "(Optional) Name used to map advanced parameters to an EKS cluster. In order to apply the defined parameters, 
+    the name must match the name used when launching the main EKS Quick Start."
   EKSPrivateAccessEndpoint:
     Type: String
     AllowedValues: [Enabled, Disabled]
     Default: Enabled
-    Description: Configure access to the Kubernetes API server endpoint from within your VPC. If this is set to "Disabled",
+    Description: Configure access to the Kubernetes API server endpoint from within your VPC. If this is set to "Disabled,"
       "EKS public access endpoint" must be set to "Enabled."
   EKSClusterLoggingTypes:
     Type: List<String>
     Default: "api, audit, authenticator, controllerManager, scheduler"
     AllowedPattern: "^(api|audit|authenticator|controllerManager|scheduler|, )*$"
     ConstraintDescription: Valid logging types are api, audit, authenticator, controllerManager, scheduler.
-    Description: EKS cluster control plane logs to be exported to CloudWatch Logs.
+    Description: EKS cluster control plane logs to be exported to Amazon CloudWatch Logs.
   EKSEncryptSecrets:
     Type: String
     AllowedValues: [Enabled, Disabled]
@@ -162,14 +162,14 @@ Parameters:
   EKSEncryptSecretsKmsKeyArn:
     Type: String
     Default: ""
-    Description: "(Optional) KMS key to use for envelope encryption of Kubernetes secrets. If this parameter is omitted
-      A key will be created for the cluster. The CMK must be symmetric, created in the same region as the cluster, and
+    Description: "(Optional) KMS key to use for envelope encryption of Kubernetes secrets. If this parameter is omitted,
+      a key is created for the cluster. The CMK must be symmetric, created in the same Region as the cluster, and
       if the CMK was created in a different account, the user must have access to the CMK."
   EKSPublicAccessCIDRs:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
-    Description: These values are only used
-      if "EKS public access endpoint" is set to "Enabled." The public CIDR IP ranges that are permitted to access the Kubernetes API. Can't contain private IP ranges.
+    Description: These values are used only
+      if the EKSPublicAccessEndpoint parameter is set to "Enabled." These are the public CIDR IP ranges permitted to access the Kubernetes API. They cannot contain private IP ranges.
     Type: List<String>
     Default: 0.0.0.0/0
   NodeGroupName:
@@ -178,17 +178,17 @@ Parameters:
     Type: String
   NodeVolumeSize:
     Default: 20
-    Description: "The size for the node's root EBS volumes."
+    Description: "Size of the node's root EBS volumes."
     Type: String
   CustomAmiId:
     Type: String
     Default: ""
-    Description: "(Optional) If an AMI id is specified here it will be used instead of the ami determined from the OS/Region."
+    Description: "(Optional) If an AMI ID is specified, it is used instead of the AMI from your OS/Region."
   KubernetesVersion:
     Type: String
     AllowedValues: [ "1.15", "1.16", "1.17" ]
     Default: "1.17"
-    Description: The Kubernetes control plane version.
+    Description: Kubernetes control plane version.
   IamOidcProvider:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
@@ -202,7 +202,7 @@ Parameters:
   BastionBootstrapScript:
     Default: ""
     Type: String
-    Description: "(Optional) Custom initialization script to run during setup. If left blank the default bootstrap will script will be used."
+    Description: "(Optional) Custom initialization script to run during setup. If left blank, the default bootstrap script is used."
   BastionInstanceType:
     Default: "t3.micro"
     Type: String
@@ -210,58 +210,58 @@ Parameters:
   BastionRootVolumeSize:
     Type: Number
     Default: 10
-    Description: The size in GB for the root EBS volume.
+    Description: Size in GB for the root EBS volume.
   BastionIAMRoleName:
     Type: String
     Default: ""
-    Description: "(Optional) An existing IAM role name to attach to the bastion host. If left blank, a new role will be created."
+    Description: "(Optional) An existing IAM role name to attach to the bastion host. If left blank, a new role is created."
   BastionEnableTCPForwarding:
     Type: String
     Default: "false"
     AllowedValues: [ "true", "false" ]
-    Description: To enable TCP forwarding, choose "true."
+    Description: Choose "true" to enable TCP forwarding.
   BastionEnableX11Forwarding:
     Type: String
     Default: "false"
     AllowedValues: [ "true", "false" ]
-    Description: To enable X11 forwarding, choose "true."
+    Description: Choose "true" To enable X11 forwarding."
   BastionVariables:
     Type: String
     Default: ""
-    Description: "(Optional) A comma-separated list of environment variables for use in bootstrapping. Variables must be in the format KEY=VALUE. VALUE cannot contain commas."
+    Description: "(Optional) Comma-separated list of environment variables for bootstrapping. The variables must be in the format KEY=VALUE. VALUE cannot contain commas."
   EfsPerformanceMode:
     Type: String
     AllowedValues: [ generalPurpose, maxIO ]
     Default: generalPurpose
-    Description: Only applies when "EFS storage class" is set to "Enabled." Choose "maxIO" mode to provide greater IOPS with an increased latency.
+    Description: Only applies if the EfsStorageClass parameter is set to "Enabled." Choose "maxIO" mode to provide greater IOPS with an increased latency.
   EfsThroughputMode:
     Type: String
     AllowedValues: [ bursting, provisioned ]
     Default: bursting
-    Description: Only applies when "EFS storage class" is set to "Enabled." For throughput that is not dependent on the amount of data stored in the file system, choose provisioned.
+    Description: Only applies if the EfsStorageClass parameter is set to "Enabled." For throughput that is not dependent on the amount of data stored in the file system, choose "provisioned."
   EfsProvisionedThroughputInMibps:
     Type: Number
     MinValue: 0
     MaxValue: 1024
     Default: 0
-    Description: Only applies when "EFS storage class" is set to "Enabled." If "EFS throughput mode" is set to "provisioned" value must be between 0-1024, if set to "bursting" this must be set to 0.
+    Description: Only applies if the EfsStorageClass parameter is set to "Enabled." If "EFS throughput mode" is set, the "provisioned" value must be in the 0–1024 range. If it's set to "bursting," this must be set to 0.
   OnDemandPercentage:
     Type: Number
     MinValue: 0
     MaxValue: 100
     Default: 100
-    Description: Only applies if "Node group type" is set to "Unmanaged." Set the percentage of on demand instances and spot instances. With the default of 100, the percentages are 100% for on demand instances and 0% for spot instances.
+    Description: Only applies if the NodeGroupType parameter is set to "Unmanaged." Set the percentage of on-demand instances and spot instances. With a default of 100, the percentages are 100% for on-demand instances and 0% for spot instances.
   NodeInstanceType2:
     Default: ""
-    Description: (Optional) Only applies if "Node group type" is set to "Unmanaged." 2nd type of EC2 instance for the node instances.
+    Description: (Optional) Only applies if the NodeGroupType parameter is set to "Unmanaged." This is the second type of EC2 instance for the nodes.
     Type: String
   NodeInstanceType3:
     Default: ""
-    Description: (Optional) Only applies if "Node group type" is set to "Unmanaged." 3rd type of EC2 instance for the node instances.
+    Description: (Optional) Only applies if the NodeGroupType parameter is set to "Unmanaged." This is the third type of EC2 instance for the nodes.
     Type: String
   NodeInstanceType4:
     Default: ""
-    Description: (Optional) Only applies if "Node group type" is set to "Unmanaged." 4th type of EC2 instance for the node instances.
+    Description: (Optional) Only applies if the NodeGroupType parameter is set to "Unmanaged." This is the fourth type of EC2 instance for the nodes.
     Type: String
   LaunchTemplateId:
     Default: ""
@@ -270,19 +270,19 @@ Parameters:
   LaunchTemplateVersion:
     Default: ""
     Type: String
-    Description: Must be specified if "Launch template ID" is provided. Can not be "$Latest" or "$Default". This value sets the launch template version for the node group to use.
+    Description: Must be specified if the LaunchTemplateId parameter is provided. It cannot be "$Latest" or "$Default." This value sets the launch template version for the node group.
   Labels:
     Default: ""
     Type: String
-    Description: (Optional) Comma separated list of <key>=<value> pairs representing node labels to assign to the node group. Ignored if "Custom launch template" is provided.
+    Description: (Optional) Comma-separated list of key-value pairs that represent node labels to assign to the node group. Ignore this if "Custom launch template" is provided.
   Taints:
     Default: ""
     Type: String
-    Description: (Optional) Comma separated list of <key>=<value>:<effect> representing node taints to assign to the node group. Ignored if "Custom launch template" is provided.
+    Description: (Optional) Comma-separated list of key-value pairs that represnt node taints to assign to the node group. Ignore this if "Custom launch template" is provided.
   NodeSecurityGroupId:
     Default: ""
     Type: String
-    Description: (Optional) Provide the id of a Security Group to use for this node group. If not specified, one will be created.
+    Description: (Optional) Provide the ID of a security group to use for this node group. If this is not specified, one is created.
 Mappings:
   Config:
     ParameterPrefix: { Value: '/quickstart/amazon-eks' }

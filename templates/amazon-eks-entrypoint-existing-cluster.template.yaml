@@ -27,13 +27,13 @@ Metadata:
       KubeClusterName:
         default: EKS cluster name
       ControlPlaneSecurityGroup:
-        default: EKS Security Group
+        default: EKS security group
       K8sSubnetIds:
-        default: EKS Subnet IDs
+        default: EKS subnet IDs
       PerAccountSharedResources:
-        default: Deploy account level shared resources
+        default: Deploy account-level shared resources
       PerRegionSharedResources:
-        default: Deploy region level shared resources
+        default: Deploy Region-level shared resources
       VPCID:
         default: VPC ID
       QSS3BucketName:
@@ -41,34 +41,34 @@ Metadata:
       QSS3KeyPrefix:
         default: Quick Start S3 key prefix
       QSS3BucketRegion:
-        default: Quick Start S3 bucket region
+        default: Quick Start S3 bucket Region
       HttpProxy:
         default: HTTP proxy
 Parameters:
   KubeClusterName:
     Type: String
-    Description: Name of the EKS cluster to be enabled for CloudFormation use.
+    Description: Name of the EKS cluster to enable for AWS CloudFormation.
   K8sSubnetIds:
     Type: String
-    Description: '(Optional) Comma separated list of Subnet IDs associated with the EKS cluster. Must have routes to the Kubernetes, CloudFormation and EKS endpoints. Leave blank for publicly accessible clusters.'
+    Description: '(Optional) Comma-separated list of subnet IDs associated with the EKS cluster. There must be routes to the Kubernetes, AWS CloudFormation, and EKS endpoints. Leave this blank for publicly accessible clusters.'
     Default: ""
   ControlPlaneSecurityGroup:
     Type: String
     Default: ""
-    Description: '(Optional) Security Group ID attached to the EKS cluster. Must allow egress traffic to the Kubernetes, CloudFormation and EKS endpoints. Leave blank for publicly accessible clusters.'
+    Description: '(Optional) Security group ID attached to the EKS cluster. This must allow egress traffic to the Kubernetes, AWS CloudFormation, and EKS endpoints. Leave this blank for publicly accessible clusters.'
   PerAccountSharedResources:
     Type: String
     AllowedValues: ['Yes', 'No']
     Default: 'Yes'
-    Description: Choose "No" if you have already deployed the EKS account shared resources in this AWS account.
+    Description: Choose "No" if you already deployed the EKS account shared resources in this AWS account.
   PerRegionSharedResources:
     Type: String
     AllowedValues: ['Yes', 'No']
     Default: 'Yes'
-    Description: Choose "No" if you have already deployed the EKS regional shared resources stack in this Region.
+    Description: Choose "No" if you already deployed the EKS shared resources stack in your Region.
   VPCID:
     Type: AWS::EC2::VPC::Id
-    Description: The ID of the VPC that contains your EKS cluster (e.g., vpc-0343606e).
+    Description: ID of the VPC that contains your EKS cluster (e.g., vpc-0343606e).
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     ConstraintDescription: Quick Start bucket name can include numbers, lowercase
@@ -82,21 +82,21 @@ Parameters:
   QSS3KeyPrefix:
     AllowedPattern: ^[0-9a-zA-Z-/.]*$
     ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
-      uppercase letters, hyphens (-), dots(.) and forward slash (/).
+      uppercase letters, hyphens (-), periods (.) and forward slash (/).
     Default: quickstart-amazon-eks/
     Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
-      can include numbers, lowercase letters, uppercase letters, hyphens (-), dots(.) and
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and
       forward slash (/).
     Type: String
   QSS3BucketRegion:
     Default: 'us-east-1'
-    Description: The Region where the Quick Start S3 bucket (QSS3BucketName) is
+    Description: Region where the Quick Start S3 bucket (QSS3BucketName) is
       hosted. When using your own bucket, you must specify this value.
     Type: String
   HttpProxy:
     Type: String
     Default: ""
-    Description: "(Optional) HTTP(S) proxy configuration, if provided all worker nodes and pod egress traffic will use this proxy. Example: http://10.101.0.100:3128/."
+    Description: "(Optional) HTTP(S) proxy configuration. If you provide a value, all worker nodes and pod egress traffic uses this proxy (e.g., http://10.101.0.100:3128/)."
 Conditions:
   CreatePerAccountSharedResources: !Equals [!Ref PerAccountSharedResources, 'Yes']
   CreatePerRegionSharedResources: !Equals [!Ref PerRegionSharedResources, 'Yes']
