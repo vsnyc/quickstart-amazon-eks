@@ -32,6 +32,8 @@ Metadata:
     - '(Optional)'
     - Node
     - Unmanaged
+    - Partner
+    - Auto Scaling
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:

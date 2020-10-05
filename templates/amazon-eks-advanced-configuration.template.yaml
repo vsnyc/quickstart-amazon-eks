@@ -224,7 +224,7 @@ Parameters:
     Type: String
     Default: "false"
     AllowedValues: [ "true", "false" ]
-    Description: Choose "true" To enable X11 forwarding."
+    Description: Choose "true" to enable X11 forwarding.
   BastionVariables:
     Type: String
     Default: ""
@@ -278,7 +278,7 @@ Parameters:
   Taints:
     Default: ""
     Type: String
-    Description: (Optional) Comma-separated list of key-value pairs that represnt node taints to assign to the node group. Ignore this if "Custom launch template" is provided.
+    Description: (Optional) Comma-separated list of key-value pairs that represent node taints to assign to the node group. Ignore this if "Custom launch template" is provided.
   NodeSecurityGroupId:
     Default: ""
     Type: String
