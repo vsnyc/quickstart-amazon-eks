@@ -27,7 +27,7 @@ Resources:
         apiVersion: batch/v1
         kind: Job
         metadata:
-          name: test-job
+          name: linux-test-job
         spec:
           template:
             spec:
@@ -37,7 +37,7 @@ Resources:
               containers:
               - name: test-job
                 image: amazonlinux:2
-                command: ["ping", "-c", "120", "aws.amazon.com"]
+                command: ["/bin/bash", "-c", "yum install -y iputils; sleep 120; ping -c 1 aws.amazon.com"]
               restartPolicy: OnFailure
           backoffLimit: 4
   TestApplyOnWindows:
@@ -50,7 +50,7 @@ Resources:
         apiVersion: batch/v1
         kind: Job
         metadata:
-          name: windows-test
+          name: windows-test-job
         spec:
           template:
             spec:
@@ -60,7 +60,7 @@ Resources:
               containers:
               - name: windows-test-container
                 image: mcr.microsoft.com/windows/servercore:ltsc2019
-                command: ["ping", "aws.amazon.com"]
+                command: ["powershell", "-command", "sleep 20; ping aws.amazon.com"]
               restartPolicy: OnFailure
           backoffLimit: 4
 Outputs:

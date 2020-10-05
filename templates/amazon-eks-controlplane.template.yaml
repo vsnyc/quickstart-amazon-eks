@@ -110,7 +110,7 @@ Resources:
         Roles:
           - Arn: !Sub ['arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-NodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
             Username: 'system:node:{{EC2PrivateDNSName}}'
-            Groups: [ 'system:bootstrappers', 'system:nodes' ]
+            Groups: [ 'system:bootstrappers', 'system:nodes', 'eks:kube-proxy-windows' ]
           - Arn: !Ref FunctionRoleArn
             Username: !Ref FunctionRoleArn
             Groups: [ 'system:masters' ]
