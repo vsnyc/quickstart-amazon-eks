@@ -477,11 +477,5 @@ Outputs:
     Value: !GetAtt EKSStack.Outputs.BastionSecurityGroup
   NodeGroupSecurityGroup:
     Value: !GetAtt EKSStack.Outputs.NodeGroupSecurityGroup
-  NodeInstanceProfile:
-    Value: !GetAtt EKSStack.Outputs.NodeInstanceProfile
-  NodeInstanceRoleName:
-    Value: !GetAtt EKSStack.Outputs.NodeInstanceRoleName
-  NodeInstanceRoleArn:
-    Value: !GetAtt EKSStack.Outputs.NodeInstanceRoleArn
   ControlPlaneSecurityGroup:
     Value: !GetAtt EKSStack.Outputs.ControlPlaneSecurityGroup
