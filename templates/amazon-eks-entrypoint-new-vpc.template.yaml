@@ -35,8 +35,9 @@ Metadata:
     - Unmanaged
     - Node
     - NewRelicIntegration
-    - SnykIntegration
+    - Integration
     - Auto Scaling
+    - Partner
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
