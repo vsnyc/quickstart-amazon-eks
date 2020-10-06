@@ -250,7 +250,7 @@ Resources:
                    args:
                      - --ingress-class=alb
                      - !Sub "--cluster-name=${ClusterName}"
-                   image: docker.io/amazon/aws-alb-ingress-controller:v1.1.7
+                   image: docker.io/amazon/aws-alb-ingress-controller:v1.1.9
                serviceAccountName: alb-ingress-controller
 
 Outputs:
