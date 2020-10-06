@@ -546,3 +546,18 @@ Outputs:
     Value: !GetAtt EKSStack.Outputs.BastionSecurityGroup
   NodeGroupSecurityGroup:
     Value: !GetAtt EKSStack.Outputs.NodeGroupSecurityGroup
+Rules:
+  WindowsUnmanaged:
+    Assertions:
+      - Assert: !Not [!Equals [NodeGroupOS, 'Windows']]
+        AssertDescription: "Managed nodegroups do not support Windows nodes."
+    RuleCondition: !Equals
+      - !Ref NodeGroupType
+      - Managed
+  LablesNeedNamespaces:
+    RuleCondition: !Not
+      - !Equals [ !Ref FargateLabels, "" ]
+    Assertions:
+      - AssertDescription: You must specify at least one Fargate namespace to enable Fargate.
+        Assert: !Not
+          - !Equals [ !Ref FargateNamespaces, "" ]

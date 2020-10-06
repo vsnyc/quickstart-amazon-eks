@@ -365,14 +365,6 @@ Parameters:
 Mappings:
   Config:
     Prefix: { Value: 'eks-quickstart' }
-Rules:
-  LablesNeedNamespaces:
-    RuleCondition: !Not
-      - !Equals [ !Ref FargateLabels, "" ]
-    Assertions:
-      - AssertDescription: You must specify at least one Fargate namespace to enable Fargate.
-        Assert: !Not
-          - !Equals [ !Ref FargateNamespaces, "" ]
 Conditions:
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
   CreateAdvancedConfigWithDefaults: !Equals [!Ref ConfigSetName, '']
@@ -479,3 +471,18 @@ Outputs:
     Value: !GetAtt EKSStack.Outputs.NodeGroupSecurityGroup
   ControlPlaneSecurityGroup:
     Value: !GetAtt EKSStack.Outputs.ControlPlaneSecurityGroup
+Rules:
+  LablesNeedNamespaces:
+    RuleCondition: !Not
+      - !Equals [ !Ref FargateLabels, "" ]
+    Assertions:
+      - AssertDescription: You must specify at least one Fargate namespace to enable Fargate.
+        Assert: !Not
+          - !Equals [ !Ref FargateNamespaces, "" ]
+  WindowsUnmanaged:
+    Assertions:
+      - Assert: !Not [!Equals [NodeGroupOS, 'Windows']]
+        AssertDescription: "Managed nodegroups do not support Windows nodes."
+    RuleCondition: !Equals
+      - !Ref NodeGroupType
+      - Managed

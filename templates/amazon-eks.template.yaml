@@ -287,7 +287,7 @@ Resources:
         Subnet2ID: !If [2AZDeployment, !Ref PrivateSubnet2ID, !Ref "AWS::NoValue" ]
         Subnet3ID: !If [3AZDeployment, !Ref PrivateSubnet3ID, !Ref "AWS::NoValue" ]
         NodeInstanceType: t3.large
-        NumberOfNodes: 1
+        NumberOfNodes: 2
         NodeGroupName: windows-support-al2
         NodeVolumeSize: 20
         EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
