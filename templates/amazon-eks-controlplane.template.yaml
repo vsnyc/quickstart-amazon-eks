@@ -108,7 +108,7 @@ Resources:
       Version: !Ref KubernetesVersion
       KubernetesApiAccess:
         Roles:
-          - Arn: !Sub ['arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-NodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
+          - Arn: !Sub ['arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-UnmanagedNodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
             Username: 'system:node:{{EC2PrivateDNSName}}'
             Groups: [ 'system:bootstrappers', 'system:nodes', 'eks:kube-proxy-windows' ]
           - Arn: !Ref FunctionRoleArn

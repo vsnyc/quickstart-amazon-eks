@@ -378,17 +378,51 @@ Resources:
                   - 'ssm:GetParameterHistory'
                   - 'ssm:GetParameter'
                 Resource: !Sub ['arn:${AWS::Partition}:ssm:*:${AWS::AccountId}:parameter${ParameterPrefix}/*', {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
-  NodeInstanceProfile:
+  UnmanagedNodeInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
-      InstanceProfileName: !Ref NodeInstanceRole
+      InstanceProfileName: !Ref UnmanagedNodeInstanceRole
       Path: "/"
       Roles:
-        - !Ref NodeInstanceRole
-  NodeInstanceRole:
+        - !Ref UnmanagedNodeInstanceRole
+  ManagedNodeInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Ref ManagedNodeInstanceRole
+      Path: "/"
+      Roles:
+        - !Ref ManagedNodeInstanceRole
+  UnmanagedNodeInstanceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub ['${Prefix}-NodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
+      RoleName: !Sub ['${Prefix}-UnmanagedNodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: !Sub "ec2.${AWS::URLSuffix}"
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: cfn-signal
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudformation:SignalResource
+                Resource: "*"
+      ManagedPolicyArns:
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy'
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonEKS_CNI_Policy'
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly'
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonElasticFileSystemReadOnlyAccess'
+  ManagedNodeInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ['${Prefix}-ManagedNodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:

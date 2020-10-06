@@ -4,8 +4,6 @@ Metadata:
     Exclusions: [W9002, W9003, W9004, W9006]
 Description: "Deploys the auto-scaler helm chart into an existing kubernetes cluster (qs-1ql475ceo)"
 Parameters:
-  NodeInstanceRoleName:
-    Type: String
   NodeAutoScalingGroup:
     Type: String
   EksClusterName:
@@ -26,6 +24,8 @@ Conditions:
     - !Equals [!Ref 'AWS::Region', 'af-south-1']
     - !Equals [!Ref 'AWS::Region', 'eu-south-1']
 Mappings:
+  Config:
+    Prefix: { Value: 'eks-quickstart' }
   K8sVersionMap:
     "1.15":
       ImageTag: v1.15.5
@@ -55,7 +55,8 @@ Resources:
               - autoscaling:TerminateInstanceInAutoScalingGroup
             Resource: !Sub "arn:${AWS::Partition}:autoscaling:${AWS::Region}:${AWS::AccountId}:autoScalingGroup:*:autoScalingGroupName/${NodeAutoScalingGroup}"
       Roles:
-        - !Ref NodeInstanceRoleName
+        - !Sub ['${Prefix}-ManagedNodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
+        - !Sub ['${Prefix}-UnManagedNodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
   # Install auto-scaler helm chart
   AutoScalerHelmChart:
     DependsOn:
