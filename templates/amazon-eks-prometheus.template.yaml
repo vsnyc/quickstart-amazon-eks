@@ -10,6 +10,7 @@ Resources:
   # Install prometheus helm chart
   PrometheusHelmChart:
     Type: "AWSQS::Kubernetes::Helm"
+    Metadata: { cfn-lint: { config: { ignore_checks: [E3012] } } }
     Properties:
       ClusterID: !Ref ClusterName
       Namespace: prometheus

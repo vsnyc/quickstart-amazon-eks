@@ -57,7 +57,8 @@ def sts_to_role(sts_arn):
         logger.error(f"failed to parse calling arn {sts_arn}")
         return "NotFound"
     role_name = sts_arn.split('/')[1]
-    return f'{":".join(sts_arn.split(":")[:-1])}:role/{role_name}'
+    account_id = sts_arn.split(':')[4]
+    return f"arn:aws:iam::{account_id}:role/{role_name}"
 
 
 @helper.create

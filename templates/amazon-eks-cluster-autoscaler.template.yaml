@@ -4,38 +4,41 @@ Metadata:
     Exclusions: [W9002, W9003, W9004, W9006]
 Description: "Deploys the auto-scaler helm chart into an existing kubernetes cluster (qs-1ql475ceo)"
 Parameters:
-  NodeInstanceRoleName:
-    Type: String
   NodeAutoScalingGroup:
     Type: String
   EksClusterName:
     Type: String
   KubernetesVersion:
     Type: String
-    AllowedValues: [ "1.16", "1.15", "1.14", "1.13" ]
-    Default: "1.16"
+    AllowedValues: [ "1.17", "1.16", "1.15" ]
+    Default: "1.17"
 # NOTE: The cluster autoscaler version number is dependant on the K8S version it is being
 #       deployed into. See...
 #       https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler#releases
 #       https://github.com/kubernetes/autoscaler/releases
 Conditions:
+  is17: !Equals [ !Ref KubernetesVersion, "1.17" ]
   is16: !Equals [ !Ref KubernetesVersion, "1.16" ]
+  # workaround for https://github.com/kubernetes/autoscaler/issues/3372
+  NeedsStaticList: !Or
+    - !Equals [!Ref 'AWS::Region', 'af-south-1']
+    - !Equals [!Ref 'AWS::Region', 'eu-south-1']
 Mappings:
+  Config:
+    Prefix: { Value: 'eks-quickstart' }
   K8sVersionMap:
-    "1.13":
-      ImageTag: v1.13.9
-    "1.14":
-      ImageTag: v1.14.7
     "1.15":
       ImageTag: v1.15.5
     "1.16":
       ImageTag: v1.16.5
+    "1.17":
+      ImageTag: v1.17.3
 Resources:
   # Policy to apply to NodeInstanceRole
   ClusterAutoScalerPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: cluster-autoscaler
+      PolicyName: !Sub '${NodeAutoScalingGroup}'
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -52,13 +55,14 @@ Resources:
               - autoscaling:TerminateInstanceInAutoScalingGroup
             Resource: !Sub "arn:${AWS::Partition}:autoscaling:${AWS::Region}:${AWS::AccountId}:autoScalingGroup:*:autoScalingGroupName/${NodeAutoScalingGroup}"
       Roles:
-        - !Ref NodeInstanceRoleName
-
+        - !Sub ['${Prefix}-ManagedNodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
+        - !Sub ['${Prefix}-UnManagedNodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
   # Install auto-scaler helm chart
   AutoScalerHelmChart:
     DependsOn:
       - ClusterAutoScalerPolicy
     Type: "AWSQS::Kubernetes::Helm"
+    Metadata: { cfn-lint: { config: { ignore_checks: [ E3012 ] } } }
     Properties:
       ClusterID: !Ref EksClusterName
       Namespace: kube-system
@@ -70,7 +74,11 @@ Resources:
           - K8sVersionMap
           - !Ref KubernetesVersion
           - ImageTag
-        image.repository: !If [ is16, us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler, k8s.gcr.io/cluster-autoscaler ]
+        image.repository: !If
+        - is17
+        - k8s.gcr.io/autoscaling/cluster-autoscaler
+        - !If [ is16, us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler, k8s.gcr.io/cluster-autoscaler ]
+        extraArgs.aws-use-static-instance-list: !If [NeedsStaticList, true, !Ref 'AWS::NoValue']
         rbac.create: true
         rbac.pspEnabled: true
         autoDiscovery.clusterName: !Ref EksClusterName
