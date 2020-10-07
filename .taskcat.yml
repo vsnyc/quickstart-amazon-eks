@@ -2,12 +2,8 @@ project:
   name: quickstart-amazon-eks
   owner: quickstart-eng@amazon.com
   regions:
-  - eu-north-1
   - me-south-1
-  - us-east-1
-  - us-east-2
-  - us-west-2
-  template: templates/amazon-eks-master.template.yaml
+  template: templates/amazon-eks-entrypoint-new-vpc.template.yaml
   parameters:
     RemoteAccessCIDR: 10.0.0.0/16
     QSS3BucketName: $[taskcat_autobucket]
@@ -18,34 +14,22 @@ tests:
   defaults:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      ProvisionBastionHost: Disabled
-      EKSPublicAccessEndpoint: Enabled
   public-endpoint:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      EKSPublicAccessEndpoint: Disabled
-      ProvisionBastionHost: Enabled
+      EKSPublicAccessEndpoint: Enabled
+      ProvisionBastionHost: Disabled
+      ALBIngressController: Disabled
     regions:
       - ap-northeast-2
   cluster-autoscaler:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       ClusterAutoScaler: Enabled
-      ProvisionBastionHost: Enabled
-      EKSPublicAccessEndpoint: Disabled
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Disabled
     regions:
     - eu-central-1
-  efs:
-    parameters:
-      AvailabilityZones: $[taskcat_genaz_3]
-      EfsStorageClass: Enabled
-      ClusterAutoScaler: Disabled
-      ManagedNodeGroup: 'yes'
-      ManagedNodeGroupAMIType: AL2_x86_64
-      EKSPublicAccessEndpoint: Disabled
-      ProvisionBastionHost: Enabled
-    regions:
-    - us-west-2
   efs-prov:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -54,17 +38,16 @@ tests:
       EfsThroughputMode: provisioned
       EfsProvisionedThroughputInMibps: 100
       EKSPublicAccessEndpoint: Enabled
-      ProvisionBastionHost: Disabled
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Disabled
     regions:
     - ap-east-1
   managed-node-group:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       ClusterAutoScaler: Disabled
-      ManagedNodeGroup: 'yes'
-      ManagedNodeGroupAMIType: AL2_x86_64
       EKSPublicAccessEndpoint: Enabled
-      ProvisionBastionHost: Disabled
+      ALBIngressController: Disabled
     regions:
     - ap-south-1
   monitoring-prom-graf:
@@ -72,16 +55,17 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       MonitoringStack: Prometheus + Grafana
       EKSPublicAccessEndpoint: Enabled
-      ProvisionBastionHost: Disabled
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Disabled
     regions:
     - ap-southeast-2
-    - us-west-2
   2az:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
       NumberOfAZs: "2"
       EKSPublicAccessEndpoint: Enabled
-      ProvisionBastionHost: Disabled
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Disabled
     regions:
     - ca-central-1
     - cn-north-1
@@ -92,26 +76,22 @@ tests:
       NumberOfAZs: "2"
       EKSClusterLoggingTypes: ""
       EKSPublicAccessEndpoint: Enabled
-      ProvisionBastionHost: Disabled
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Disabled
     regions:
-    - eu-west-1
+    - eu-west-2
   with-hybrid:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      ClusterAutoScaler: Disabled
-      ManagedNodeGroup: 'yes'
-      ManagedNodeGroupAMIType: AL2_x86_64
-      MangedNodeGroupLabel: TestMNG
       EKSPublicAccessEndpoint: Enabled
-      ProvisionBastionHost: Disabled
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Disabled
     regions:
     - us-west-2
   alb-ingress:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      ALBIngressController: Enabled
-      EKSPublicAccessEndpoint: Disabled
-      ProvisionBastionHost: Enabled
+      NodeGroupType: 'Unmanaged'
     regions:
     - us-east-2
   fargate:
@@ -121,42 +101,55 @@ tests:
       FargateNamespaces: kube-system
       FargateLabels: 'app.kubernetes.io/name=aws-cluster-autoscaler'
       EKSPublicAccessEndpoint: Enabled
-      ProvisionBastionHost: Disabled
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Enabled
     regions:
     - us-east-1
   enable-oidc:
     regions:
-      - eu-west-2
+      - eu-west-1
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       IamOidcProvider: Enabled
       EKSPublicAccessEndpoint: Enabled
-      ProvisionBastionHost: Disabled
+      NodeGroupOS: Bottlerocket
+      NodeInstanceFamily: ARM
+      NodeInstanceType: c6g.medium
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Enabled
   snyk:
     regions:
       - eu-west-3
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      ProvisionBastionHost: Disabled
       EKSPublicAccessEndpoint: Enabled
       SnykIntegration: Enabled
       SnykIntegrationId: ---overridden---
+      ALBIngressController: Enabled
   new-relic:
     regions:
       - sa-east-1
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      ProvisionBastionHost: Disabled
       EKSPublicAccessEndpoint: Enabled
       NewRelicIntegration: Enabled
       NewRelicLicenseKey: ---overridden---
+      ALBIngressController: Enabled
   managed-node-group-ASC:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       ClusterAutoScaler: Enabled
-      ManagedNodeGroup: 'yes'
-      ManagedNodeGroupAMIType: AL2_x86_64
-      EKSPublicAccessEndpoint: Enabled
-      ProvisionBastionHost: Enabled
+      TestSuite: Enabled
+      ProvisionBastionHost: Disabled
+      ALBIngressController: Enabled
     regions:
-    - ap-south-1
+    - af-south-1
+  windows:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      TestSuite: Enabled
+      NodeGroupOS: Windows
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Enabled
+    regions:
+    - eu-north-1

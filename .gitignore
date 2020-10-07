@@ -6,3 +6,6 @@
 /.taskcat
 /functions/packages
 /output
+__pycache__
+/docs/generated/
+/index.html

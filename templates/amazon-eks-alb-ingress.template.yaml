@@ -137,12 +137,11 @@ Resources:
             Resource: "*"
       Path: "/"
   ALBClusterRole:
-    Type: "Custom::KubeManifest"
-    Version: '1.0'
+    Type: "AWSQS::Kubernetes::Resource"
     Properties:
-      ServiceToken: !Sub "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}"
       ClusterName: !Ref ClusterName
-      Manifest:
+      Namespace: kube-system
+      Manifest: |
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRole
         metadata:
@@ -181,15 +180,14 @@ Resources:
               - list
               - watch
   ALBClusterRoleBinding:
-    Type: "Custom::KubeManifest"
-    Version: '1.0'
+    Type: "AWSQS::Kubernetes::Resource"
     DependsOn:
       - ALBClusterRole
       - ALBServiceAccount
     Properties:
-      ServiceToken: !Sub "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}"
       ClusterName: !Ref ClusterName
-      Manifest:
+      Namespace: kube-system
+      Manifest: |
         apiVersion: rbac.authorization.k8s.io/v1
         kind: ClusterRoleBinding
         metadata:
@@ -205,36 +203,32 @@ Resources:
             name: alb-ingress-controller
             namespace: kube-system
   ALBServiceAccount:
-    Type: "Custom::KubeManifest"
-    Version: '1.0'
+    Type: "AWSQS::Kubernetes::Resource"
     Properties:
-      ServiceToken: !Sub "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}"
       ClusterName: !Ref ClusterName
-      Manifest:
+      Namespace: kube-system
+      Manifest: !Sub |
         apiVersion: v1
         kind: ServiceAccount
         metadata:
           labels:
             app.kubernetes.io/name: alb-ingress-controller
           annotations:
-            eks.amazonaws.com/role-arn: !GetAtt ALBIngressIAMRole.Arn
+            eks.amazonaws.com/role-arn: ${ALBIngressIAMRole.Arn}
           name: alb-ingress-controller
-          namespace: kube-system
   ALBDeployment:
-    Type: "Custom::KubeManifest"
-    Version: '1.0'
+    Type: "AWSQS::Kubernetes::Resource"
     DependsOn: ALBServiceAccount
     Properties:
-      ServiceToken: !Sub "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}"
       ClusterName: !Ref ClusterName
-      Manifest:
+      Namespace: kube-system
+      Manifest: !Sub |
          apiVersion: apps/v1
          kind: Deployment
          metadata:
            labels:
              app.kubernetes.io/name: alb-ingress-controller
            name: alb-ingress-controller
-           namespace: kube-system
          spec:
            selector:
              matchLabels:
@@ -248,7 +242,7 @@ Resources:
                  - name: alb-ingress-controller
                    args:
                      - --ingress-class=alb
-                     - !Sub "--cluster-name=${ClusterName}"
+                     - --cluster-name=${ClusterName}
                    image: docker.io/amazon/aws-alb-ingress-controller:v1.1.7
                serviceAccountName: alb-ingress-controller
 

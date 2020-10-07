@@ -10,6 +10,7 @@ RUN mkdir -p bin/ && \
     chmod +x bin/kubectl && \
     chmod +x bin/aws-iam-authenticator && \
     rm -rf linux-amd64 Dockerfile && \
+    find . -exec touch -t 202007010000.00 {} + && \
     zip -X -r lambda.zip ./
 
 CMD mkdir -p /output/ && mv lambda.zip /output/
