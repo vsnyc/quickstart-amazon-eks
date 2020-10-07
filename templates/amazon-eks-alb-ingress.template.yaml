@@ -159,6 +159,7 @@ Resources:
               - ingresses
               - ingresses/status
               - services
+              - pods/status
             verbs:
               - create
               - get
@@ -243,7 +244,7 @@ Resources:
                    args:
                      - --ingress-class=alb
                      - --cluster-name=${ClusterName}
-                   image: docker.io/amazon/aws-alb-ingress-controller:v1.1.7
+                   image: docker.io/amazon/aws-alb-ingress-controller:v1.1.9
                serviceAccountName: alb-ingress-controller
 
 Outputs:
