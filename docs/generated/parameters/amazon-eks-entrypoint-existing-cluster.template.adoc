@@ -1,0 +1,21 @@
+
+.EKS cluster details
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|EKS cluster name
+(`KubeClusterName`)|`**__Requires input__**`|Name of the EKS cluster to enable for AWS CloudFormation.|VPC ID
+(`VPCID`)|`**__Requires input__**`|ID of the VPC that contains your EKS cluster (e.g., vpc-0343606e).|EKS subnet IDs
+(`K8sSubnetIds`)|`**__Blank string__**`|(Optional) Comma-separated list of subnet IDs associated with the EKS cluster. There must be routes to the Kubernetes, AWS CloudFormation, and EKS endpoints. Leave this blank for publicly accessible clusters.|HTTP proxy
+(`HttpProxy`)|`**__Blank string__**`|(Optional) HTTP(S) proxy configuration. If you provide a value, all worker nodes and pod egress traffic uses this proxy (e.g., http://10.101.0.100:3128/).|EKS security group
+(`ControlPlaneSecurityGroup`)|`**__Blank string__**`|(Optional) Security group ID attached to the EKS cluster. This must allow egress traffic to the Kubernetes, AWS CloudFormation, and EKS endpoints. Leave this blank for publicly accessible clusters.|Deploy account-level shared resources
+(`PerAccountSharedResources`)|`Yes`|Choose "No" if you already deployed the EKS account shared resources in this AWS account.|Deploy Region-level shared resources
+(`PerRegionSharedResources`)|`Yes`|Choose "No" if you already deployed the EKS shared resources stack in your Region.
+|===
+.AWS Quick Start configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Quick Start S3 bucket name
+(`QSS3BucketName`)|`aws-quickstart`|S3 bucket name for the Quick Start assets. This string can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).|Quick Start S3 key prefix
+(`QSS3KeyPrefix`)|`quickstart-amazon-eks/`|S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and forward slash (/).|Quick Start S3 bucket Region
+(`QSS3BucketRegion`)|`us-east-1`|Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.
+|===

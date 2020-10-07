@@ -1,0 +1,83 @@
+
+.Basic configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|VPC ID
+(`VPCID`)|`**__Requires input__**`|ID of your existing VPC (e.g., vpc-0343606e).|Private subnet 1 ID
+(`PrivateSubnet1ID`)|`**__Requires input__**`|ID of the private subnet in Availability Zone 1 of your existing VPC (e.g., subnet-fe9a8b32).|Private subnet 2 ID
+(`PrivateSubnet2ID`)|`**__Blank string__**`|ID of the private subnet in Availability Zone 2 of your existing VPC (e.g., subnet-be8b01ea).|Private subnet 3 ID
+(`PrivateSubnet3ID`)|`**__Blank string__**`|ID of the private subnet in Availability Zone 3 of your existing VPC (e.g., subnet-abd39039).|Public subnet 1 ID
+(`PublicSubnet1ID`)|`**__Blank string__**`|ID of the public subnet in Availability Zone 1 of your existing VPC (e.g., subnet-a0246dcd).|Public subnet 2 ID
+(`PublicSubnet2ID`)|`**__Blank string__**`|ID of the public subnet in Availability Zone 2 of your existing VPC (e.g., subnet-b1236eea).|Public subnet 3 ID
+(`PublicSubnet3ID`)|`**__Blank string__**`|ID of the public subnet in Availability Zone 3 of your existing VPC (e.g., subnet-c3456aba).|Allowed external access CIDR
+(`RemoteAccessCIDR`)|`**__Requires input__**`|CIDR IP range that is permitted to access the instances. We recommend that you set this value to a trusted IP range.|SSH key name
+(`KeyPairName`)|`**__Requires input__**`|Name of an existing key pair, which allows you to securely connect to your instance after it launches.|Config set name
+(`ConfigSetName`)|`**__Blank string__**`|(Optional) Name used to map advanced parameters to an EKS cluster. If you launched an advanced configuration stack and would like to apply it's values to this cluster, this name must match the "Config set name" parameter in that stack. If left blank, a new config set is created using default values.|Per-account shared resources
+(`PerAccountSharedResources`)|`Yes`|Choose "No" if you already deployed another EKS Quick Start stack in your AWS account.|Per-Region shared resources
+(`PerRegionSharedResources`)|`Yes`|Choose "No" if you already deployed another EKS Quick Start stack in your Region.
+|===
+.Network configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|HTTP proxy
+(`HttpProxy`)|`**__Blank string__**`|(Optional) HTTP(S) proxy configuration. If provided, all worker nodes and pod egress traffic uses this proxy. Example: http://10.101.0.100:3128/.
+|===
+.Amazon EC2 configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Provision bastion host
+(`ProvisionBastionHost`)|`Enabled`|Choose "Disabled" to skip creating a bastion host.
+|===
+.Amazon EKS configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|EKS cluster name
+(`EKSClusterName`)|`**__Blank string__**`|(Optional) Name for the EKS cluster. If left blank, one is auto-generated. This must be unique within the Region.|EKS public access endpoint
+(`EKSPublicAccessEndpoint`)|`Disabled`|Configure access to the Kubernetes API server endpoint from outside of your VPC.|Additional EKS admin ARN (IAM user)
+(`AdditionalEKSAdminUserArn`)|`**__Blank string__**`|(Optional) IAM user Amazon Resource Name (ARN) to be granted administrative access to the EKS cluster.|Additional EKS admin ARN (IAM role)
+(`AdditionalEKSAdminRoleArn`)|`**__Blank string__**`|(Optional) IAM role Amazon Resource Name (ARN) to be granted administrative access to the EKS cluster.|Fargate namespaces
+(`FargateNamespaces`)|`**__Blank string__**`|(Optional) Comma-separated list of namespaces for which Fargate should be enabled.|Fargate labels
+(`FargateLabels`)|`**__Blank string__**`|Requires at least one Fargate namespace to be specified. This is a comma-separated list of key-value pod labels. For a pod to run on Fargate, all of the labels must match, and it must run in a namespace defined by "Fargate namespaces".
+|===
+.Default EKS node group configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Instance type
+(`NodeInstanceType`)|`t3.medium`|EC2 instance type.|Number of nodes
+(`NumberOfNodes`)|`3`|Number of Amazon EKS node instances. The default is one for each of the three Availability Zones.|Maximum number of nodes
+(`MaxNumberOfNodes`)|`3`|Maximum number of Amazon EKS node instances. The default is three.|Instance family
+(`NodeInstanceFamily`)|`Standard`|Choose the instance family to match the value of "Node instance type."|Node group type
+(`NodeGroupType`)|`Managed`|Choose "Unmanaged" to create an Auto Scaling group without using the EKS-managed node groups feature.|Node group operating system
+(`NodeGroupOS`)|`Amazon Linux 2`|Operating system to use for node instances. Note that if you choose "Windows," an additional Amazon Linux node group is created.
+|===
+.Snyk monitor (AWS Partner security)
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Snyk integration
+(`SnykIntegration`)|`Disabled`|For more information, see https://github.com/aws-quickstart/quickstart-eks-snyk/.|Integration ID
+(`SnykIntegrationId`)|`**__Blank string__**`|If Snyk is enabled, a value must be provided. For more information, see https://support.snyk.io/hc/en-us/articles/360003916158-Install-the-Snyk-controller-with-Helm.
+|===
+.New Relic infrastructure (AWS Partner monitoring)
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|New Relic integration
+(`NewRelicIntegration`)|`Disabled`|For more information, see https://github.com/aws-quickstart/quickstart-eks-newrelic-infrastructure/.|License key
+(`NewRelicLicenseKey`)|`**__Blank string__**`|If New Relic is enabled, this must be provided. For more information, see https://docs.newrelic.com/docs/accounts/install-new-relic/account-setup/license-key.
+|===
+.Kubernetes add-ins
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|ALB ingress controller
+(`ALBIngressController`)|`Enabled`|Choose "Enabled" to deploy the ALB ingress controller.|Cluster autoscaler
+(`ClusterAutoScaler`)|`Disabled`|Choose "Enabled" to enable Kubernetes cluster autoscaler.|EFS storage class
+(`EfsStorageClass`)|`Disabled`|Choose "Enabled" to enable EFS storage class.|Monitoring stack
+(`MonitoringStack`)|`None`|Enable monitoring stack with "Prometheus+Grafana."
+|===
+.AWS Quick Start configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Quick Start S3 bucket name
+(`QSS3BucketName`)|`aws-quickstart`|S3 bucket name for the Quick Start assets. This string can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).|Quick Start S3 key prefix
+(`QSS3KeyPrefix`)|`quickstart-amazon-eks/`|S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), periods (.) and forward slash (/).|Quick Start S3 bucket Region
+(`QSS3BucketRegion`)|`us-east-1`|Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.
+|===

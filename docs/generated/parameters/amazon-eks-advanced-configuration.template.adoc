@@ -1,0 +1,57 @@
+
+.Quick Start configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Config set name
+(`ConfigSetName`)|`**__Requires input__**`|(Optional) Name used to map advanced parameters to an EKS cluster. In order to apply the defined parameters, the name must match the name used when launching the main EKS Quick Start.
+|===
+.EKS cluster configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Kubernetes version
+(`KubernetesVersion`)|`1.17`|Kubernetes control plane version.|Kubernetes API public access CIDRs
+(`EKSPublicAccessCIDRs`)|`0.0.0.0/0`|These values are used only if the EKSPublicAccessEndpoint parameter is set to "Enabled." These are the public CIDR IP ranges permitted to access the Kubernetes API. They cannot contain private IP ranges.|Private access endpoint
+(`EKSPrivateAccessEndpoint`)|`Enabled`|Configure access to the Kubernetes API server endpoint from within your VPC. If this is set to "Disabled," "EKS public access endpoint" must be set to "Enabled."|Cluster logging types
+(`EKSClusterLoggingTypes`)|`api, audit, authenticator, controllerManager, scheduler`|EKS cluster control plane logs to be exported to Amazon CloudWatch Logs.|Encrypt secrets
+(`EKSEncryptSecrets`)|`Enabled`|Envelope encryption of Kubernetes secrets using KMS.|Encrypt secrets KMS key ARN
+(`EKSEncryptSecretsKmsKeyArn`)|`**__Blank string__**`|(Optional) KMS key to use for envelope encryption of Kubernetes secrets. If this parameter is omitted, a key is created for the cluster. The CMK must be symmetric, created in the same Region as the cluster, and if the CMK was created in a different account, the user must have access to the CMK.|Enable IAM OIDC provider
+(`IamOidcProvider`)|`Enabled`|Enables IAM roles for Kubernetes service accounts.
+|===
+.Default EKS node group configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Name
+(`NodeGroupName`)|`Default`|Name of the EKS node group.|Volume size
+(`NodeVolumeSize`)|`20`|Size of the node's root EBS volumes.|Custom AMI ID
+(`CustomAmiId`)|`**__Blank string__**`|(Optional) If an AMI ID is specified, it is used instead of the AMI from your OS/Region.|Labels
+(`Labels`)|`**__Blank string__**`|(Optional) Comma-separated list of key-value pairs that represent node labels to assign to the node group. Ignore this if "Custom launch template" is provided.|Taints
+(`Taints`)|`**__Blank string__**`|(Optional) Comma-separated list of key-value pairs that represent node taints to assign to the node group. Ignore this if "Custom launch template" is provided.|Launch template ID
+(`LaunchTemplateId`)|`**__Blank string__**`|(Optional) ID of an existing launch template to use when creating the node group.|Launch template version
+(`LaunchTemplateVersion`)|`**__Blank string__**`|Must be specified if the LaunchTemplateId parameter is provided. It cannot be "$Latest" or "$Default." This value sets the launch template version for the node group.|Security group ID
+(`NodeSecurityGroupId`)|`**__Blank string__**`|(Optional) Provide the ID of a security group to use for this node group. If this is not specified, one is created.|Instance type 2
+(`NodeInstanceType2`)|`**__Blank string__**`|(Optional) Only applies if the NodeGroupType parameter is set to "Unmanaged." This is the second type of EC2 instance for the nodes.|Instance type 3
+(`NodeInstanceType3`)|`**__Blank string__**`|(Optional) Only applies if the NodeGroupType parameter is set to "Unmanaged." This is the third type of EC2 instance for the nodes.|Instance type 4
+(`NodeInstanceType4`)|`**__Blank string__**`|(Optional) Only applies if the NodeGroupType parameter is set to "Unmanaged." This is the fourth type of EC2 instance for the nodes.|On-demand percentage
+(`OnDemandPercentage`)|`100`|Only applies if the NodeGroupType parameter is set to "Unmanaged." Set the percentage of on-demand instances and spot instances. With a default of 100, the percentages are 100% for on-demand instances and 0% for spot instances.
+|===
+.Bastion configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Operating system
+(`BastionOS`)|`Amazon-Linux2-HVM`|Linux distribution of the bastion host.|Bootstrap script
+(`BastionBootstrapScript`)|`**__Blank string__**`|(Optional) Custom initialization script to run during setup. If left blank, the default bootstrap script is used.|Instance type
+(`BastionInstanceType`)|`t3.micro`|Instance type for the bastion host.|Root volume size
+(`BastionRootVolumeSize`)|`10`|Size in GB for the root EBS volume.|IAM role name
+(`BastionIAMRoleName`)|`**__Blank string__**`|(Optional) An existing IAM role name to attach to the bastion host. If left blank, a new role is created.|Enable TCP forwarding
+(`BastionEnableTCPForwarding`)|`false`|Choose "true" to enable TCP forwarding.|Enable X11 forwarding
+(`BastionEnableX11Forwarding`)|`false`|Choose "true" to enable X11 forwarding.|Variables
+(`BastionVariables`)|`**__Blank string__**`|(Optional) Comma-separated list of environment variables for bootstrapping. The variables must be in the format KEY=VALUE. VALUE cannot contain commas.
+|===
+.EFS storage class configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Performance mode
+(`EfsPerformanceMode`)|`generalPurpose`|Only applies if the EfsStorageClass parameter is set to "Enabled." Choose "maxIO" mode to provide greater IOPS with an increased latency.|Throughput mode
+(`EfsThroughputMode`)|`bursting`|Only applies if the EfsStorageClass parameter is set to "Enabled." For throughput that is not dependent on the amount of data stored in the file system, choose "provisioned."|Provisioned throughput in Mibps
+(`EfsProvisionedThroughputInMibps`)|`0`|Only applies if the EfsStorageClass parameter is set to "Enabled." If "EFS throughput mode" is set, the "provisioned" value must be in the 0–1024 range. If it's set to "bursting," this must be set to 0.
+|===

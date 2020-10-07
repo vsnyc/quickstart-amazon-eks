@@ -28,6 +28,7 @@
 :template_custom_cliquery:
 :template_custom_clusteroidcprovider:
 :template_custom_copyzips:
+:template_custom_enableproxy:
 :template_custom_fargate:
 :template_custom_generatename:
 :template_custom_getcallerarn:
@@ -38,6 +39,7 @@
 :template_ec2:
 :template_efs:
 :template_eks:
+:template_enableproxy:
 :template_fargate:
 :template_generatename:
 :template_getcallerarn:
