@@ -1,6 +1,7 @@
 project:
   name: quickstart-amazon-eks
   owner: quickstart-eng@amazon.com
+  shorten_stack_name: true
   regions:
   - me-south-1
   template: templates/amazon-eks-entrypoint-new-vpc.template.yaml
@@ -151,5 +152,20 @@ tests:
       NodeGroupOS: Windows
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Enabled
+    regions:
+    - eu-north-1
+  vault:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      ALBIngressController: Enabled
+      VaultIntegration: Enabled
+      VaultUIAccessCIDR: 0.0.0.0/0
+      VaultUIDomainName: ---overridden---
+      VaultUIHostedZoneID: ---overridden---
+      VaultKubernetesNameSpace: vault-server-$[taskcat_random-string]
+      VaultUILoadBalancerType: "External"
+      VaultNodes: 3
+      VaultVersion: 1.5.3
+      ProvisionBastionHost: Disabled
     regions:
     - eu-north-1

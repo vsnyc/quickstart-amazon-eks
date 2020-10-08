@@ -136,6 +136,65 @@ Parameters:
     AllowedValues: [ Managed, Unmanaged ]
     Default: Managed
     Description: Choose "Unmanaged" to create an auto-scaling group without using the EKS managed node groups feature.
+  VaultIntegration:
+    Type: String
+    AllowedValues: [Enabled, Disabled]
+    Default: Disabled
+    Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-hashicorp-vault/."
+  VaultVersion:
+    Type: String
+    Default: "1.5.3"
+    AllowedValues:
+      - "1.5.3"
+  VaultDeploymentSize:
+    Type: String
+    Default: "small"
+    Description: Deployment size of dedicated HashiCorp Vault nodes.
+    AllowedValues:
+      - "small"
+      - "medium"
+      - "large"
+  VaultKubernetesNameSpace:
+    Default: "vault-server"
+    Type: String
+    Description: Kubernetes namespace for HashiCorp Vault.
+  VaultNodes:
+    Type: Number
+    Default: "3"
+    AllowedValues:
+      - "3"
+    Description: The number of dedicated Vault server nodes and pods.
+  VaultUILoadBalancerType:
+    Type: String
+    Default: "Internal"
+    Description: Choose whether the load balancer for HashiCorp Vault is internal or external to the VPC.
+    AllowedValues:
+      - "Internal"
+      - "External"
+  VaultUIAccessCIDR:
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$"
+    Description: 'The CIDR IP range that is permitted to access Vault Note: A value
+      of 0.0.0.0/0 allows access from ANY IP address.'
+    Type: String
+  VaultUIDomainName:
+    Type: String
+    Description: >-
+      Fully qualified DNS name for the vault-ui service load balancer.
+      If you don't provide a value for "ACM SSL certificate ARN", use the HostedZoneID.
+    MaxLength: 128
+    Default: ""
+  VaultUIHostedZoneID:
+    Type: String
+    Description: >-
+      Route 53-hosted zone ID of the domain name. If you don't provide an ACMSSLCertificateArn value, the Quick Start
+      creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.
+    Default: ""
+  VaultUIACMSSLCertificateArn:
+    Description: >-
+      ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and
+      "Hosted zone id", provide a value for "ACM SSL certificate ARN".
+    Type: String
+    Default: ""
 Mappings:
   Config:
     Prefix: { Value: 'eks-quickstart' }
@@ -144,6 +203,7 @@ Conditions:
   EnableProxy: !Not [!Equals [!Ref HttpProxy, ""]]
   DeployTestStack: !Equals [!Ref TestSuite, Enabled]
   EnableSnyk: !Equals [ !Ref SnykIntegration, Enabled]
+  EnableVault: !Equals [ !Ref VaultIntegration, Enabled]
   EnableNewRelic: !Equals [ !Ref NewRelicIntegration, Enabled]
   EnableFargate: !Not [!Equals [ !Ref FargateNamespaces, ""]]
   3AZDeployment: !Not [!Equals [!Ref PrivateSubnet3ID, ""]]
@@ -607,6 +667,38 @@ Resources:
         KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         SnykIntegrationId: !Ref SnykIntegrationId
         Namespace: snyk-monitor
+  VaultStack:
+    DependsOn: FunctionStack
+    Condition: EnableVault
+    Type: AWS::CloudFormation::Stack
+    Metadata:
+      DependsOn:
+        - !Ref ControlPlaneSecurityGroupIngress
+        - !Ref NodeGroupStack
+        - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-hashicorp-vault/templates/quickstart-eks-hashicorp-vault.template.yml'
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+      Parameters:
+        ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        KeyPairName: !Ref KeyPairName
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        QSS3BucketRegion: !Ref QSS3BucketRegion
+        AccessCIDR: !Ref VaultUIAccessCIDR
+        KubernetesNameSpace: !Ref VaultKubernetesNameSpace
+        PrivateSubnet1ID: !Ref PrivateSubnet1ID
+        PrivateSubnet2ID: !Ref PrivateSubnet2ID
+        PrivateSubnet3ID: !Ref PrivateSubnet3ID
+        LoadBalancerType: !Ref VaultUILoadBalancerType
+        ACMSSLCertificateArn: !Ref VaultUIACMSSLCertificateArn
+        HostedZoneID: !Ref VaultUIHostedZoneID
+        DomainName: !Ref VaultUIDomainName
+        VaultVersion: !Ref VaultVersion
+        VaultDeploymentSize: !Ref VaultDeploymentSize
+        Nodes: !Ref VaultNodes
   WindowsSupportStack:
     DependsOn: WindowsSupportNodeGroupStack
     Condition: EnableWindows
