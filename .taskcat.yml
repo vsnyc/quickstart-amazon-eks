@@ -159,13 +159,18 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       ALBIngressController: Enabled
       VaultIntegration: Enabled
-      VaultUIAccessCIDR: 0.0.0.0/0
       VaultUIDomainName: ---overridden---
       VaultUIHostedZoneID: ---overridden---
-      VaultKubernetesNameSpace: vault-server-$[taskcat_random-string]
-      VaultUILoadBalancerType: "External"
-      VaultNodes: 3
-      VaultVersion: 1.5.3
       ProvisionBastionHost: Disabled
     regions:
     - eu-north-1
+  consul:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      ALBIngressController: Enabled
+      ConsulIntegration: Enabled
+      ConsulUIDomainName: ---overridden---
+      ConsulUIHostedZoneID: ---overridden---
+      ProvisionBastionHost: Disabled
+    regions:
+    - eu-west-1
