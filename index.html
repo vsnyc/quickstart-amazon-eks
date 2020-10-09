@@ -1744,7 +1744,89 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 8. Kubernetes add-ins</caption>
+<caption class="title">Table 8. HashiCorp Vault (AWS Partner security)</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HashiCorp Vault integration
+(<code>VaultIntegration</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Disabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">For more information, see <a href="https://github.com/aws-quickstart/quickstart-eks-hashicorp-vault/" class="bare">https://github.com/aws-quickstart/quickstart-eks-hashicorp-vault/</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vault UI ACM SSL certificate ARN
+(<code>VaultUIACMSSLCertificateArn</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ARN of the load balancer&#8217;s ACM SSL certificate. If you don&#8217;t provide values for "Domain name" and "Hosted zone id", provide a value for "ACM SSL certificate ARN".</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Route 53 hosted zone id
+(<code>VaultUIHostedZoneID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Route 53-hosted zone ID of the domain name. If you don&#8217;t provide an ACMSSLCertificateArn value, the Quick Start creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vault UI Load balancer DNS name
+(<code>VaultUIDomainName</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified DNS name for the vault-ui service load balancer. If you don&#8217;t provide a value for "ACM SSL certificate ARN", use the HostedZoneID.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 9. HashiCorp Consul (AWS Partner containers)</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HashiCorp Consul integration
+(<code>ConsulIntegration</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Disabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">For more information, see <a href="https://github.com/aws-quickstart/quickstart-eks-hashicorp-consul/" class="bare">https://github.com/aws-quickstart/quickstart-eks-hashicorp-consul/</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ACM SSL certificate ARN
+(<code>ConsulUIACMSSLCertificateArn</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ARN of the load balancer&#8217;s ACM SSL certificate. If you don&#8217;t provide values for "Domain name" and "Hosted zone id", provide a value for "ACM SSL certificate ARN".</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Route 53 hosted zone id
+(<code>ConsulUIHostedZoneID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Route 53-hosted zone ID of the domain name. If you don&#8217;t provide an ACMSSLCertificateArn value, the Quick Start creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consul UI Load balancer DNS name
+(<code>ConsulUIDomainName</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified DNS name for the consul-ui service load balancer. If you don&#8217;t provide a value for "ACM SSL certificate ARN", use the HostedZoneID.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 10. Kubernetes add-ins</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1785,7 +1867,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 9. AWS Quick Start configuration</caption>
+<caption class="title">Table 11. AWS Quick Start configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1829,7 +1911,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 <div class="sect2">
 <h3 id="_launch_into_an_existing_vpc">Launch into an existing VPC</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 10. Basic configuration</caption>
+<caption class="title">Table 12. Basic configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1918,7 +2000,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 11. Network configuration</caption>
+<caption class="title">Table 13. Network configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1941,7 +2023,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 12. Amazon EC2 configuration</caption>
+<caption class="title">Table 14. Amazon EC2 configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1964,7 +2046,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 13. Amazon EKS configuration</caption>
+<caption class="title">Table 15. Amazon EKS configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2017,7 +2099,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 14. Default EKS node group configuration</caption>
+<caption class="title">Table 16. Default EKS node group configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2070,7 +2152,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 15. Snyk monitor (AWS Partner security)</caption>
+<caption class="title">Table 17. Snyk monitor (AWS Partner security)</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2099,7 +2181,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 16. New Relic infrastructure (AWS Partner monitoring)</caption>
+<caption class="title">Table 18. New Relic infrastructure (AWS Partner monitoring)</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2128,7 +2210,89 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 17. Kubernetes add-ins</caption>
+<caption class="title">Table 19. HashiCorp Vault (AWS Partner security)</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HashiCorp Vault integration
+(<code>VaultIntegration</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Disabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">For more information, see <a href="https://github.com/aws-quickstart/quickstart-eks-hashicorp-vault/" class="bare">https://github.com/aws-quickstart/quickstart-eks-hashicorp-vault/</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vault UI ACM SSL certificate ARN
+(<code>VaultUIACMSSLCertificateArn</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ARN of the load balancer&#8217;s ACM SSL certificate. If you don&#8217;t provide values for "Domain name" and "Hosted zone id", provide a value for "ACM SSL certificate ARN".</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Route 53 hosted zone id
+(<code>VaultUIHostedZoneID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Route 53 Hosted zone ID of the domain name. If you don&#8217;t provide an ACMSSLCertificateArn value, the Quick Start creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vault UI load balancer DNS name
+(<code>VaultUIDomainName</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified DNS name for the vault-ui service load balancer. If you don&#8217;t provide a value for "ACM SSL certificate ARN", use the HostedZoneID.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 20. HashiCorp Consul (AWS Partner containers)</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HashiCorp Consul integration
+(<code>ConsulIntegration</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Disabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">For more information, see <a href="https://github.com/aws-quickstart/quickstart-eks-hashicorp-consul/" class="bare">https://github.com/aws-quickstart/quickstart-eks-hashicorp-consul/</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ACM SSL certificate ARN
+(<code>ConsulUIACMSSLCertificateArn</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ARN of the load balancer&#8217;s ACM SSL certificate. If you don&#8217;t provide values for "Domain name" and "Hosted zone id", provide a value for "ACM SSL certificate ARN".</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Route 53 hosted zone id
+(<code>ConsulUIHostedZoneID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Route 53-hosted zone ID of the domain name. If you don&#8217;t provide an ACMSSLCertificateArn value, the Quick Start creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consul UI load balancer DNS name
+(<code>ConsulUIDomainName</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fully qualified DNS name for the consul-ui service load balancer. If you don&#8217;t provide a value for "ACM SSL certificate ARN", use the HostedZoneID.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 21. Kubernetes add-ins</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2169,7 +2333,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 18. AWS Quick Start configuration</caption>
+<caption class="title">Table 22. AWS Quick Start configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2207,7 +2371,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 <div class="sect2">
 <h3 id="_prepare_an_existing_eks_cluster">Prepare an existing EKS cluster</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 19. EKS cluster details</caption>
+<caption class="title">Table 23. EKS cluster details</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2266,7 +2430,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 20. AWS Quick Start configuration</caption>
+<caption class="title">Table 24. AWS Quick Start configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2304,7 +2468,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 <div class="sect2">
 <h3 id="_configure_advanced_options">Configure advanced options</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 21. Quick Start configuration</caption>
+<caption class="title">Table 25. Quick Start configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2327,7 +2491,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 22. EKS cluster configuration</caption>
+<caption class="title">Table 26. EKS cluster configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2386,7 +2550,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 23. Default EKS node group configuration</caption>
+<caption class="title">Table 27. Default EKS node group configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2475,7 +2639,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 24. Bastion configuration</caption>
+<caption class="title">Table 28. Bastion configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2540,7 +2704,113 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 25. EFS storage class configuration</caption>
+<caption class="title">Table 29. HashiCorp Vault (AWS Partner security)</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes namespace for HashiCorp Vault
+(<code>VaultKubernetesNameSpace</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vault-server</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes namespace for HashiCorp Vault.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consul UI Internal or external load balancer?
+(<code>VaultUILoadBalancerType</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>External</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose whether the load balancer for HashiCorp Vault is internal or external to the VPC.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Permitted IP range for Vault UI
+(<code>VaultUIAccessCIDR</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>127.0.0.1/32</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The CIDR IP range that is permitted to access Vault. Note: A value of 0.0.0.0/0 allows access from ANY IP address.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HashiCorp Vault version
+(<code>VaultVersion</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1.5.3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HashiCorp Vault deployment size
+(<code>VaultDeploymentSize</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>small</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deployment size of dedicated HashiCorp Vault nodes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HashiCorp Vault server nodes
+(<code>VaultNodes</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The number of dedicated Vault server nodes and pods.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 30. HashiCorp Consul (AWS Partner containers)</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes namespace for HashiCorp Consul
+(<code>ConsulKubernetesNameSpace</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>vault-server</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes namespace for HashiCorp Consul.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consul UI Internal or external load balancer?
+(<code>ConsulUILoadBalancerType</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Internal</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose whether the load balancer for HashiCorp Consul is internal or external to the VPC.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Permitted IP range for Consul UI
+(<code>ConsulUIAccessCIDR</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>127.0.0.1/32</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The CIDR IP range that is permitted to access Consul Note: A value of 0.0.0.0/0 allows access from ANY IP address.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HashiCorp Consul version
+(<code>ConsulVersion</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>1.8.4</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NO_DESCRIPTION</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HashiCorp Consul deployment size
+(<code>ConsulDeploymentSize</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>small</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deployment size of dedicated HashiCorp Consul nodes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HashiCorp Consul server nodes
+(<code>ConsulNodes</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>3</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The number of dedicated Consul server nodes and pods.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 31. EFS storage class configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">

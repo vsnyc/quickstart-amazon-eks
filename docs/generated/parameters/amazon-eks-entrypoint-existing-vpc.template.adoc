@@ -64,6 +64,24 @@
 (`NewRelicIntegration`)|`Disabled`|For more information, see https://github.com/aws-quickstart/quickstart-eks-newrelic-infrastructure/.|License key
 (`NewRelicLicenseKey`)|`**__Blank string__**`|If New Relic is enabled, this must be provided. For more information, see https://docs.newrelic.com/docs/accounts/install-new-relic/account-setup/license-key.
 |===
+.HashiCorp Vault (AWS Partner security)
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|HashiCorp Vault integration
+(`VaultIntegration`)|`Disabled`|For more information, see https://github.com/aws-quickstart/quickstart-eks-hashicorp-vault/.|Vault UI ACM SSL certificate ARN
+(`VaultUIACMSSLCertificateArn`)|`**__Blank string__**`|ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and "Hosted zone id", provide a value for "ACM SSL certificate ARN".|Route 53 hosted zone id
+(`VaultUIHostedZoneID`)|`**__Blank string__**`|Route 53 Hosted zone ID of the domain name. If you don't provide an ACMSSLCertificateArn value, the Quick Start creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.|Vault UI load balancer DNS name
+(`VaultUIDomainName`)|`**__Blank string__**`|Fully qualified DNS name for the vault-ui service load balancer. If you don't provide a value for "ACM SSL certificate ARN", use the HostedZoneID.
+|===
+.HashiCorp Consul (AWS Partner containers)
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|HashiCorp Consul integration
+(`ConsulIntegration`)|`Disabled`|For more information, see https://github.com/aws-quickstart/quickstart-eks-hashicorp-consul/.|ACM SSL certificate ARN
+(`ConsulUIACMSSLCertificateArn`)|`**__Blank string__**`|ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and "Hosted zone id", provide a value for "ACM SSL certificate ARN".|Route 53 hosted zone id
+(`ConsulUIHostedZoneID`)|`**__Blank string__**`|Route 53-hosted zone ID of the domain name. If you don't provide an ACMSSLCertificateArn value, the Quick Start creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.|Consul UI load balancer DNS name
+(`ConsulUIDomainName`)|`**__Blank string__**`|Fully qualified DNS name for the consul-ui service load balancer. If you don't provide a value for "ACM SSL certificate ARN", use the HostedZoneID.
+|===
 .Kubernetes add-ins
 [width="100%",cols="16%,11%,73%",options="header",]
 |===

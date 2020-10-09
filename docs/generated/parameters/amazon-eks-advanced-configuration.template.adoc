@@ -47,6 +47,28 @@
 (`BastionEnableX11Forwarding`)|`false`|Choose "true" to enable X11 forwarding.|Variables
 (`BastionVariables`)|`**__Blank string__**`|(Optional) Comma-separated list of environment variables for bootstrapping. The variables must be in the format KEY=VALUE. VALUE cannot contain commas.
 |===
+.HashiCorp Vault (AWS Partner security)
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Kubernetes namespace for HashiCorp Vault
+(`VaultKubernetesNameSpace`)|`vault-server`|Kubernetes namespace for HashiCorp Vault.|Consul UI Internal or external load balancer?
+(`VaultUILoadBalancerType`)|`External`|Choose whether the load balancer for HashiCorp Vault is internal or external to the VPC.|Permitted IP range for Vault UI
+(`VaultUIAccessCIDR`)|`127.0.0.1/32`|The CIDR IP range that is permitted to access Vault. Note: A value of 0.0.0.0/0 allows access from ANY IP address.|HashiCorp Vault version
+(`VaultVersion`)|`1.5.3`|(Optional)|HashiCorp Vault deployment size
+(`VaultDeploymentSize`)|`small`|Deployment size of dedicated HashiCorp Vault nodes.|HashiCorp Vault server nodes
+(`VaultNodes`)|`3`|The number of dedicated Vault server nodes and pods.
+|===
+.HashiCorp Consul (AWS Partner containers)
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Kubernetes namespace for HashiCorp Consul
+(`ConsulKubernetesNameSpace`)|`vault-server`|Kubernetes namespace for HashiCorp Consul.|Consul UI Internal or external load balancer?
+(`ConsulUILoadBalancerType`)|`Internal`|Choose whether the load balancer for HashiCorp Consul is internal or external to the VPC.|Permitted IP range for Consul UI
+(`ConsulUIAccessCIDR`)|`127.0.0.1/32`|The CIDR IP range that is permitted to access Consul Note: A value of 0.0.0.0/0 allows access from ANY IP address.|HashiCorp Consul version
+(`ConsulVersion`)|`1.8.4`|NO_DESCRIPTION|HashiCorp Consul deployment size
+(`ConsulDeploymentSize`)|`small`|Deployment size of dedicated HashiCorp Consul nodes.|HashiCorp Consul server nodes
+(`ConsulNodes`)|`3`|The number of dedicated Consul server nodes and pods.
+|===
 .EFS storage class configuration
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
