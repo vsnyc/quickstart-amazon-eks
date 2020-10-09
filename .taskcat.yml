@@ -1,6 +1,7 @@
 project:
   name: quickstart-amazon-eks
   owner: quickstart-eng@amazon.com
+  shorten_stack_name: true
   regions:
   - me-south-1
   template: templates/amazon-eks-entrypoint-new-vpc.template.yaml
@@ -153,3 +154,23 @@ tests:
       ALBIngressController: Enabled
     regions:
     - eu-north-1
+  vault:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      ALBIngressController: Enabled
+      VaultIntegration: Enabled
+      VaultUIDomainName: ---overridden---
+      VaultUIHostedZoneID: ---overridden---
+      ProvisionBastionHost: Disabled
+    regions:
+    - eu-north-1
+  consul:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      ALBIngressController: Enabled
+      ConsulIntegration: Enabled
+      ConsulUIDomainName: ---overridden---
+      ConsulUIHostedZoneID: ---overridden---
+      ProvisionBastionHost: Disabled
+    regions:
+    - eu-west-1

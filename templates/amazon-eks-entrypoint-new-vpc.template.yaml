@@ -38,6 +38,9 @@ Metadata:
     - Integration
     - Auto Scaling
     - Partner
+    - Vault
+    - Consul
+    - HashiCorp
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -92,6 +95,20 @@ Metadata:
         Parameters:
           - NewRelicIntegration
           - NewRelicLicenseKey
+      - Label:
+          default: HashiCorp Vault (AWS Partner security)
+        Parameters:
+          - VaultIntegration
+          - VaultUIACMSSLCertificateArn
+          - VaultUIHostedZoneID
+          - VaultUIDomainName
+      - Label:
+          default: HashiCorp Consul (AWS Partner containers)
+        Parameters:
+          - ConsulIntegration
+          - ConsulUIACMSSLCertificateArn
+          - ConsulUIHostedZoneID
+          - ConsulUIDomainName
       - Label:
           default: Kubernetes add-ins
         Parameters:
@@ -185,6 +202,22 @@ Metadata:
         default: Node instance family
       NodeGroupOS:
         default: Node group OS
+      VaultIntegration:
+        default: HashiCorp Vault integration
+      VaultUIACMSSLCertificateArn:
+        default: Vault UI ACM SSL certificate ARN
+      VaultUIHostedZoneID:
+        default: Route 53 hosted zone id
+      VaultUIDomainName:
+        default: Vault UI Load balancer DNS name
+      ConsulIntegration:
+        default: HashiCorp Consul integration
+      ConsulUIACMSSLCertificateArn:
+        default: ACM SSL certificate ARN
+      ConsulUIHostedZoneID:
+        default: Route 53 hosted zone id
+      ConsulUIDomainName:
+        default: Consul UI Load balancer DNS name
 Parameters:
   AvailabilityZones:
     Description: List of Availability Zones to use for the subnets in the VPC. Three
@@ -402,6 +435,54 @@ Parameters:
     Description: Operating system to use for node instances. Note that if you choose "Windows," an additional
       Amazon Linux node group is created.
     Type: String
+  VaultIntegration:
+    Type: String
+    AllowedValues: [Enabled, Disabled]
+    Default: Disabled
+    Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-hashicorp-vault/."
+  VaultUIDomainName:
+    Type: String
+    Description: >-
+      Fully qualified DNS name for the vault-ui service load balancer.
+      If you don't provide a value for "ACM SSL certificate ARN", use the HostedZoneID.
+    MaxLength: 128
+    Default: ""
+  VaultUIHostedZoneID:
+    Type: String
+    Description: >-
+      Route 53-hosted zone ID of the domain name. If you don't provide an ACMSSLCertificateArn value, the Quick Start
+      creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.
+    Default: ""
+  VaultUIACMSSLCertificateArn:
+    Description: >-
+      ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and
+      "Hosted zone id", provide a value for "ACM SSL certificate ARN".
+    Type: String
+    Default: ""
+  ConsulIntegration:
+    Type: String
+    AllowedValues: [Enabled, Disabled]
+    Default: Disabled
+    Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-hashicorp-consul/."
+  ConsulUIDomainName:
+    Type: String
+    Description: >-
+      Fully qualified DNS name for the consul-ui service load balancer.
+      If you don't provide a value for "ACM SSL certificate ARN", use the HostedZoneID.
+    MaxLength: 128
+    Default: ""
+  ConsulUIHostedZoneID:
+    Type: String
+    Description: >-
+      Route 53-hosted zone ID of the domain name. If you don't provide an ACMSSLCertificateArn value, the Quick Start
+      creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.
+    Default: ""
+  ConsulUIACMSSLCertificateArn:
+    Description: >-
+      ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and
+      "Hosted zone id", provide a value for "ACM SSL certificate ARN".
+    Type: String
+    Default: ""
 Conditions:
   CreateAdvancedConfigWithDefaults: !Equals [!Ref ConfigSetName, '']
   CreatePerAccountSharedResources: !Equals [!Ref PerAccountSharedResources, 'Yes']
@@ -535,6 +616,14 @@ Resources:
         SnykIntegration: !Ref SnykIntegration
         NewRelicLicenseKey: !Ref NewRelicLicenseKey
         NewRelicIntegration: !Ref NewRelicIntegration
+        VaultIntegration: !Ref VaultIntegration
+        VaultUIACMSSLCertificateArn: !Ref VaultUIACMSSLCertificateArn
+        VaultUIHostedZoneID: !Ref VaultUIHostedZoneID
+        VaultUIDomainName: !Ref VaultUIDomainName
+        ConsulIntegration: !Ref ConsulIntegration
+        ConsulUIACMSSLCertificateArn: !Ref ConsulUIACMSSLCertificateArn
+        ConsulUIHostedZoneID: !Ref ConsulUIHostedZoneID
+        ConsulUIDomainName: !Ref ConsulUIDomainName
         ConfigSetName: !If [CreateAdvancedConfigWithDefaults, !Ref 'AWS::StackName', !Ref ConfigSetName]
         TestSuite: !Ref TestSuite
 Outputs:
@@ -561,3 +650,67 @@ Rules:
       - AssertDescription: You must specify at least one Fargate namespace to enable Fargate.
         Assert: !Not
           - !Equals [ !Ref FargateNamespaces, "" ]
+  # Vault
+  VaultUIDomainNamePresentWithHostedID:
+    RuleCondition: !And
+      - !Equals [!Ref VaultIntegration, 'Enabled']
+      - !Equals [ !Ref VaultUIHostedZoneID, '' ]
+    Assertions:
+      - Assert: !Not [!Equals [!Ref VaultUIDomainName, '']]
+        AssertDescription: "Vault: Please specify a 'Domain Name' if you specify 'Route 53 Hosted Zone ID'"
+  VaultUIHostedIDPresentWithDomainName:
+    RuleCondition: !And
+      - !Equals [!Ref VaultIntegration, 'Enabled']
+      - !Equals [ !Ref VaultUIDomainName, '' ]
+    Assertions:
+      - Assert: !Not [!Equals [!Ref VaultUIHostedZoneID, '']]
+        AssertDescription: "Vault: Please specify a 'Route 53 Hosted Zone ID' if you specify 'Domain Name'"
+  VaultUIGenerateOrProvideSSL:
+    RuleCondition: !And
+      - !Equals [!Ref VaultIntegration, 'Enabled']
+      - !Not [!Equals [!Ref VaultUIACMSSLCertificateArn, '']]
+    Assertions:
+      - Assert: !And
+        - !Equals [!Ref VaultUIHostedZoneID, '']
+        - !Equals [!Ref VaultUIDomainName, '']
+        AssertDescription: "Vault1: Using an SSL certificate is enforced. A CertificateArn or a HostedZoneID and Domain Name must be provided."
+  VaultUINoLoadBalancerInfoSupplied:
+    RuleCondition: !Equals [!Ref VaultIntegration, 'Enabled']
+    Assertions:
+      - Assert: !Or
+        - !Not [!Equals [!Ref VaultUIHostedZoneID, '']]
+        - !Not [!Equals [!Ref VaultUIACMSSLCertificateArn, '']]
+        - !Not [!Equals [!Ref VaultUIDomainName, '']]
+        AssertDescription: "Vault2: Using an SSL certificate is enforced. A CertificateArn or a HostedZoneID and Domain Name must be provided."
+  # Consul
+  ConsulUIDomainNamePresentWithHostedID:
+    RuleCondition: !And
+     - !Equals [!Ref ConsulIntegration, 'Enabled']
+     - !Equals [ !Ref ConsulUIHostedZoneID, '' ]
+    Assertions:
+      - Assert: !Not [!Equals [!Ref ConsulUIDomainName, '']]
+        AssertDescription: "Consul: Please specify a 'Domain Name' if you specify 'Route 53 Hosted Zone ID'"
+  ConsulUIHostedIDPresentWithDomainName:
+    RuleCondition: !And
+      - !Equals [!Ref ConsulIntegration, 'Enabled']
+      - !Equals [ !Ref ConsulUIDomainName, '' ]
+    Assertions:
+      - Assert: !Not [!Equals [!Ref ConsulUIHostedZoneID, '']]
+        AssertDescription: "Consul: Please specify a 'Route 53 Hosted Zone ID' if you specify 'Domain Name'"
+  ConsulUIGenerateOrProvideSSL:
+    RuleCondition: !And
+      - !Equals [!Ref ConsulIntegration, 'Enabled']
+      - !Not [!Equals [!Ref ConsulUIACMSSLCertificateArn, '']]
+    Assertions:
+      - Assert: !And
+        - !Equals [!Ref ConsulUIHostedZoneID, '']
+        - !Equals [!Ref ConsulUIDomainName, '']
+        AssertDescription: "Consul1: Using an SSL certificate is enforced. A CertificateArn or a HostedZoneID and Domain Name must be provided."
+  ConsulUINoLoadBalancerInfoSupplied:
+    RuleCondition: !Equals [!Ref ConsulIntegration, 'Enabled']
+    Assertions:
+      - Assert: !Or
+        - !Not [!Equals [!Ref ConsulUIHostedZoneID, '']]
+        - !Not [!Equals [!Ref ConsulUIACMSSLCertificateArn, '']]
+        - !Not [!Equals [!Ref ConsulUIDomainName, '']]
+        AssertDescription: "Consul2: Using an SSL certificate is enforced. A CertificateArn or a HostedZoneID and Domain Name must be provided."

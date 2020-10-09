@@ -136,6 +136,54 @@ Parameters:
     AllowedValues: [ Managed, Unmanaged ]
     Default: Managed
     Description: Choose "Unmanaged" to create an auto-scaling group without using the EKS managed node groups feature.
+  VaultIntegration:
+    Type: String
+    AllowedValues: [Enabled, Disabled]
+    Default: Disabled
+    Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-hashicorp-vault/."
+  VaultUIDomainName:
+    Type: String
+    Description: >-
+      Fully qualified DNS name for the vault-ui service load balancer.
+      If you don't provide a value for "ACM SSL certificate ARN", use the HostedZoneID.
+    MaxLength: 128
+    Default: ""
+  VaultUIHostedZoneID:
+    Type: String
+    Description: >-
+      Route 53-hosted zone ID of the domain name. If you don't provide an ACMSSLCertificateArn value, the Quick Start
+      creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.
+    Default: ""
+  VaultUIACMSSLCertificateArn:
+    Description: >-
+      ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and
+      "Hosted zone id", provide a value for "ACM SSL certificate ARN".
+    Type: String
+    Default: ""
+  ConsulIntegration:
+    Type: String
+    AllowedValues: [Enabled, Disabled]
+    Default: Disabled
+    Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-hashicorp-consul/."
+  ConsulUIDomainName:
+    Type: String
+    Description: >-
+      Fully qualified DNS name for the consul-ui service load balancer.
+      If you don't provide a value for "ACM SSL certificate ARN", use the ConsulHostedZoneID.
+    MaxLength: 128
+    Default: ""
+  ConsulUIHostedZoneID:
+    Type: String
+    Description: >-
+      Route 53-hosted zone ID of the domain name. If you don't provide an ConsulUIACMSSLCertificateArn value, the Quick Start
+      creates an ACM certificate for you using ConsulUIHostedZoneID in conjunction with ConsulUIDomainName.
+    Default: ""
+  ConsulUIACMSSLCertificateArn:
+    Description: >-
+      ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and
+      "Hosted zone id", provide a value for "ACM SSL certificate ARN".
+    Type: String
+    Default: ""
 Mappings:
   Config:
     Prefix: { Value: 'eks-quickstart' }
@@ -144,6 +192,8 @@ Conditions:
   EnableProxy: !Not [!Equals [!Ref HttpProxy, ""]]
   DeployTestStack: !Equals [!Ref TestSuite, Enabled]
   EnableSnyk: !Equals [ !Ref SnykIntegration, Enabled]
+  EnableVault: !Equals [ !Ref VaultIntegration, Enabled]
+  EnableConsul: !Equals [ !Ref ConsulIntegration, Enabled]
   EnableNewRelic: !Equals [ !Ref NewRelicIntegration, Enabled]
   EnableFargate: !Not [!Equals [ !Ref FargateNamespaces, ""]]
   3AZDeployment: !Not [!Equals [!Ref PrivateSubnet3ID, ""]]
@@ -607,6 +657,72 @@ Resources:
         KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         SnykIntegrationId: !Ref SnykIntegrationId
         Namespace: snyk-monitor
+  VaultStack:
+    DependsOn: FunctionStack
+    Condition: EnableVault
+    Type: AWS::CloudFormation::Stack
+    Metadata:
+      DependsOn:
+        - !Ref ControlPlaneSecurityGroupIngress
+        - !Ref NodeGroupStack
+        - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-hashicorp-vault/templates/quickstart-eks-hashicorp-vault.template.yml'
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+      Parameters:
+        ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        HttpProxy: !Ref HttpProxy
+        KeyPairName: !Ref KeyPairName
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-eks-hashicorp-vault/
+        QSS3BucketRegion: !Ref QSS3BucketRegion
+        AccessCIDR: ~~/<ConfigSetName>/hashicorp/vault/AccessCIDR~~
+        KubernetesNameSpace: ~~/<ConfigSetName>/hashicorp/vault/KubernetesNameSpace~~
+        PrivateSubnet1ID: !Ref PrivateSubnet1ID
+        PrivateSubnet2ID: !Ref PrivateSubnet2ID
+        PrivateSubnet3ID: !Ref PrivateSubnet3ID
+        LoadBalancerType: ~~/<ConfigSetName>/hashicorp/vault/LoadBalancerType~~
+        ACMSSLCertificateArn: !Ref VaultUIACMSSLCertificateArn
+        HostedZoneID: !Ref VaultUIHostedZoneID
+        DomainName: !Ref VaultUIDomainName
+        VaultVersion: ~~/<ConfigSetName>/hashicorp/vault/Version~~
+        VaultDeploymentSize: ~~/<ConfigSetName>/hashicorp/vault/DeploymentSize~~
+        Nodes: ~~/<ConfigSetName>/hashicorp/vault/Nodes~~
+  ConsulStack:
+    DependsOn: FunctionStack
+    Condition: EnableConsul
+    Type: AWS::CloudFormation::Stack
+    Metadata:
+      DependsOn:
+        - !Ref ControlPlaneSecurityGroupIngress
+        - !Ref NodeGroupStack
+        - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-hashicorp-consul/templates/quickstart-eks-hashicorp-consul.template.yml'
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+      Parameters:
+        ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        HttpProxy: !Ref HttpProxy
+        KeyPairName: !Ref KeyPairName
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-eks-hashicorp-consul/
+        QSS3BucketRegion: !Ref QSS3BucketRegion
+        RemoteAccessCIDR: ~~/<ConfigSetName>/hashicorp/consul/AccessCIDR~~
+        KubernetesNameSpace: ~~/<ConfigSetName>/hashicorp/consul/KubernetesNameSpace~~
+        PrivateSubnet1ID: !Ref PrivateSubnet1ID
+        PrivateSubnet2ID: !Ref PrivateSubnet2ID
+        PrivateSubnet3ID: !Ref PrivateSubnet3ID
+        LoadBalancerType: ~~/<ConfigSetName>/hashicorp/consul/LoadBalancerType~~
+        ACMSSLCertificateArn: !Ref ConsulUIACMSSLCertificateArn
+        HostedZoneID: !Ref ConsulUIHostedZoneID
+        DomainName: !Ref ConsulUIDomainName
+        ConsulVersion: ~~/<ConfigSetName>/hashicorp/consul/Version~~
+        ConsulDeploymentSize: ~~/<ConfigSetName>/hashicorp/consul/DeploymentSize~~
+        ConsulReplicas: ~~/<ConfigSetName>/hashicorp/consul/Nodes~~
   WindowsSupportStack:
     DependsOn: WindowsSupportNodeGroupStack
     Condition: EnableWindows
