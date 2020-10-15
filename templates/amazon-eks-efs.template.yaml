@@ -57,6 +57,9 @@ Resources:
       PerformanceMode: !Ref PerformanceMode
       ProvisionedThroughputInMibps: !If [ IsProvisioned, !Ref EfsProvisionedThroughputInMibps, !Ref 'AWS::NoValue' ]
       ThroughputMode: !Ref ThroughputMode
+      FileSystemTags:
+        - Key: Name
+          Value: !Ref ClusterName
   MountTargetPrivateSubnet1:
     Type: AWS::EFS::MountTarget
     Properties:
