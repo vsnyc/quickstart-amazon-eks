@@ -234,8 +234,8 @@ Parameters:
     Description: "(Optional) If an AMI ID is specified, it is used instead of the AMI from your OS/Region."
   KubernetesVersion:
     Type: String
-    AllowedValues: [ "1.15", "1.16", "1.17" ]
-    Default: "1.17"
+    AllowedValues: [ "1.15", "1.16", "1.17", "1.18" ]
+    Default: "1.18"
     Description: Kubernetes control plane version.
   IamOidcProvider:
     Type: String
