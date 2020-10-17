@@ -87,6 +87,8 @@ tests:
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled
+      PerAccountSharedResources: "Yes"
+      PerRegionSharedResources: "Yes"
     regions:
     - us-west-2
   alb-ingress:
@@ -174,3 +176,24 @@ tests:
       ProvisionBastionHost: Disabled
     regions:
     - eu-west-1
+  calico-comm:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Disabled
+      CalicoIntegration: Enabled
+      CalicoProductVariant: Calico
+      PerAccountSharedResources: "No"
+      PerRegionSharedResources: "No"
+    regions:
+    - us-west-2
+  calico-enterprise:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Disabled
+      CalicoIntegration: Enabled
+      CalicoProductVariant: CalicoEntprise
+      CalicoDockerConfigJSONBase64: Override
+    regions:
+    - us-east-1
