@@ -62,7 +62,7 @@
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
 |Parameter label (name) |Default value|Description|Kubernetes namespace for HashiCorp Consul
-(`ConsulKubernetesNameSpace`)|`vault-server`|Kubernetes namespace for HashiCorp Consul.|Consul UI Internal or external load balancer?
+(`ConsulKubernetesNameSpace`)|`consul-server`|Kubernetes namespace for HashiCorp Consul.|Consul UI Internal or external load balancer?
 (`ConsulUILoadBalancerType`)|`Internal`|Choose whether the load balancer for HashiCorp Consul is internal or external to the VPC.|Permitted IP range for Consul UI
 (`ConsulUIAccessCIDR`)|`127.0.0.1/32`|The CIDR IP range that is permitted to access Consul Note: A value of 0.0.0.0/0 allows access from ANY IP address.|HashiCorp Consul version
 (`ConsulVersion`)|`1.8.4`|NO_DESCRIPTION|HashiCorp Consul deployment size
