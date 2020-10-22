@@ -382,7 +382,7 @@ Parameters:
       - "medium"
       - "large"
   ConsulKubernetesNameSpace:
-    Default: "vault-server"
+    Default: "consul-server"
     Type: String
     Description: Kubernetes namespace for HashiCorp Consul.
   ConsulNodes:
