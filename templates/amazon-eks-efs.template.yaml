@@ -31,6 +31,7 @@ Parameters:
     Default: bursting
   ClusterName:
     Type: String
+    Default: "EKS-EFS"
 Rules:
   ProvisionedThroughput:
     RuleCondition: !Equals [ !Ref ThroughputMode, provisioned ]
