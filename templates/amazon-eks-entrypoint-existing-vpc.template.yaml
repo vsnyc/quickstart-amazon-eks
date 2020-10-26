@@ -454,6 +454,7 @@ Conditions:
   CreatePerAccountSharedResources: !Equals [!Ref PerAccountSharedResources, 'Yes']
   CreatePerRegionSharedResources: !Equals [!Ref PerRegionSharedResources, 'Yes']
   WindowsNodes: !Equals [NodeGroupOS, 'Windows']
+  VaultEnabled: !Equals [VaultIntegration, 'Enabled']
 Resources:
   AccountSharedResources:
     Type: AWS::CloudFormation::Stack
@@ -496,6 +497,7 @@ Resources:
         ConsulUIAccessCIDR: !Ref RemoteAccessCIDR
         VaultUIAccessCIDR: !Ref RemoteAccessCIDR
         NodeVolumeSize: !If [WindowsNodes, 50, !Ref 'AWS::NoValue']
+        KubernetesVersion: !If [VaultEnabled, '1.17', !Ref 'AWS::NoValue']
   EKSStack:
     Type: AWS::CloudFormation::Stack
     Metadata:

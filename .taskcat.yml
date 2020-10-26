@@ -161,7 +161,6 @@ tests:
       VaultIntegration: Enabled
       VaultUIDomainName: ---overridden---
       VaultUIHostedZoneID: ---overridden---
-      ProvisionBastionHost: Disabled
     regions:
     - eu-north-1
   consul:
@@ -171,6 +170,5 @@ tests:
       ConsulIntegration: Enabled
       ConsulUIDomainName: ---overridden---
       ConsulUIHostedZoneID: ---overridden---
-      ProvisionBastionHost: Disabled
     regions:
     - eu-west-1

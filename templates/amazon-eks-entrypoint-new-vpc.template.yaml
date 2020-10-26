@@ -493,6 +493,7 @@ Conditions:
     - !Equals [!Ref NumberOfAZs, "3"]
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
   WindowsNodes: !Equals [NodeGroupOS, 'Windows']
+  VaultEnabled: !Equals [VaultIntegration, 'Enabled']
 Mappings:
   Config:
     Prefix: { Value: 'eks-quickstart' }
@@ -509,6 +510,9 @@ Resources:
       Parameters:
         ConfigSetName: !Ref AWS::StackName
         NodeVolumeSize: !If [WindowsNodes, 50, !Ref 'AWS::NoValue']
+        KubernetesVersion: !If [VaultEnabled, '1.17', !Ref 'AWS::NoValue']
+        ConsulUIAccessCIDR: !Ref RemoteAccessCIDR
+        VaultUIAccessCIDR: !Ref RemoteAccessCIDR
   AccountSharedResources:
     Type: AWS::CloudFormation::Stack
     Condition: CreatePerAccountSharedResources
