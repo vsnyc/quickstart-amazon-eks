@@ -86,6 +86,17 @@ Resources:
     Type: "AWS::IAM::Role"
     Properties:
       RoleName: !Sub ['${Prefix}-ControlPlane', {Prefix: !FindInMap [Config, Prefix, Value]}]
+      Policies:
+        - PolicyName: ec2-describe-policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:DescribeAccountAttributes
+                  - ec2:DescribeAddresses
+                  - ec2:DescribeInternetGateways
+                Resource: '*'
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
