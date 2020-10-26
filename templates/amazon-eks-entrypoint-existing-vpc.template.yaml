@@ -453,8 +453,8 @@ Conditions:
   CreateAdvancedConfigWithDefaults: !Equals [!Ref ConfigSetName, '']
   CreatePerAccountSharedResources: !Equals [!Ref PerAccountSharedResources, 'Yes']
   CreatePerRegionSharedResources: !Equals [!Ref PerRegionSharedResources, 'Yes']
-  WindowsNodes: !Equals [NodeGroupOS, 'Windows']
-  VaultEnabled: !Equals [VaultIntegration, 'Enabled']
+  WindowsNodes: !Equals [!Ref NodeGroupOS, 'Windows']
+  VaultEnabled: !Equals [!Ref VaultIntegration, 'Enabled']
 Resources:
   AccountSharedResources:
     Type: AWS::CloudFormation::Stack

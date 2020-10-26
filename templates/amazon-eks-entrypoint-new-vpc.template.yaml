@@ -492,8 +492,8 @@ Conditions:
     - !Equals [!Ref NumberOfAZs, "2"]
     - !Equals [!Ref NumberOfAZs, "3"]
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
-  WindowsNodes: !Equals [NodeGroupOS, 'Windows']
-  VaultEnabled: !Equals [VaultIntegration, 'Enabled']
+  WindowsNodes: !Equals [!Ref NodeGroupOS, 'Windows']
+  VaultEnabled: !Equals [!Ref VaultIntegration, 'Enabled']
 Mappings:
   Config:
     Prefix: { Value: 'eks-quickstart' }
