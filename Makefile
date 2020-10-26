@@ -14,6 +14,7 @@ RESOURCE_PATH ?=
 RESOURCE_TYPE ?=
 REGIONS ?=
 TEST_NAMES ?=
+QSPROD_TEST ?= false
 REGIONAL_STACK ?= true
 ACCOUNT_STACK ?= true
 CLEAN_ACCOUNT ?= true
@@ -30,6 +31,9 @@ build:
 	cp -r LICENSE.txt NOTICE.txt output/build
 	if [ "$(VERSION)" != "" ] ; then \
 	  sed -i "s|Default: $(PREFIX)/|Default: $(PREFIX)-versions/$(VERSION)/|g" output/build/templates/*.yaml ; \
+	fi
+ 	if [ "$(BUCKET)" != "" && QSPROD_TEST == "true" ] ; then \
+ 	  sed -i "s/UsingDefaultBucket: \!Equals \[\!Ref QSS3BucketName, 'aws-quickstart'\]/UsingDefaultBucket: \!Equals [\!Ref QSS3BucketName, \'$(BUCKET)\']/" output/build/templates/*.yaml ; \
 	fi
 	if [ "$(BUCKET)" != "" ] ; then \
 	  sed -i "s/Default: aws-quickstart/Default: $(BUCKET)/" output/build/templates/*.yaml ; \
