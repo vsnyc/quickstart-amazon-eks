@@ -14,6 +14,6 @@ You can also use the AWS CloudFormation templates as a starting point for your o
 
 ![Quick Start architecture for Modular and Scalable Amazon EKS Architecture](https://d0.awsstatic.com/partner-network/QuickStart/datasheets/amazon-eks-on-aws-architecture-diagram.png)
 
-For architectural details, best practices, step-by-step instructions, and customization options, see the [deployment guide](https://fwd.aws/zeWyb).
+For architectural details, best practices, step-by-step instructions, and customization options, see the [deployment guide](https://fwd.aws/EP9QP).
 
 To post feedback, submit feature ideas, or report bugs, use the **Issues** section of this GitHub repo. If you'd like to submit code for this Quick Start, please review the [AWS Quick Start Contributor's Kit](https://aws-quickstart.github.io/).
