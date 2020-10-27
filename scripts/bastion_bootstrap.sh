@@ -432,7 +432,7 @@ EOF
 
 function install_kubernetes_client_tools() {
     mkdir -p /usr/local/bin/
-    retry_command 20 curl --retry 5 -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.16.8/2020-04-16/bin/linux/amd64/kubectl
+    retry_command 20 curl --retry 5 -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl
     chmod +x ./kubectl
     mv ./kubectl /usr/local/bin/
     cat > /etc/profile.d/kubectl.sh <<EOF
@@ -440,8 +440,8 @@ function install_kubernetes_client_tools() {
 if [[ ":$PATH:" != *":/usr/local/bin:"* ]]; then     PATH="$PATH:/usr/local/bin";   fi
 source <(kubectl completion bash)
 EOF
-    chmod +x /etc//profile.d/kubectl.sh
-    retry_command 20 curl --retry 5 -o helm.tar.gz https://get.helm.sh/helm-v3.2.0-linux-amd64.tar.gz
+    chmod +x /etc/profile.d/kubectl.sh
+    retry_command 20 curl --retry 5 -o helm.tar.gz https://get.helm.sh/helm-v3.3.4-linux-amd64.tar.gz
     tar -xvf helm.tar.gz
     chmod +x ./linux-amd64/helm
 #    chmod +x ./linux-amd64/tiller

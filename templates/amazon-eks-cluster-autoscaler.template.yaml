@@ -10,16 +10,14 @@ Parameters:
     Type: String
   KubernetesVersion:
     Type: String
-    AllowedValues: [ "1.17", "1.16", "1.15" ]
-    Default: "1.17"
+    AllowedValues: [ "1.18", "1.17", "1.16", "1.15" ]
+    Default: "1.18"
 # NOTE: The cluster autoscaler version number is dependant on the K8S version it is being
 #       deployed into. See...
 #       https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler#releases
 #       https://github.com/kubernetes/autoscaler/releases
+# workaround for https://github.com/kubernetes/autoscaler/issues/3372
 Conditions:
-  is17: !Equals [ !Ref KubernetesVersion, "1.17" ]
-  is16: !Equals [ !Ref KubernetesVersion, "1.16" ]
-  # workaround for https://github.com/kubernetes/autoscaler/issues/3372
   NeedsStaticList: !Or
     - !Equals [!Ref 'AWS::Region', 'af-south-1']
     - !Equals [!Ref 'AWS::Region', 'eu-south-1']
@@ -32,9 +30,11 @@ Mappings:
     "1.15":
       ImageTag: v1.15.5
     "1.16":
-      ImageTag: v1.16.5
+      ImageTag: v1.16.6
     "1.17":
       ImageTag: v1.17.3
+    "1.18":
+      ImageTag: v1.18.2
 Resources:
   # Policy to apply to NodeInstanceRole
   ClusterAutoScalerPolicy:
@@ -76,10 +76,7 @@ Resources:
           - K8sVersionMap
           - !Ref KubernetesVersion
           - ImageTag
-        image.repository: !If
-        - is17
-        - k8s.gcr.io/autoscaling/cluster-autoscaler
-        - !If [ is16, us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler, k8s.gcr.io/cluster-autoscaler ]
+        image.repository: k8s.gcr.io/autoscaling/cluster-autoscaler
         extraArgs.aws-use-static-instance-list: !If [NeedsStaticList, true, !Ref 'AWS::NoValue']
         rbac.create: true
         rbac.pspEnabled: true
