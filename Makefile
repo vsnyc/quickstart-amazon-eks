@@ -32,7 +32,7 @@ build:
 	if [ "$(VERSION)" != "" ] ; then \
 	  sed -i "s|Default: $(PREFIX)/|Default: $(PREFIX)-versions/$(VERSION)/|g" output/build/templates/*.yaml ; \
 	fi
- 	if [ "$(BUCKET)" != "" && QSPROD_TEST == "true" ] ; then \
+	if [ "$(BUCKET)" != "" ] && [ $(QSPROD_TEST) == "true" ]; then \
  	  sed -i "s/UsingDefaultBucket: \!Equals \[\!Ref QSS3BucketName, 'aws-quickstart'\]/UsingDefaultBucket: \!Equals [\!Ref QSS3BucketName, \'$(BUCKET)\']/" output/build/templates/*.yaml ; \
 	fi
 	if [ "$(BUCKET)" != "" ] ; then \
