@@ -347,7 +347,8 @@ Resources:
               "sts:GetCallerIdentity",
               "logs:CreateLogGroup",
               "logs:CreateLogStream",
-              "logs:PutLogEvents"
+              "logs:PutLogEvents",
+              "s3:GetObject"
             ]
             Resource: "*"
   CleanupSecurityGroupDependenciesLambda:
