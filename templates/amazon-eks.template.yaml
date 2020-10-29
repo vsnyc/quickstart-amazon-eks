@@ -622,6 +622,9 @@ Resources:
       Parameters:
         ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         TestWindows: !If [EnableWindows, Enabled, Disabled]
+        ManifestUrl: !Sub
+        - 's3://${S3Bucket}/${QSS3KeyPrefix}/scripts/test-manifest.yaml'
+        - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
   NewRelicStack:
     DependsOn: FunctionStack
     Condition: EnableNewRelic
