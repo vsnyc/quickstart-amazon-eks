@@ -55,7 +55,7 @@ Resources:
           Action:
           - s3:PutObject
           - s3:DeleteObject
-          Resource: !Sub 'arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}*'
+          Resource: !Sub 'arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/*'
   DeleteBucketContentsRolePolicy:
     Type: AWS::IAM::Policy
     Properties:
