@@ -756,8 +756,6 @@ Resources:
           S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
       Parameters:
         KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
-        ProductVariant: !Ref CalicoProductVariant
-        DockerConfigJSONBase64: !Ref CalicoDockerConfigJSONBase64
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Sub '${QSS3KeyPrefix}submodules/quickstart-eks-tigera-calico/'
         QSS3BucketRegion: !Ref QSS3BucketRegion

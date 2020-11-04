@@ -176,24 +176,11 @@ tests:
       ProvisionBastionHost: Disabled
     regions:
     - eu-west-1
-  calico-comm:
+  calico:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled
       CalicoIntegration: Enabled
-      CalicoProductVariant: Calico
-      PerAccountSharedResources: "No"
-      PerRegionSharedResources: "No"
     regions:
     - us-west-2
-  calico-enterprise:
-    parameters:
-      AvailabilityZones: $[taskcat_genaz_3]
-      NodeGroupType: 'Unmanaged'
-      ALBIngressController: Disabled
-      CalicoIntegration: Enabled
-      CalicoProductVariant: CalicoEntprise
-      CalicoDockerConfigJSONBase64: Override
-    regions:
-    - us-east-1

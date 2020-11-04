@@ -43,3 +43,6 @@
 	url = git@github.com:aws-quickstart/quickstart-eks-hashicorp-consul.git
 	branch = main
 
+[submodule "submodules/quickstart-eks-tigera-calico"]
+	path = submodules/quickstart-eks-tigera-calico
+	url = git@github.com:aws-quickstart/quickstart-eks-tigera-calico.git

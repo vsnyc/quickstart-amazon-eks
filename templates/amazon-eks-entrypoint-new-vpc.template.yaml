@@ -411,17 +411,6 @@ Parameters:
     AllowedValues: [ Enabled, Disabled ]
     Default: Disabled
     Description: "For more information see https://www.projectcalico.org/ ."
-  CalicoProductVariant:
-    Type: String
-    Default: Calico
-    AllowedValues:
-      - Calico
-      - CalicoEnterprise
-    Description: "Whether to install Calico or Calico Enterprise."
-  CalicoDockerConfigJSONBase64:
-    Type: String
-    Description: "Base64 encoded Docker pull configuration for pulling Calico Enterprise images."
-    Default: ""
   PerAccountSharedResources:
     Type: String
     AllowedValues: ['Yes', 'No']
@@ -655,8 +644,6 @@ Resources:
         ConfigSetName: !If [CreateAdvancedConfigWithDefaults, !Ref 'AWS::StackName', !Ref ConfigSetName]
         TestSuite: !Ref TestSuite
         CalicoIntegration: !Ref CalicoIntegration
-        CalicoProductVariant: !Ref CalicoProductVariant
-        CalicoDockerConfigJSONBase64: !Ref CalicoDockerConfigJSONBase64
 Outputs:
   EKSClusterName:
     Value: !GetAtt EKSStack.Outputs.EKSClusterName
