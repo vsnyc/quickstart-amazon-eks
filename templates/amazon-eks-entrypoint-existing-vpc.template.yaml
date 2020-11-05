@@ -176,10 +176,6 @@ Metadata:
         default: License key
       CalicoIntegration:
         default: Calico Policy Intergration
-      CalicoProductVariant:
-        default: Calico Product Variant
-      CalicoDockerConfigJSONBase64:
-        default: Calico encoded Docker pull configuration
       EKSPublicAccessEndpoint:
         default: EKS public access endpoint
       HttpProxy:

@@ -118,17 +118,6 @@ Parameters:
     AllowedValues: [ Enabled, Disabled ]
     Default: Disabled
     Description: "For more information see https://www.projectcalico.org/ ."
-  CalicoProductVariant:
-    Type: String
-    Default: Calico
-    AllowedValues:
-      - Calico
-      - CalicoEnterprise
-    Description: "Whether to install Calico or Calico Enterprise."
-  CalicoDockerConfigJSONBase64:
-    Type: String
-    Description: "Base64 encoded Docker pull configuration for pulling Calico Enterprise images."
-    Default: ""
   ConfigSetName:
     Type: String
   TestSuite:
