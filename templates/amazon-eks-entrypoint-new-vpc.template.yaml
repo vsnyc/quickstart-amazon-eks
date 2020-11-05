@@ -99,8 +99,6 @@ Metadata:
           default: Calico Policy [APN security partner]
         Parameters:
           - CalicoIntegration
-          - CalicoProductVariant
-          - CalicoDockerConfigJSONBase64
       - Label:
           default: HashiCorp Vault (AWS Partner security)
         Parameters:
@@ -196,10 +194,6 @@ Metadata:
         default: License key
       CalicoIntegration:
         default: Calico Policy Intergration
-      CalicoProductVariant:
-        default: Calico Product Variant
-      CalicoDockerConfigJSONBase64:
-        default: Calico encoded Docker pull configuration
       PerAccountSharedResources:
         default: Per-account shared resources
       PerRegionSharedResources:

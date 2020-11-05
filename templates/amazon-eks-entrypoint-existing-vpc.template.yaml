@@ -96,8 +96,6 @@ Metadata:
           default: Calico Policy [APN security partner]
         Parameters:
           - CalicoIntegration
-          - CalicoProductVariant
-          - CalicoDockerConfigJSONBase64
       - Label:
           default: HashiCorp Vault (AWS Partner security)
         Parameters:
