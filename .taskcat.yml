@@ -87,8 +87,6 @@ tests:
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled
-      PerAccountSharedResources: "Yes"
-      PerRegionSharedResources: "Yes"
     regions:
     - us-west-2
   alb-ingress:
