@@ -113,7 +113,7 @@ Metadata:
       - Label:
           default: Kubernetes add-ins
         Parameters:
-          - ALBIngressController
+          - LoadBalancerController
           - ClusterAutoScaler
           - EfsStorageClass
           - MonitoringStack
@@ -162,8 +162,8 @@ Metadata:
         default: EFS storage class
       ProvisionBastionHost:
         default: Provision bastion host
-      ALBIngressController:
-        default: ALB ingress controller
+      LoadBalancerController:
+        default: AWS load balancer controller
       EKSClusterName:
         default: EKS cluster name
       SnykIntegrationId:
@@ -318,11 +318,11 @@ Parameters:
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Enabled"
     Description: Choose "Disabled" to skip creating a bastion host.
-  ALBIngressController:
+  LoadBalancerController:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Enabled"
-    Description: Choose "Enabled" to deploy the ALB ingress controller.
+    Description: Choose "Enabled" to deploy the AWS load balancer controller.
   EKSClusterName:
     Type: String
     Default: ""
@@ -545,7 +545,7 @@ Resources:
         EfsStorageClass: !Ref EfsStorageClass
         ProvisionBastionHost: !Ref ProvisionBastionHost
         EKSPublicAccessEndpoint: !Ref EKSPublicAccessEndpoint
-        ProvisionALBIngressController: !Ref ALBIngressController
+        ProvisionLoadBalancerController: !Ref LoadBalancerController
         EKSClusterName: !Ref EKSClusterName
         SnykIntegrationId: !Ref SnykIntegrationId
         SnykIntegration: !Ref SnykIntegration

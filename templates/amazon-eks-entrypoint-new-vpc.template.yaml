@@ -116,7 +116,7 @@ Metadata:
       - Label:
           default: Kubernetes add-ins
         Parameters:
-          - ALBIngressController
+          - LoadBalancerController
           - ClusterAutoScaler
           - EfsStorageClass
           - MonitoringStack
@@ -176,8 +176,8 @@ Metadata:
         default: Provision bastion host
       EKSPublicAccessEndpoint:
         default: EKS public access endpoint
-      ALBIngressController:
-        default: ALB ingress controller
+      LoadBalancerController:
+        default: AWS load balancer controller
       FargateNamespaces:
         default: Fargate namespaces
       FargateLabels:
@@ -360,11 +360,11 @@ Parameters:
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Enabled"
     Description: Skip creating a bastion host by choosing "Disabled."
-  ALBIngressController:
+  LoadBalancerController:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Enabled"
-    Description: Choose "Disabled" to skip deploying the ALB ingress controller.
+    Description: Choose "Disabled" to skip deploying the AWS load balancer controller.
   FargateNamespaces:
     Type: String
     Default: ""
@@ -623,7 +623,7 @@ Resources:
         ProvisionMonitoringStack: !Ref MonitoringStack
         ProvisionBastionHost: !Ref ProvisionBastionHost
         EKSPublicAccessEndpoint: !Ref EKSPublicAccessEndpoint
-        ProvisionALBIngressController: !Ref ALBIngressController
+        ProvisionLoadBalancerController: !Ref LoadBalancerController
         FargateLabels: !Ref FargateLabels
         FargateNamespaces: !Ref FargateNamespaces
         EKSClusterName: !Ref EKSClusterName
