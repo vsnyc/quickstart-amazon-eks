@@ -96,6 +96,10 @@ Metadata:
           - NewRelicIntegration
           - NewRelicLicenseKey
       - Label:
+          default: Calico Policy [APN security partner]
+        Parameters:
+          - CalicoIntegration
+      - Label:
           default: HashiCorp Vault (AWS Partner security)
         Parameters:
           - VaultIntegration
@@ -188,6 +192,8 @@ Metadata:
         default: Infrastructure monitoring integration
       NewRelicLicenseKey:
         default: License key
+      CalicoIntegration:
+        default: Calico Policy Intergration
       PerAccountSharedResources:
         default: Per-account shared resources
       PerRegionSharedResources:
@@ -394,6 +400,11 @@ Parameters:
     AllowedValues: [Enabled, Disabled]
     Default: Disabled
     Description: For more information, see https://github.com/aws-quickstart/quickstart-eks-newrelic-infrastructure/."
+  CalicoIntegration:
+    Type: String
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
+    Description: "For more information see https://www.projectcalico.org/ ."
   PerAccountSharedResources:
     Type: String
     AllowedValues: ['Yes', 'No']
@@ -630,6 +641,7 @@ Resources:
         ConsulUIDomainName: !Ref ConsulUIDomainName
         ConfigSetName: !If [CreateAdvancedConfigWithDefaults, !Ref 'AWS::StackName', !Ref ConfigSetName]
         TestSuite: !Ref TestSuite
+        CalicoIntegration: !Ref CalicoIntegration
 Outputs:
   EKSClusterName:
     Value: !GetAtt EKSStack.Outputs.EKSClusterName

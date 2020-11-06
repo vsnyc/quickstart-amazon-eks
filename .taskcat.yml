@@ -172,3 +172,11 @@ tests:
       ConsulUIHostedZoneID: ---overridden---
     regions:
     - eu-west-1
+  calico:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Disabled
+      CalicoIntegration: Enabled
+    regions:
+    - us-west-2

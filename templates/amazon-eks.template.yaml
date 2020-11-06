@@ -113,6 +113,11 @@ Parameters:
     Type: String
     AllowedValues: [Enabled, Disabled]
     Default: Disabled
+  CalicoIntegration:
+    Type: String
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
+    Description: "For more information see https://www.projectcalico.org/ ."
   ConfigSetName:
     Type: String
   TestSuite:
@@ -195,6 +200,7 @@ Conditions:
   EnableVault: !Equals [ !Ref VaultIntegration, Enabled]
   EnableConsul: !Equals [ !Ref ConsulIntegration, Enabled]
   EnableNewRelic: !Equals [ !Ref NewRelicIntegration, Enabled]
+  EnableCalico: !Equals [ !Ref CalicoIntegration, Enabled]
   EnableFargate: !Not [!Equals [ !Ref FargateNamespaces, ""]]
   3AZDeployment: !Not [!Equals [!Ref PrivateSubnet3ID, ""]]
   2AZDeployment: !Or
@@ -727,6 +733,25 @@ Resources:
         ConsulVersion: ~~/<ConfigSetName>/hashicorp/consul/Version~~
         ConsulDeploymentSize: ~~/<ConfigSetName>/hashicorp/consul/DeploymentSize~~
         ConsulReplicas: ~~/<ConfigSetName>/hashicorp/consul/Nodes~~
+  CalicoStack:
+    DependsOn: FunctionStack
+    Condition: EnableCalico
+    Type: AWS::CloudFormation::Stack
+    Metadata:
+      DependsOn:
+        - !Ref ControlPlaneSecurityGroupIngress
+        - !Ref NodeGroupStack
+        - !If [ EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue' ]
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-tigera-calico/templates/eks-calico-entrypoint.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
+      Parameters:
+        KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Sub '${QSS3KeyPrefix}submodules/quickstart-eks-tigera-calico/'
+        QSS3BucketRegion: !Ref QSS3BucketRegion
   WindowsSupportStack:
     DependsOn: WindowsSupportNodeGroupStack
     Condition: EnableWindows
