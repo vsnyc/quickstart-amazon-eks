@@ -20,7 +20,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
       ProvisionBastionHost: Disabled
-      LoadBalancerController: Disabled
+      ALBIngressController: Disabled
     regions:
       - ap-northeast-2
   cluster-autoscaler:
@@ -28,7 +28,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       ClusterAutoScaler: Enabled
       NodeGroupType: 'Unmanaged'
-      LoadBalancerController: Disabled
+      ALBIngressController: Disabled
     regions:
     - eu-central-1
   efs-prov:
@@ -40,7 +40,7 @@ tests:
       EfsProvisionedThroughputInMibps: 100
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
-      LoadBalancerController: Disabled
+      ALBIngressController: Disabled
     regions:
     - ap-east-1
   managed-node-group:
@@ -48,7 +48,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       ClusterAutoScaler: Disabled
       EKSPublicAccessEndpoint: Enabled
-      LoadBalancerController: Disabled
+      ALBIngressController: Disabled
     regions:
     - ap-south-1
   monitoring-prom-graf:
@@ -57,7 +57,7 @@ tests:
       MonitoringStack: Prometheus + Grafana
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
-      LoadBalancerController: Disabled
+      ALBIngressController: Disabled
     regions:
     - ap-southeast-2
   2az:
@@ -66,7 +66,7 @@ tests:
       NumberOfAZs: "2"
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
-      LoadBalancerController: Disabled
+      ALBIngressController: Disabled
     regions:
     - ca-central-1
     - cn-north-1
@@ -78,7 +78,7 @@ tests:
       EKSClusterLoggingTypes: ""
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
-      LoadBalancerController: Disabled
+      ALBIngressController: Disabled
     regions:
     - eu-west-2
   with-hybrid:
@@ -86,7 +86,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
-      LoadBalancerController: Disabled
+      ALBIngressController: Disabled
     regions:
     - us-west-2
   load-balancer-controller:
@@ -103,7 +103,7 @@ tests:
       FargateLabels: 'app.kubernetes.io/name=aws-cluster-autoscaler'
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
-      LoadBalancerController: Enabled
+      ALBIngressController: Enabled
     regions:
     - us-east-1
   enable-oidc:
@@ -117,7 +117,7 @@ tests:
       NodeInstanceFamily: ARM
       NodeInstanceType: c6g.medium
       NodeGroupType: 'Unmanaged'
-      LoadBalancerController: Enabled
+      ALBIngressController: Enabled
   snyk:
     regions:
       - eu-west-3
@@ -126,7 +126,7 @@ tests:
       EKSPublicAccessEndpoint: Enabled
       SnykIntegration: Enabled
       SnykIntegrationId: ---overridden---
-      LoadBalancerController: Enabled
+      ALBIngressController: Enabled
   new-relic:
     regions:
       - sa-east-1
@@ -135,14 +135,14 @@ tests:
       EKSPublicAccessEndpoint: Enabled
       NewRelicIntegration: Enabled
       NewRelicLicenseKey: ---overridden---
-      LoadBalancerController: Enabled
+      ALBIngressController: Enabled
   managed-node-group-ASC:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       ClusterAutoScaler: Enabled
       TestSuite: Enabled
       ProvisionBastionHost: Disabled
-      LoadBalancerController: Enabled
+      ALBIngressController: Enabled
     regions:
     - af-south-1
   windows:
@@ -151,13 +151,13 @@ tests:
       TestSuite: Enabled
       NodeGroupOS: Windows
       NodeGroupType: 'Unmanaged'
-      LoadBalancerController: Enabled
+      ALBIngressController: Enabled
     regions:
     - eu-north-1
   vault:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      LoadBalancerController: Enabled
+      ALBIngressController: Enabled
       VaultIntegration: Enabled
       VaultUIDomainName: ---overridden---
       VaultUIHostedZoneID: ---overridden---
@@ -166,7 +166,7 @@ tests:
   consul:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      LoadBalancerController: Enabled
+      ALBIngressController: Enabled
       ConsulIntegration: Enabled
       ConsulUIDomainName: ---overridden---
       ConsulUIHostedZoneID: ---overridden---
