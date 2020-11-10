@@ -19,7 +19,7 @@ Resources:
             {
               "Effect": "Allow",
               "Principal": {
-                "Federated": "arn:aws:iam::${AWS::AccountId}:oidc-provider/${OIDCIssuerURLWithoutProtocol}"
+                "Federated": "arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/${OIDCIssuerURLWithoutProtocol}"
               },
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
@@ -90,7 +90,7 @@ Resources:
             - Effect: Allow
               Action:
                 - 'ec2:CreateTags'
-              Resource: 'arn:aws:ec2:*:*:security-group/*'
+              Resource: !Sub 'arn:${AWS::Partition}:ec2:*:*:security-group/*'
               Condition:
                 StringEquals:
                   'ec2:CreateAction': CreateSecurityGroup
@@ -100,7 +100,7 @@ Resources:
               Action:
                 - 'ec2:CreateTags'
                 - 'ec2:DeleteTags'
-              Resource: 'arn:aws:ec2:*:*:security-group/*'
+              Resource: !Sub 'arn:${AWS::Partition}:ec2:*:*:security-group/*'
               Condition:
                 'Null':
                   'aws:RequestTag/elbv2.k8s.aws/cluster': 'true'
@@ -134,9 +134,9 @@ Resources:
                 - 'elasticloadbalancing:AddTags'
                 - 'elasticloadbalancing:RemoveTags'
               Resource:
-                - 'arn:aws:elasticloadbalancing:*:*:targetgroup/*/*'
-                - 'arn:aws:elasticloadbalancing:*:*:loadbalancer/net/*/*'
-                - 'arn:aws:elasticloadbalancing:*:*:loadbalancer/app/*/*'
+                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:targetgroup/*/*'
+                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*'
+                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*'
               Condition:
                 'Null':
                   'aws:RequestTag/elbv2.k8s.aws/cluster': 'true'
@@ -159,7 +159,7 @@ Resources:
               Action:
                 - 'elasticloadbalancing:RegisterTargets'
                 - 'elasticloadbalancing:DeregisterTargets'
-              Resource: 'arn:aws:elasticloadbalancing:*:*:targetgroup/*/*'
+              Resource: !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:targetgroup/*/*'
             - Effect: Allow
               Action:
                 - 'elasticloadbalancing:SetWebAcl'
