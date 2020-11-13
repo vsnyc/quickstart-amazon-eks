@@ -165,6 +165,7 @@ Resources:
         - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
+        QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         KubernetesAdminRoleArn: !GetAtt IamStack.Outputs.KubernetesAdminRoleArn
         ControlPlaneSecurityGroup: !Ref ControlPlaneSecurityGroup
