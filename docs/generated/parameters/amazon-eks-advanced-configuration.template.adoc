@@ -9,7 +9,7 @@
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
 |Parameter label (name) |Default value|Description|Kubernetes version
-(`KubernetesVersion`)|`1.17`|Kubernetes control plane version.|Kubernetes API public access CIDRs
+(`KubernetesVersion`)|`1.18`|Kubernetes control plane version.|Kubernetes API public access CIDRs
 (`EKSPublicAccessCIDRs`)|`0.0.0.0/0`|These values are used only if the EKSPublicAccessEndpoint parameter is set to "Enabled." These are the public CIDR IP ranges permitted to access the Kubernetes API. They cannot contain private IP ranges.|Private access endpoint
 (`EKSPrivateAccessEndpoint`)|`Enabled`|Configure access to the Kubernetes API server endpoint from within your VPC. If this is set to "Disabled," "EKS public access endpoint" must be set to "Enabled."|Cluster logging types
 (`EKSClusterLoggingTypes`)|`api, audit, authenticator, controllerManager, scheduler`|EKS cluster control plane logs to be exported to Amazon CloudWatch Logs.|Encrypt secrets
