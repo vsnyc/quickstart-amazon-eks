@@ -122,6 +122,7 @@ Resources:
       DestBucket: !Ref LambdaZipsBucket
       SourceBucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Prefix: !Ref 'QSS3KeyPrefix'
+      Version: "1.0.0"
       Objects:
         - functions/packages/DeleteBucketContents/lambda.zip
         - functions/packages/CleanupLoadBalancers/lambda.zip
