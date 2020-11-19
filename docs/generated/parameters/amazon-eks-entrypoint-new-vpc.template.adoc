@@ -92,8 +92,8 @@
 .Kubernetes add-ins
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
-|Parameter label (name) |Default value|Description|ALB ingress controller
-(`ALBIngressController`)|`Enabled`|Choose "Disabled" to skip deploying the ALB ingress controller.|Cluster autoscaler
+|Parameter label (name) |Default value|Description|AWS load balancer controller
+(`ALBIngressController`)|`Enabled`|Choose "Disabled" to skip deploying the AWS load balancer controller.|Cluster autoscaler
 (`ClusterAutoScaler`)|`Disabled`|Choose "Enabled" to enable Kubernetes cluster autoscaler.|EFS storage class
 (`EfsStorageClass`)|`Disabled`|Choose "Enabled" to enable EFS storage class.|Monitoring stack
 (`MonitoringStack`)|`None`|Enable monitoring stack with "Prometheus+Grafana."
