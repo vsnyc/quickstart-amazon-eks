@@ -68,24 +68,34 @@ def delete_handler(event, _):
                     for tag in tags['Tags']:
                         if tag["Key"] == tag_key and tag['Value'] == "owned":
                             lbs_to_remove.append(tags[lt[4]])
+                        if tag["Key"] == 'elbv2.k8s.aws/cluster' and tag['Value'] == event["ResourceProperties"]["ClusterName"]:
+                            lbs_to_remove.append(tags[lt[4]])
         if lbs_to_remove:
             for lb in lbs_to_remove:
                 print("removing elb %s" % lb)
                 elb.delete_load_balancer(**{lt[1]: lb})
     ec2 = boto3.client('ec2')
-    response = ec2.describe_tags(Filters=[
-        {'Name': 'tag:%s' % tag_key, 'Values': ['owned']},
-        {'Name': 'resource-type', 'Values': ['security-group']}
-    ])
-    for t in [r['ResourceId'] for r in response['Tags']]:
-        try:
-            ec2.delete_security_group(GroupId=t)
-        except ec2.exceptions.ClientError as e:
-            if 'DependencyViolation' in str(e):
-                print("Dependency error on %s" % t)
-                delete_dependencies(t, ec2)
-            else:
-                raise
+    filters = [
+        [
+            {'Name': 'tag:%s' % tag_key, 'Values': ['owned']},
+            {'Name': 'resource-type', 'Values': ['security-group']}
+        ],
+        [
+            {'Name': 'tag:elbv2.k8s.aws/cluster', 'Values': [event["ResourceProperties"]["ClusterName"]]},
+            {'Name': 'resource-type', 'Values': ['security-group']}
+        ]
+    ]
+    for f in filters:
+        response = ec2.describe_tags(Filters=f)
+        for t in [r['ResourceId'] for r in response['Tags']]:
+            try:
+                ec2.delete_security_group(GroupId=t)
+            except ec2.exceptions.ClientError as e:
+                if 'DependencyViolation' in str(e):
+                    print("Dependency error on %s" % t)
+                    delete_dependencies(t, ec2)
+                else:
+                    print(e)
 
 
 def lambda_handler(event, context):
