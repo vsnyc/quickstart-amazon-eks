@@ -177,7 +177,7 @@ Metadata:
       EKSPublicAccessEndpoint:
         default: EKS public access endpoint
       ALBIngressController:
-        default: ALB ingress controller
+        default: AWS load balancer controller
       FargateNamespaces:
         default: Fargate namespaces
       FargateLabels:
@@ -360,11 +360,12 @@ Parameters:
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Enabled"
     Description: Skip creating a bastion host by choosing "Disabled."
+  # This parameter name is inaccurate to preserve backward compatibility, and will be changed to ALBIngressController in the next release
   ALBIngressController:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Enabled"
-    Description: Choose "Disabled" to skip deploying the ALB ingress controller.
+    Description: Choose "Disabled" to skip deploying the AWS load balancer controller.
   FargateNamespaces:
     Type: String
     Default: ""

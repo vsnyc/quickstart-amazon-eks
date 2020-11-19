@@ -15,6 +15,7 @@ Resources:
       ClusterID: !Ref ClusterName
       Namespace: prometheus
       Chart: stable/prometheus
+      Repository: 'https://charts.helm.sh/stable'
       Name: prometheus
       Values:
         server.persistentVolume.storageClass: "gp2"

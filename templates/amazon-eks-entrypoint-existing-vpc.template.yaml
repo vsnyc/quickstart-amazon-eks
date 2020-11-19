@@ -163,7 +163,7 @@ Metadata:
       ProvisionBastionHost:
         default: Provision bastion host
       ALBIngressController:
-        default: ALB ingress controller
+        default: AWS load balancer controller
       EKSClusterName:
         default: EKS cluster name
       SnykIntegrationId:
@@ -318,11 +318,12 @@ Parameters:
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Enabled"
     Description: Choose "Disabled" to skip creating a bastion host.
+  # This parameter name is inaccurate to preserve backward compatibility, and will be changed to ALBIngressController in the next release
   ALBIngressController:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Enabled"
-    Description: Choose "Enabled" to deploy the ALB ingress controller.
+    Description: Choose "Enabled" to deploy the AWS load balancer controller.
   EKSClusterName:
     Type: String
     Default: ""

@@ -69,6 +69,7 @@ Resources:
       ClusterID: !Ref EksClusterName
       Namespace: kube-system
       Chart: stable/cluster-autoscaler
+      Repository: 'https://charts.helm.sh/stable'
       Values:
         awsRegion: !Ref 'AWS::Region'
         cloudProvider: aws

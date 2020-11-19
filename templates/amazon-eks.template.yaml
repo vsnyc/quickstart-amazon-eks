@@ -66,6 +66,7 @@ Parameters:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Disabled"
+  # This parameter name is inaccurate to preserve backward compatibility, and will be changed to ProvisionLoadBalancerController in the next release
   ProvisionALBIngressController:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
@@ -214,7 +215,7 @@ Conditions:
   CustomBastionRole: !Not [!Equals [~~/<ConfigSetName>/bastion/BastionIAMRoleName~~, '']]
   AdditionalVars: !Not [!Equals [~~/<ConfigSetName>/bastion/BastionVariables~~, '']]
   EnableClusterAutoScaler: !Equals [!Ref 'ProvisionClusterAutoScaler', 'Enabled']
-  EnableALBIngressController: !Equals [!Ref 'ProvisionALBIngressController', 'Enabled']
+  EnableLoadBalancerController: !Equals [!Ref 'ProvisionALBIngressController', 'Enabled']
   EnableMonitoringPrometheusGrafana: !Equals [!Ref 'ProvisionMonitoringStack', 'Prometheus + Grafana']
   EnableEfs: !Equals [!Ref 'EfsStorageClass', 'Enabled']
   EnableWindows: !Equals [!Ref 'NodeGroupOS', 'Windows']
@@ -563,22 +564,22 @@ Resources:
             - 2AZDeployment
             - !Join [",", [ !Ref PrivateSubnet1ID, !Ref PrivateSubnet2ID ]]
             - !Ref PrivateSubnet1ID
-  ALBIngressStack:
+  LoadBalancerStack:
     Metadata:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
-    Condition: EnableALBIngressController
+    Condition: EnableLoadBalancerController
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-alb-ingress.template.yaml'
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-load-balancer-controller.template.yaml'
         - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         OIDCIssuerURLWithoutProtocol:  !Join [ '', !Split [ 'https://', !GetAtt EKSControlPlane.Outputs.OIDCIssuerURL ] ]
-        ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
   GenerateNameFunction:
     Condition: GenerateClusterName
     Type: AWS::Lambda::Function

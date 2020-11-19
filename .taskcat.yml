@@ -89,7 +89,7 @@ tests:
       ALBIngressController: Disabled
     regions:
     - us-west-2
-  alb-ingress:
+  load-balancer-controller:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       NodeGroupType: 'Unmanaged'
