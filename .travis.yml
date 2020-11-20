@@ -1,3 +1,6 @@
+branches:
+  only:
+  - main
 git:
   submodules: false
 dist: bionic
