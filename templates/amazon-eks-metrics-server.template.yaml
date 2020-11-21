@@ -2,27 +2,18 @@ AWSTemplateFormatVersion: "2010-09-09"
 Metadata:
   QSLint:
     Exclusions: [W9002, W9003, W9004, W9006]
-Description: "Deploys the metrics-server helm chart into an existing kubernetes cluster (qs-qwertyuiop)"
+Description: "Deploys the metrics-server into an existing kubernetes cluster (qs-qwertyuiop)"
 Parameters:
   EksClusterName:
     Type: String
 Resources:
-  MetricsServerHelmChart:
-    Type: "AWSQS::Kubernetes::Helm"
+  MetricsServer:
+    Type: "AWSQS::Kubernetes::Resource"
     Metadata: { cfn-lint: { config: { ignore_checks: [ E3012 ] } } }
     Properties:
-      ClusterID: !Ref EksClusterName
+      ClusterName: !Ref EksClusterName
       Namespace: kube-system
-      Chart: stable/metrics-server
-      Values:
-        image.repository: k8s.gcr.io/metrics-server-amd64
-        image.tag: v0.3.6
-        args:
-        - --kubelet-preferred-address-types=InternalIP
-        rbac.create: true
-        rbac.pspEnabled: true
-        podDisruptionBudget.enabled: true
-        podDisruptionBudget.maxUnavailable: 0
+      Url: https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.4.1/components.yaml
 Outputs:
-  MetricsServerReleaseName:
-    Value: !Ref MetricsServerHelmChart
+  MetricsServer:
+    Value: !Ref MetricsServer
