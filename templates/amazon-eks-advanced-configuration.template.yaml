@@ -333,10 +333,11 @@ Parameters:
     Description: (Optional) Provide the ID of a security group to use for this node group. If this is not specified, one is created.
   VaultVersion:
     Type: String
-    Default: "1.5.3"
+    Default: "1.6.0"
     Description: (Optional)
     AllowedValues:
-      - "1.5.3"
+      - "1.6.0"
+      - "1.5.5"
   VaultDeploymentSize:
     Type: String
     Default: "small"

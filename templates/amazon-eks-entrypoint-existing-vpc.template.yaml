@@ -93,6 +93,10 @@ Metadata:
           - NewRelicIntegration
           - NewRelicLicenseKey
       - Label:
+          default: Calico Policy [APN security partner]
+        Parameters:
+          - CalicoIntegration
+      - Label:
           default: HashiCorp Vault (AWS Partner security)
         Parameters:
           - VaultIntegration
@@ -159,7 +163,7 @@ Metadata:
       ProvisionBastionHost:
         default: Provision bastion host
       ALBIngressController:
-        default: ALB ingress controller
+        default: AWS load balancer controller
       EKSClusterName:
         default: EKS cluster name
       SnykIntegrationId:
@@ -170,6 +174,8 @@ Metadata:
         default: New Relic integration
       NewRelicLicenseKey:
         default: License key
+      CalicoIntegration:
+        default: Calico Policy Intergration
       EKSPublicAccessEndpoint:
         default: EKS public access endpoint
       HttpProxy:
@@ -312,11 +318,12 @@ Parameters:
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Enabled"
     Description: Choose "Disabled" to skip creating a bastion host.
+  # This parameter name is inaccurate to preserve backward compatibility, and will be changed to ALBIngressController in the next release
   ALBIngressController:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Enabled"
-    Description: Choose "Enabled" to deploy the ALB ingress controller.
+    Description: Choose "Enabled" to deploy the AWS load balancer controller.
   EKSClusterName:
     Type: String
     Default: ""
@@ -348,6 +355,11 @@ Parameters:
       (Optional) Name used to map advanced parameters to an EKS cluster. If you launched an advanced
       configuration stack and would like to apply it's values to this cluster, this name must match the "Config set name"
       parameter in that stack. If left blank, a new config set is created using default values.
+  CalicoIntegration:
+    Type: String
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
+    Description: "For more information see https://www.projectcalico.org/ ."
   PerAccountSharedResources:
     Type: String
     AllowedValues: ['Yes', 'No']
@@ -555,6 +567,7 @@ Resources:
         ConsulUIACMSSLCertificateArn: !Ref ConsulUIACMSSLCertificateArn
         ConsulUIHostedZoneID: !Ref ConsulUIHostedZoneID
         ConsulUIDomainName: !Ref ConsulUIDomainName
+        CalicoIntegration: !Ref CalicoIntegration
 Outputs:
   EKSClusterName:
     Value: !GetAtt EKSStack.Outputs.EKSClusterName

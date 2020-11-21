@@ -70,6 +70,7 @@ Parameters:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Disabled"
+  # This parameter name is inaccurate to preserve backward compatibility, and will be changed to ProvisionLoadBalancerController in the next release
   ProvisionALBIngressController:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
@@ -117,6 +118,11 @@ Parameters:
     Type: String
     AllowedValues: [Enabled, Disabled]
     Default: Disabled
+  CalicoIntegration:
+    Type: String
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
+    Description: "For more information see https://www.projectcalico.org/ ."
   ConfigSetName:
     Type: String
   TestSuite:
@@ -199,6 +205,7 @@ Conditions:
   EnableVault: !Equals [ !Ref VaultIntegration, Enabled]
   EnableConsul: !Equals [ !Ref ConsulIntegration, Enabled]
   EnableNewRelic: !Equals [ !Ref NewRelicIntegration, Enabled]
+  EnableCalico: !Equals [ !Ref CalicoIntegration, Enabled]
   EnableFargate: !Not [!Equals [ !Ref FargateNamespaces, ""]]
   3AZDeployment: !Not [!Equals [!Ref PrivateSubnet3ID, ""]]
   2AZDeployment: !Or
@@ -213,7 +220,7 @@ Conditions:
   AdditionalVars: !Not [!Equals [~~/<ConfigSetName>/bastion/BastionVariables~~, '']]
   EnableClusterAutoScaler: !Equals [!Ref 'ProvisionClusterAutoScaler', 'Enabled']
   EnableMetricsServer: !Equals [!Ref 'ProvisionMetricsServer', 'Enabled']
-  EnableALBIngressController: !Equals [!Ref 'ProvisionALBIngressController', 'Enabled']
+  EnableLoadBalancerController: !Equals [!Ref 'ProvisionALBIngressController', 'Enabled']
   EnableMonitoringPrometheusGrafana: !Equals [!Ref 'ProvisionMonitoringStack', 'Prometheus + Grafana']
   EnableEfs: !Equals [!Ref 'EfsStorageClass', 'Enabled']
   EnableWindows: !Equals [!Ref 'NodeGroupOS', 'Windows']
@@ -576,22 +583,22 @@ Resources:
             - 2AZDeployment
             - !Join [",", [ !Ref PrivateSubnet1ID, !Ref PrivateSubnet2ID ]]
             - !Ref PrivateSubnet1ID
-  ALBIngressStack:
+  LoadBalancerStack:
     Metadata:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
-    Condition: EnableALBIngressController
+    Condition: EnableLoadBalancerController
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-alb-ingress.template.yaml'
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-load-balancer-controller.template.yaml'
         - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         OIDCIssuerURLWithoutProtocol:  !Join [ '', !Split [ 'https://', !GetAtt EKSControlPlane.Outputs.OIDCIssuerURL ] ]
-        ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
   GenerateNameFunction:
     Condition: GenerateClusterName
     Type: AWS::Lambda::Function
@@ -746,6 +753,25 @@ Resources:
         ConsulVersion: ~~/<ConfigSetName>/hashicorp/consul/Version~~
         ConsulDeploymentSize: ~~/<ConfigSetName>/hashicorp/consul/DeploymentSize~~
         ConsulReplicas: ~~/<ConfigSetName>/hashicorp/consul/Nodes~~
+  CalicoStack:
+    DependsOn: FunctionStack
+    Condition: EnableCalico
+    Type: AWS::CloudFormation::Stack
+    Metadata:
+      DependsOn:
+        - !Ref ControlPlaneSecurityGroupIngress
+        - !Ref NodeGroupStack
+        - !If [ EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue' ]
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-tigera-calico/templates/eks-calico-entrypoint.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
+      Parameters:
+        KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Sub '${QSS3KeyPrefix}submodules/quickstart-eks-tigera-calico/'
+        QSS3BucketRegion: !Ref QSS3BucketRegion
   WindowsSupportStack:
     DependsOn: WindowsSupportNodeGroupStack
     Condition: EnableWindows
