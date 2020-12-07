@@ -58,13 +58,13 @@ Parameters:
     Description: '(Optional) Security group ID attached to the EKS cluster. This must allow egress traffic to the Kubernetes, AWS CloudFormation, and EKS endpoints. Leave this blank for publicly accessible clusters.'
   PerAccountSharedResources:
     Type: String
-    AllowedValues: ['Yes', 'No']
-    Default: 'Yes'
+    AllowedValues: ['AutoDetect', 'Yes', 'No']
+    Default: 'AutoDetect'
     Description: Choose "No" if you already deployed the EKS account shared resources in this AWS account.
   PerRegionSharedResources:
     Type: String
-    AllowedValues: ['Yes', 'No']
-    Default: 'Yes'
+    AllowedValues: ['AutoDetect', 'Yes', 'No']
+    Default: 'AutoDetect'
     Description: Choose "No" if you already deployed the EKS shared resources stack in your Region.
   VPCID:
     Type: AWS::EC2::VPC::Id
@@ -98,6 +98,9 @@ Parameters:
     Default: ""
     Description: "(Optional) HTTP(S) proxy configuration. If you provide a value, all worker nodes and pod egress traffic uses this proxy (e.g., http://10.101.0.100:3128/)."
 Conditions:
+  DetectSharedStacks: !And
+    - !Equals [!Ref PerAccountSharedResources, 'AutoDetect']
+    - !Equals [!Ref PerRegionSharedResources, 'AutoDetect']
   CreatePerAccountSharedResources: !Equals [!Ref PerAccountSharedResources, 'Yes']
   CreatePerRegionSharedResources: !Equals [!Ref PerRegionSharedResources, 'Yes']
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
@@ -113,11 +116,30 @@ Resources:
       DependsOn:
         - !If [CreatePerRegionSharedResources, !Ref RegionalSharedResources, !Ref 'AWS::NoValue']
         - !If [CreatePerAccountSharedResources, !Ref AccountSharedResources, !Ref 'AWS::NoValue']
+        - !If [DetectSharedStacks, !Ref AutDetectSharedResources, !Ref 'AWS::NoValue']
     Type: Custom::CliQuery
     Properties:
       ServiceToken: !Sub ['arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-ResourceReader', {Prefix: !FindInMap [Config, Prefix, Value]}]
       AwsCliCommand: "iam list-roles --query 'Roles[?RoleName==`CloudFormation-Kubernetes-VPC`].RoleName | {RoleName: [0]}'"
       IdField: 'RoleName'
+  AutDetectSharedResources:
+    Type: AWS::CloudFormation::Stack
+    Condition: DetectSharedStacks
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-prerequisites.template.yaml'
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+      Parameters:
+        Version: "1.0.0"
+        AccountTemplateUri: !Sub
+          - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-per-account-resources.template.yaml'
+          - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+            S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+        RegionalTemplateUri: !Sub
+          - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-per-region-resources.template.yaml'
+          - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+            S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
   AccountSharedResources:
     Type: AWS::CloudFormation::Stack
     Condition: CreatePerAccountSharedResources
@@ -178,3 +200,13 @@ Outputs:
     Value: !GetAtt IamStack.Outputs.KubernetesAdminRoleArn
   HelmRoleArn:
     Value: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-helm"
+Rules:
+  AutoDetectSharedParams:
+    RuleCondition: !Or
+      - !Equals [!Ref PerRegionSharedResources, 'AutoDetect']
+      - !Equals [!Ref PerAccountSharedResources, 'AutoDetect']
+    Assertions:
+      - Assert: !And
+          - !Equals [!Ref PerRegionSharedResources, 'AutoDetect']
+          - !Equals [!Ref PerAccountSharedResources, 'AutoDetect']
+        AssertDescription: "AutDetect must be set/unset for both PerRegionSharedResources and PerAccountSharedResources"
