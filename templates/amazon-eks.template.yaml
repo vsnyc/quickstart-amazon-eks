@@ -66,6 +66,10 @@ Parameters:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Disabled"
+  ProvisionMetricsServer:
+    Type: String
+    AllowedValues: [ "Enabled", "Disabled" ]
+    Default: "Disabled"
   # This parameter name is inaccurate to preserve backward compatibility, and will be changed to ProvisionLoadBalancerController in the next release
   ProvisionALBIngressController:
     Type: String
@@ -215,6 +219,7 @@ Conditions:
   CustomBastionRole: !Not [!Equals [~~/<ConfigSetName>/bastion/BastionIAMRoleName~~, '']]
   AdditionalVars: !Not [!Equals [~~/<ConfigSetName>/bastion/BastionVariables~~, '']]
   EnableClusterAutoScaler: !Equals [!Ref 'ProvisionClusterAutoScaler', 'Enabled']
+  EnableMetricsServer: !Equals [!Ref 'ProvisionMetricsServer', 'Enabled']
   EnableLoadBalancerController: !Equals [!Ref 'ProvisionALBIngressController', 'Enabled']
   EnableMonitoringPrometheusGrafana: !Equals [!Ref 'ProvisionMonitoringStack', 'Prometheus + Grafana']
   EnableEfs: !Equals [!Ref 'EfsStorageClass', 'Enabled']
@@ -426,6 +431,20 @@ Resources:
         NodeAutoScalingGroup: !GetAtt NodeGroupStack.Outputs.NodeAutoScalingGroup
         EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         KubernetesVersion: ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
+  MetricsServerStack:
+    Condition: EnableMetricsServer
+    Metadata:
+      DependsOn:
+       - !Ref ControlPlaneSecurityGroupIngress
+       - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-metrics-server.template.yaml'
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+      Parameters:
+        EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
   EfsStack:
     Condition: EnableEfs
     Type: 'AWS::CloudFormation::Stack'
