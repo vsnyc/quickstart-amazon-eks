@@ -528,7 +528,7 @@ Resources:
         KubernetesVersion: !If [VaultEnabled, '1.17', !Ref 'AWS::NoValue']
         ConsulUIAccessCIDR: !Ref RemoteAccessCIDR
         VaultUIAccessCIDR: !Ref RemoteAccessCIDR
-  AutDetectSharedResources:
+  AutoDetectSharedResources:
     Type: AWS::CloudFormation::Stack
     Condition: DetectSharedStacks
     Properties:

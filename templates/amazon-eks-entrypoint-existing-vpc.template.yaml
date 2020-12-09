@@ -471,7 +471,7 @@ Conditions:
   WindowsNodes: !Equals [!Ref NodeGroupOS, 'Windows']
   VaultEnabled: !Equals [!Ref VaultIntegration, 'Enabled']
 Resources:
-  AutDetectSharedResources:
+  AutoDetectSharedResources:
     Type: AWS::CloudFormation::Stack
     Condition: DetectSharedStacks
     Properties:
