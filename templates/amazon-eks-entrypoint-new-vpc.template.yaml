@@ -601,6 +601,7 @@ Resources:
       DependsOn:
         - !If [CreatePerRegionSharedResources, !Ref RegionalSharedResources, !Ref 'AWS::NoValue']
         - !If [CreatePerAccountSharedResources, !Ref AccountSharedResources, !Ref 'AWS::NoValue']
+        - !If [DetectSharedStacks, !Ref AutoDetectSharedResources, !Ref 'AWS::NoValue']
       cfn-lint: { config: { ignore_checks: [ W9901 ] } }
     Properties:
       TemplateURL: !Sub
