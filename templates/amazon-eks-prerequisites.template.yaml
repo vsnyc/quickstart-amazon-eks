@@ -53,6 +53,7 @@ Resources:
           from uuid import uuid4
           from random import randint
           from time import sleep
+          SX = "SharedResources"
           C = Config(retries={'max_attempts': 10, 'mode': 'standard'})
           BC = boto3.client
           CFN = 'cloudformation'
@@ -71,7 +72,7 @@ Resources:
                   cfn.get_waiter(f'stack_{op}_complete').wait(StackName=stack_id)
                   return stack_id if op != 'DELETE' else None
               return s[0] if len(s) > 0 else None
-          def put_stack(name, region, template_url, parameters, key, value, retries=5):
+          def put_stack(name, region, template_url, parameters, key, retries=5):
               sleep(randint(0, 1500)/100) # jitter to reduce the chance of concurrent queries racing
               if not region:
                 for r in [r['RegionName'] for r in BC('ec2').describe_regions()['Regions']]:
@@ -82,12 +83,12 @@ Resources:
               stack_id = get_stacks(key, name, region)
               client = BC(CFN, region_name=region)
               args = {
-                  "StackName": stack_id if stack_id else f"{key}-{value}",
+                  "StackName": stack_id if stack_id else f"{key}-{name}",
                   "TemplateURL": template_url,
                   "Parameters": [{"ParameterKey": k, "ParameterValue": v} for k, v in parameters.items()],
                   "Capabilities": ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND'],
                   "OnFailure": "DELETE",
-                  "Tags": [{"Key": key, "Value": value}]
+                  "Tags": [{"Key": key, "Value": name}]
               }
               method = client.create_stack
               wait = 'create'
@@ -96,17 +97,22 @@ Resources:
                   wait = 'update'
                   del args['OnFailure']
               try:
-                  stack_id = method(**args)['StackId']
+                  try:
+                      stack_id = method(**args)['StackId']
+                  except Exception as e:
+                      if f"No updates are to be performed" in str(e):
+                          pass
+                      elif retries > 0:
+                          put_stack(name, region, template_url, parameters, key, retries-1)
+                      elif f"terminal failure state" in str(e):
+                          raise RuntimeError(f"{name} create/update failed.")
+                      else:
+                          raise
                   client.get_waiter(f'stack_{wait}_complete').wait(StackName=stack_id)
               except Exception as e:
-                  if "No updates are to be performed" in str(e):
-                      print(f"No updates are to be performed for {value}.")
-                  elif retries > 0:
-                      put_stack(name, region, template_url, parameters, key, value, retries-1)
-                  elif "Waiter encountered a terminal failure state" in str(e):
-                      raise RuntimeError(f"{name} create/update failed.")
-                  else:
+                  if retries == 0:
                       raise
+                  put_stack(name, region, template_url, parameters, key, retries-1)
           def handler(event, context):
               s = cfnresponse.SUCCESS
               r = " "
@@ -118,12 +124,12 @@ Resources:
               prefix = '/'.join(acc_uri.split('/')[3:-2]) + '/'
               try:
                   if event['RequestType'] != 'Delete':
-                      put_stack('AccountSharedResources', None, acc_uri, {}, key, 'AccountSharedResources')
+                      put_stack(f'Account{SX}', None, acc_uri, {}, key)
                       params = {"QSS3BucketName": bucket, "QSS3KeyPrefix": prefix, "RandomStr": uuid4().hex}
-                      put_stack('RegionalSharedResources', None, props['RegionalTemplateUri'], params, key, 'RegionalSharedResources')
+                      put_stack(f'Regional{SX}', None, props['RegionalTemplateUri'], params, key)
               except Exception as e:
                   s = cfnresponse.FAILED
-                  r = f"Unhandled Exception: {e}"
+                  r = f"Exception: {e}"
                   traceback.print_exc()
               finally:
                   cfnresponse.send(event, context, s, {}, p, reason=r)
