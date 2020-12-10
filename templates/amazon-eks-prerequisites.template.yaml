@@ -61,9 +61,25 @@ Resources:
               stacks = []
               for p in cfn.get_paginator('describe_stacks').paginate():
                   stacks += p['Stacks']
-              s = [s['StackId'] for s in stacks if {'Key': key, 'Value': val} in s['Tags']]
+              s = [s for s in stacks if {'Key': key, 'Value': val} in s['Tags']]
+              if not len(s):
+                  return None
+              stack_id = s[0]['StackId']
+              status = s[0]['StackStatus']
+              if status.endswith('_IN_PROGRESS'):
+                  op = status.split('_')[0]
+                  cfn.get_waiter(f'stack_{op}_complete').wait(StackName=stack_id)
+                  return stack_id if op != 'DELETE' else None
               return s[0] if len(s) > 0 else None
-          def put_stack(stack_id, region, template_url, parameters, key, value):
+          def put_stack(name, region, template_url, parameters, key, value, retries=5):
+              sleep(randint(0, 1500)/100) # jitter to reduce the chance of concurrent queries racing
+              if not region:
+                for r in [r['RegionName'] for r in BC('ec2').describe_regions()['Regions']]:
+                    acc_stack = get_stacks(key, name, r)
+                    if acc_stack:
+                        region = r
+                        break
+              stack_id = get_stacks(key, name, region)
               client = BC(CFN, region_name=region)
               args = {
                   "StackName": stack_id if stack_id else f"{key}-{value}",
@@ -85,13 +101,10 @@ Resources:
               except Exception as e:
                   if "No updates are to be performed" in str(e):
                       print(f"No updates are to be performed for {value}.")
-                  elif "_IN_PROGRESS state and can not be updated." in str(e):
-                      print(f"Stack operation already in progress for {value}.")
-                      wait = client.describe_stacks(StackName=stack_id)['Stacks'][0]['StackStatus'].split('_')[0].lower()
-                      client.get_waiter(f'stack_{wait}_complete').wait(StackName=stack_id)
-                  elif "AlreadyExistsException" in str(e):
-                      print(f"Stack operation already in progress for {value}.")
-                      client.get_waiter(f'stack_{wait}_complete').wait(StackName=stack_id)
+                  elif retries > 0:
+                      put_stack(name, region, template_url, parameters, key, value, retries-1)
+                  elif "Waiter encountered a terminal failure state" in str(e):
+                      raise RuntimeError(f"{name} create/update failed.")
                   else:
                       raise
           def handler(event, context):
@@ -103,19 +116,11 @@ Resources:
               acc_uri = props['AccountTemplateUri']
               bucket = acc_uri.split('https://')[1].split('.')[0]
               prefix = '/'.join(acc_uri.split('/')[3:-2]) + '/'
-              acc_region = None
               try:
                   if event['RequestType'] != 'Delete':
-                      sleep(randint(0, 1500)/100) # jitter to reduce the chance of concurrent queries racing
-                      for r in [r['RegionName'] for r in BC('ec2').describe_regions()['Regions']]:
-                          acc_stack = get_stacks(key, 'AccountSharedResources', r)
-                          if acc_stack:
-                              acc_region = r
-                              break
-                      put_stack(acc_stack, acc_region, acc_uri, {}, key, 'AccountSharedResources')
+                      put_stack('AccountSharedResources', None, acc_uri, {}, key, 'AccountSharedResources')
                       params = {"QSS3BucketName": bucket, "QSS3KeyPrefix": prefix, "RandomStr": uuid4().hex}
-                      put_stack(get_stacks(key, 'RegionalSharedResources'), None, props['RegionalTemplateUri'],
-                                params, key, 'RegionalSharedResources')
+                      put_stack('RegionalSharedResources', None, props['RegionalTemplateUri'], params, key, 'RegionalSharedResources')
               except Exception as e:
                   s = cfnresponse.FAILED
                   r = f"Unhandled Exception: {e}"
