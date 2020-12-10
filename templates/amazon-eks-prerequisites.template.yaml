@@ -51,6 +51,8 @@ Resources:
           import traceback
           from botocore.config import Config
           from uuid import uuid4
+          from random import randint
+          from time import sleep
           C = Config(retries={'max_attempts': 10, 'mode': 'standard'})
           BC = boto3.client
           CFN = 'cloudformation'
@@ -87,6 +89,9 @@ Resources:
                       print(f"Stack operation already in progress for {value}.")
                       wait = client.describe_stacks(StackName=stack_id)['Stacks'][0]['StackStatus'].split('_')[0].lower()
                       client.get_waiter(f'stack_{wait}_complete').wait(StackName=stack_id)
+                  elif "AlreadyExistsException" in str(e):
+                      print(f"Stack operation already in progress for {value}.")
+                      client.get_waiter(f'stack_{wait}_complete').wait(StackName=stack_id)
                   else:
                       raise
           def handler(event, context):
@@ -101,6 +106,7 @@ Resources:
               acc_region = None
               try:
                   if event['RequestType'] != 'Delete':
+                      sleep(randint(0, 1500)/100) # jitter to reduce the chance of concurrent queries racing
                       for r in [r['RegionName'] for r in BC('ec2').describe_regions()['Regions']]:
                           acc_stack = get_stacks(key, 'AccountSharedResources', r)
                           if acc_stack:
