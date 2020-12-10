@@ -83,6 +83,10 @@ Resources:
               except Exception as e:
                   if "No updates are to be performed" in str(e):
                       print(f"No updates are to be performed for {value}.")
+                  elif "_IN_PROGRESS state and can not be updated." in str(e):
+                      print(f"Stack operation already in progress for {value}.")
+                      wait = client.describe_stacks(StackName=stack_id)['Stacks'][0]['StackStatus'].split('_')[0].lower()
+                      client.get_waiter(f'stack_{wait}_complete').wait(StackName=stack_id)
                   else:
                       raise
           def handler(event, context):
