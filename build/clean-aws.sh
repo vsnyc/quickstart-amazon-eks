@@ -17,24 +17,28 @@ RESOURCE_TYPES="AWSQS::EKS::Cluster AWSQS::Kubernetes::Helm AWSQS::Kubernetes::R
 echo "cleaning quickstart stacks..."
 
 taskcat -q test clean quickstart-amazon-eks -a ${PROFILE} ${TCAT_ARGS}
-while [ true ]; do
-   taskcat -q test list -p ${PROFILE} ${TCAT_ARGS} 2>&1 | grep 'quickstart-amazon-eks' || break
-   clean=true
-   for r in $(taskcat -q test list -p ${PROFILE} ${TCAT_ARGS} 2>&1 | grep 'quickstart-amazon-eks' | awk '{print $3}')
-   do
-     for s in $(aws cloudformation describe-stacks --query 'Stacks[? Tags[? Value==`quickstart-amazon-eks` && Key==`taskcat-project-name`] && ParentId == null].StackId' --region $r --output text --profile ${PROFILE})
+
+if ${CLEAN_STACKS}
+then
+  while [ true ]; do
+     taskcat -q test list -p ${PROFILE} ${TCAT_ARGS} 2>&1 | grep 'quickstart-amazon-eks' || break
+     clean=true
+     for r in $(taskcat -q test list -p ${PROFILE} ${TCAT_ARGS} 2>&1 | grep 'quickstart-amazon-eks' | awk '{print $3}')
      do
-       if [ "$(aws cloudformation describe-stacks --stack-name $s --profile ${PROFILE} --region $r --query 'Stacks[0].StackStatus' --output text)" != "DELETE_FAILED" ]
-       then
-         clean=false
-       else
-         echo "WARNING: $s DELETE_FAILED"
-       fi
+       for s in $(aws cloudformation describe-stacks --query 'Stacks[? Tags[? Value==`quickstart-amazon-eks` && Key==`taskcat-project-name`] && ParentId == null].StackId' --region $r --output text --profile ${PROFILE})
+       do
+         if [ "$(aws cloudformation describe-stacks --stack-name $s --profile ${PROFILE} --region $r --query 'Stacks[0].StackStatus' --output text)" != "DELETE_FAILED" ]
+         then
+           clean=false
+         else
+           echo "WARNING: $s DELETE_FAILED"
+         fi
+       done
      done
-   done
-   if $clean; then break ; fi
-   sleep 30
-done
+     if $clean; then break ; fi
+     sleep 30
+  done
+fi
 
 if ${CLEAN_REGIONAL}
 then
