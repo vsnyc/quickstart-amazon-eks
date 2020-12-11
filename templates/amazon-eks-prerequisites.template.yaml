@@ -109,8 +109,8 @@ Resources:
                       else:
                           raise
                   client.get_waiter(f'stack_{wait}_complete').wait(StackName=stack_id)
-              except Exception as e:
-                  if retries == 0:
+              except Exception:
+                  if not retries:
                       raise
                   put_stack(name, region, template_url, parameters, key, retries-1)
           def handler(event, context):
