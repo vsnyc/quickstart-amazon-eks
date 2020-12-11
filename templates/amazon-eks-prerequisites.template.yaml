@@ -68,7 +68,7 @@ Resources:
               stack_id = s[0]['StackId']
               status = s[0]['StackStatus']
               if status.endswith('_IN_PROGRESS'):
-                  op = status.split('_')[0]
+                  op = status.split('_')[0].lower()
                   cfn.get_waiter(f'stack_{op}_complete').wait(StackName=stack_id)
                   return stack_id if op != 'DELETE' else None
               return s[0] if len(s) > 0 else None
