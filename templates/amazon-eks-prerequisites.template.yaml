@@ -72,8 +72,8 @@ Resources:
                   cfn.get_waiter(f'stack_{op}_complete').wait(StackName=stack_id)
                   return stack_id if op != 'DELETE' else None
               return s[0] if len(s) > 0 else None
-          def put_stack(name, region, template_url, parameters, key, retries=5):
-              sleep(randint(0, 1500)/100) # jitter to reduce the chance of concurrent queries racing
+          def put_stack(name, region, template_url, parameters, key, retries=10):
+              sleep(randint(0, 3000)/100) # jitter to reduce the chance of concurrent queries racing
               if not region:
                 for r in [r['RegionName'] for r in BC('ec2').describe_regions()['Regions']]:
                     acc_stack = get_stacks(key, name, r)
