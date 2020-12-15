@@ -6,6 +6,7 @@ Metadata:
       - Label:
           default: Quick Start configuration
         Parameters:
+          - RandomStr
           - QSS3BucketName
           - QSS3KeyPrefix
     ParameterLabels:
@@ -13,6 +14,8 @@ Metadata:
         default: Quick Start S3 bucket name
       QSS3KeyPrefix:
         default: Quick Start S3 key prefix
+      RandomStr:
+        default: Random string
 Parameters:
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
@@ -33,6 +36,11 @@ Parameters:
       can include numbers, lowercase letters, uppercase letters, hyphens (-), dots(.) and
       forward slash (/).
     Type: String
+  RandomStr:
+    Type: String
+    Description: Enter a random string here when performing stack updates. Doing this
+      ensures that all lambda function and resource type source code is updated from s3.
+    Default: ""
 Conditions:
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
 Mappings:
@@ -114,7 +122,7 @@ Resources:
                   logger.error('Unhandled exception', exc_info=True)
                   status = cfnresponse.FAILED
               finally:
-                  cfnresponse.send(event, context, status, {}, None)
+                  cfnresponse.send(event, context, status, {}, event.get('PhysicalResourceId', context.log_stream_name))
   CopyZips:
     Type: Custom::CopyZips
     Properties:
@@ -123,6 +131,7 @@ Resources:
       SourceBucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Prefix: !Ref 'QSS3KeyPrefix'
       Version: "1.0.0"
+      RandomStr: !Ref RandomStr
       Objects:
         - functions/packages/DeleteBucketContents/lambda.zip
         - functions/packages/CleanupLoadBalancers/lambda.zip
@@ -169,6 +178,7 @@ Resources:
     Type: AWS::Lambda::LayerVersion
     Properties:
       LayerName: !Sub ['${Prefix}-Kubectl', {Prefix: !FindInMap [Config, Prefix, Value]}]
+      Description: !Sub "kubectl layer - ${RandomStr}"
       Content:
         S3Bucket: !Ref LambdaZipsBucket
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/kubectlLayer/lambda.zip'
@@ -177,6 +187,7 @@ Resources:
     Type: AWS::Lambda::LayerVersion
     Properties:
       LayerName: !Sub ['${Prefix}-AwsCli', {Prefix: !FindInMap [Config, Prefix, Value]}]
+      Description: !Sub "aws cli layer - ${RandomStr}"
       Content:
         S3Bucket: !Ref LambdaZipsBucket
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/awscliLayer/lambda.zip'
@@ -185,6 +196,7 @@ Resources:
     Type: AWS::Lambda::LayerVersion
     Properties:
       LayerName: !Sub ['${Prefix}-Crhelper', {Prefix: !FindInMap [Config, Prefix, Value]}]
+      Description: !Sub "crhelper layer - ${RandomStr}"
       CompatibleRuntimes:
         - python3.6
         - python3.7
@@ -201,6 +213,7 @@ Resources:
       Runtime: python3.7
       Timeout: 900
       Layers: [!Ref CrhelperLayer]
+      Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
       Code:
         S3Bucket: !Sub ['${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}', {Prefix: !FindInMap [Config, Prefix, Value]}]
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/CleanupLoadBalancers/lambda.zip'
@@ -214,6 +227,7 @@ Resources:
       Runtime: python3.7
       Timeout: 900
       Layers: [!Ref CrhelperLayer]
+      Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
       Code:
         S3Bucket: !Sub ['${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}', {Prefix: !FindInMap [Config, Prefix, Value]}]
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/CleanupLambdas/lambda.zip'
@@ -227,6 +241,7 @@ Resources:
       Layers: [!Ref CrhelperLayer]
       Runtime: python3.7
       Timeout: 900
+      Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
       Code:
         S3Bucket: !Sub ['${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}', {Prefix: !FindInMap [Config, Prefix, Value]}]
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/registerType/lambda.zip'
@@ -240,6 +255,7 @@ Resources:
       Layers: [!Ref CrhelperLayer]
       Runtime: python3.7
       Timeout: 900
+      Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
       Code:
         S3Bucket: !Sub ['${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}', {Prefix: !FindInMap [Config, Prefix, Value]}]
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/registerCustomResource/lambda.zip'
@@ -249,6 +265,7 @@ Resources:
     Properties:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       Version: "3.0.3"
+      RandomStr: !Ref RandomStr
       TypeName: "AWSQS::EKS::Cluster"
       SchemaHandlerPackage: !Sub ["s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/EksClusterResource/awsqs-eks-cluster.zip", {Prefix: !FindInMap [Config, Prefix, Value]}]
       IamPolicy:
@@ -274,6 +291,7 @@ Resources:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       TypeName: "AWSQS::Kubernetes::Helm"
       Version: "3.0.5"
+      RandomStr: !Ref RandomStr
       SchemaHandlerPackage: !Sub ["s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip", {Prefix: !FindInMap [Config, Prefix, Value]}]
       IamPolicy:
         Version: '2012-10-17'
@@ -306,6 +324,7 @@ Resources:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       TypeName: "AWSQS::Kubernetes::Get"
       Version: "3.0.4"
+      RandomStr: !Ref RandomStr
       SchemaHandlerPackage: !Sub ["s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_get.zip", {Prefix: !FindInMap [Config, Prefix, Value]}]
       IamPolicy:
         Version: '2012-10-17'
@@ -332,6 +351,7 @@ Resources:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       TypeName: "AWSQS::Kubernetes::Resource"
       Version: "3.0.6"
+      RandomStr: !Ref RandomStr
       SchemaHandlerPackage: !Sub ["s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_apply.zip", {Prefix: !FindInMap [Config, Prefix, Value]}]
       IamPolicy:
         Version: '2012-10-17'
@@ -362,6 +382,7 @@ Resources:
       Layers: [!Ref CrhelperLayer]
       Runtime: python3.7
       Timeout: 900
+      Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
       Code:
         S3Bucket: !Sub ['${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}', {Prefix: !FindInMap [Config, Prefix, Value]}]
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/CleanupSecurityGroupDependencies/lambda.zip'
@@ -375,6 +396,7 @@ Resources:
       Runtime: python3.7
       Timeout: 900
       Layers: [!Ref 'CrhelperLayer']
+      Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
       Code:
         S3Bucket: !Sub ['${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}', {Prefix: !FindInMap [Config, Prefix, Value]}]
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/DeleteBucketContents/lambda.zip'
@@ -388,6 +410,7 @@ Resources:
       Runtime: python3.7
       Timeout: 900
       Layers: [!Ref 'CrhelperLayer']
+      Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
       Code:
         S3Bucket: !Sub ['${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}', {Prefix: !FindInMap [Config, Prefix, Value]}]
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/GetCallerArn/lambda.zip'
@@ -436,6 +459,7 @@ Resources:
       Runtime: python3.7
       Timeout: 900
       Layers: [!Ref 'CrhelperLayer']
+      Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
       Code:
         S3Bucket: !Sub ['${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}', {Prefix: !FindInMap [Config, Prefix, Value]}]
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/FargateProfile/lambda.zip'
@@ -450,6 +474,7 @@ Resources:
       Runtime: python3.7
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-ResourceReader", {Prefix: !FindInMap [Config, Prefix, Value]}]
       Timeout: 900
+      Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
       Code:
         S3Bucket: !Sub ['${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}', {Prefix: !FindInMap [Config, Prefix, Value]}]
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/ResourceReader/lambda.zip'
@@ -539,5 +564,5 @@ Resources:
     Type: AWS::CloudFormation::Macro
     Properties:
       Name: 'QuickStartParameterResolver'
-      Description: Resolves ssm parameters in templates
+      Description: !Sub "Resolves ssm parameters in templates ${RandomStr}"
       FunctionName: !GetAtt ParameterResolverFunction.Arn
