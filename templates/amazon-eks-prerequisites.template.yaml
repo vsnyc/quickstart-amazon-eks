@@ -60,7 +60,15 @@ Resources:
           CFN = 'cloudformation'
           def waiter(c, o, s):
               print(f"waiter(o, s) started")
-              c.get_waiter(f'stack_{o}_complete').wait(StackName=s)
+              retries = 50
+              while True:
+                  retries -= 1
+                  status = c.describe_stacks(StackName=s)['Stacks'][0]['StackStatus']
+                  if status.endswith("COMPLETE"):
+                      break
+                  if status.endswith("FAILED") or retries == 0:
+                      raise RuntimeError(f"Stack operation failed: {o} {status} {s}")
+                  sleep(randint(1000, 1500)/100)
               print(f"waiter(o, s) done")
           def get_stacks(key, val, region=None):
               cfn = BC(CFN, region_name=region, config=C)
@@ -111,16 +119,13 @@ Resources:
                       traceback.print_exc()
                       if f"No updates are to be performed" in str(e):
                           return
-                      elif retries > 0:
-                          put_stack(name, o_region, template_url, parameters, key, retries-1)
-                      elif f"terminal failure state" in str(e):
-                          raise RuntimeError(f"{name} create/update failed.")
-                      else:
+                      elif retries == 0:
                           raise
+                      put_stack(name, o_region, template_url, parameters, key, retries-1)
                   waiter(client, wait, stack_id)
-              except Exception:
+              except Exception as e:
                   traceback.print_exc()
-                  if retries == 0:
+                  if retries == 0 or str(e).startswith():
                       raise
                   put_stack(name, o_region, template_url, parameters, key, retries-1)
           def handler(event, context):
