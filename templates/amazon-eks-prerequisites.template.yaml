@@ -49,6 +49,7 @@ Resources:
           import cfnresponse
           import boto3
           import traceback
+          import json
           from botocore.config import Config
           from uuid import uuid4
           from random import randint
@@ -57,6 +58,10 @@ Resources:
           C = Config(retries={'max_attempts': 10, 'mode': 'standard'})
           BC = boto3.client
           CFN = 'cloudformation'
+          def waiter(c, o, s):
+              print(f"waiter(o, s) started")
+              c.get_waiter(f'stack_{o}_complete').wait(StackName=s)
+              print(f"waiter(o, s) done")
           def get_stacks(key, val, region=None):
               cfn = BC(CFN, region_name=region, config=C)
               stacks = []
@@ -69,12 +74,15 @@ Resources:
               status = s[0]['StackStatus']
               if status.endswith('_IN_PROGRESS'):
                   op = status.split('_')[0].lower()
-                  cfn.get_waiter(f'stack_{op}_complete').wait(StackName=stack_id)
-                  return stack_id if op != 'DELETE' else None
-              return s[0] if len(s) > 0 else None
+                  waiter(cfn, op, stack_id)
+                  if op == 'delete':
+                      return None
+              return stack_id
           def put_stack(name, region, template_url, parameters, key, retries=10):
+              print(f"put_stack({name}, {region}, {template_url}, {parameters}, {key}, {retries})")
+              o_region = region
               sleep(randint(0, 3000)/100) # jitter to reduce the chance of concurrent queries racing
-              if not region:
+              if name == f'Account{SX}':
                 for r in [r['RegionName'] for r in BC('ec2').describe_regions()['Regions']]:
                     acc_stack = get_stacks(key, name, r)
                     if acc_stack:
@@ -100,20 +108,23 @@ Resources:
                   try:
                       stack_id = method(**args)['StackId']
                   except Exception as e:
+                      traceback.print_exc()
                       if f"No updates are to be performed" in str(e):
-                          pass
+                          return
                       elif retries > 0:
-                          put_stack(name, region, template_url, parameters, key, retries-1)
+                          put_stack(name, o_region, template_url, parameters, key, retries-1)
                       elif f"terminal failure state" in str(e):
                           raise RuntimeError(f"{name} create/update failed.")
                       else:
                           raise
-                  client.get_waiter(f'stack_{wait}_complete').wait(StackName=stack_id)
+                  waiter(client, wait, stack_id)
               except Exception:
-                  if not retries:
+                  traceback.print_exc()
+                  if retries == 0:
                       raise
-                  put_stack(name, region, template_url, parameters, key, retries-1)
+                  put_stack(name, o_region, template_url, parameters, key, retries-1)
           def handler(event, context):
+              print(json.dumps(event))
               s = cfnresponse.SUCCESS
               r = " "
               p = event.get('PhysicalResourceId', context.log_stream_name)
@@ -125,8 +136,7 @@ Resources:
               try:
                   if event['RequestType'] != 'Delete':
                       put_stack(f'Account{SX}', None, acc_uri, {}, key)
-                      params = {"QSS3BucketName": bucket, "QSS3KeyPrefix": prefix, "RandomStr": uuid4().hex}
-                      put_stack(f'Regional{SX}', None, props['RegionalTemplateUri'], params, key)
+                      put_stack(f'Regional{SX}', None, props['RegionalTemplateUri'], {"QSS3BucketName": bucket, "QSS3KeyPrefix": prefix, "RandomStr": uuid4().hex}, key)
               except Exception as e:
                   s = cfnresponse.FAILED
                   r = f"Exception: {e}"
