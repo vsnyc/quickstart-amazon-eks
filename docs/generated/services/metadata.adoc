@@ -35,6 +35,7 @@
 :template_custom_kubemanifest:
 :template_custom_lambdacleanup:
 :template_custom_lambdasgcleanup:
+:template_custom_prereqs:
 :template_custom_registertype:
 :template_ec2:
 :template_efs:
@@ -50,6 +51,7 @@
 :template_lambda:
 :template_lambdacleanup:
 :template_lambdasgcleanup:
+:template_prereqs:
 :template_registertype:
 :template_s3:
 :template_ssm:

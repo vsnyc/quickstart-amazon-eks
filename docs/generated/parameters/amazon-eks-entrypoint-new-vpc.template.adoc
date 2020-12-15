@@ -7,8 +7,8 @@
 (`RemoteAccessCIDR`)|`**__Requires input__**`|CIDR IP range that is permitted to access the instances. We recommend that you set this value to a trusted IP range.|SSH key name
 (`KeyPairName`)|`**__Requires input__**`|Name of an existing key pair, which allows you to securely connect to your instance after it launches.|Config set name
 (`ConfigSetName`)|`**__Blank string__**`|(Optional) Name used to map advanced parameters to an EKS cluster. If you launched an advanced configuration stack and want to apply its values to this cluster, this name must match the ConfigSetName parameter for the stack. If left blank, a new config set is created using default values.|Per-account shared resources
-(`PerAccountSharedResources`)|`Yes`|Choose "No" if you already deployed another EKS Quick Start stack in your AWS account.|Per-Region shared resources
-(`PerRegionSharedResources`)|`Yes`|Choose "No" if you already deployed another EKS Quick Start stack in your Region.
+(`PerAccountSharedResources`)|`AutoDetect`|Choose "No" if you already deployed another EKS Quick Start stack in your AWS account.|Per-Region shared resources
+(`PerRegionSharedResources`)|`AutoDetect`|Choose "No" if you already deployed another EKS Quick Start stack in your Region.
 |===
 .VPC network configuration
 [width="100%",cols="16%,11%,73%",options="header",]

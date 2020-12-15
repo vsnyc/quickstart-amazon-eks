@@ -8,8 +8,8 @@
 (`K8sSubnetIds`)|`**__Blank string__**`|(Optional) Comma-separated list of subnet IDs associated with the EKS cluster. There must be routes to the Kubernetes, AWS CloudFormation, and EKS endpoints. Leave this blank for publicly accessible clusters.|HTTP proxy
 (`HttpProxy`)|`**__Blank string__**`|(Optional) HTTP(S) proxy configuration. If you provide a value, all worker nodes and pod egress traffic uses this proxy (e.g., http://10.101.0.100:3128/).|EKS security group
 (`ControlPlaneSecurityGroup`)|`**__Blank string__**`|(Optional) Security group ID attached to the EKS cluster. This must allow egress traffic to the Kubernetes, AWS CloudFormation, and EKS endpoints. Leave this blank for publicly accessible clusters.|Deploy account-level shared resources
-(`PerAccountSharedResources`)|`Yes`|Choose "No" if you already deployed the EKS account shared resources in this AWS account.|Deploy Region-level shared resources
-(`PerRegionSharedResources`)|`Yes`|Choose "No" if you already deployed the EKS shared resources stack in your Region.
+(`PerAccountSharedResources`)|`AutoDetect`|Choose "No" if you already deployed the EKS account shared resources in this AWS account.|Deploy Region-level shared resources
+(`PerRegionSharedResources`)|`AutoDetect`|Choose "No" if you already deployed the EKS shared resources stack in your Region.
 |===
 .AWS Quick Start configuration
 [width="100%",cols="16%,11%,73%",options="header",]
