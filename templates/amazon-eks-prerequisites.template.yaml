@@ -122,10 +122,11 @@ Resources:
                       elif retries == 0:
                           raise
                       put_stack(name, o_region, template_url, parameters, key, retries-1)
+                      return
                   waiter(client, wait, stack_id)
               except Exception as e:
                   traceback.print_exc()
-                  if retries == 0 or str(e).startswith():
+                  if retries == 0:
                       raise
                   put_stack(name, o_region, template_url, parameters, key, retries-1)
           def handler(event, context):
