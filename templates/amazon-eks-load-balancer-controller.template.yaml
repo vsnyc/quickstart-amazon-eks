@@ -54,6 +54,10 @@ Mappings:
       lbrepo: 918309763551.dkr.ecr.cn-north-1.amazonaws.com.cn/amazon/aws-load-balancer-controller
     cn-northwest-1:
       lbrepo: 961992271922.dkr.ecr.cn-northwest-1.amazonaws.com.cn/amazon/aws-load-balancer-controller
+    us-gov-west-1:
+      lbrepo: 013241004608.dkr.ecr.us-gov-west-1.amazonaws.com/amazon/aws-load-balancer-controller
+    us-gov-east-1:
+      lbrepo: 151742754352.dkr.ecr.us-gov-east-1.amazonaws.com/amazon/aws-load-balancer-controller
 Resources:
   LoadBalancerControllerIAMRole:
     Type: AWS::IAM::Role
