@@ -425,6 +425,8 @@ users:
         - "get-token"
         - "--cluster-name"
         - "${K8S_CLUSTER_NAME}"
+        - "--region"
+        - "${REGION}"
 EOF
     cp -r /home/${user}/.kube/ /root/.kube/
     chown -R ${user}:${user_group} /home/${user}/.kube/
