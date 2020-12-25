@@ -66,11 +66,16 @@ tests:
       NumberOfAZs: "2"
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
-      ALBIngressController: Disabled
     regions:
     - ca-central-1
     - cn-north-1
     - cn-northwest-1
+  govcloud:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+    regions:
+      - us-gov-east-1
+      - us-gov-west-1
   no-logging:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
