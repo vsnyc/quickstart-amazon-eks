@@ -105,7 +105,9 @@ Resources:
               s3 = boto3.client('s3')
               objects = {'Objects': [{'Key': prefix + o} for o in objects]}
               try:
-                  s3.delete_objects(Bucket=bucket, Delete=objects)
+                  logger.debug(f'deleting objects: {objects["Objects"]}')
+                  resp = s3.delete_objects(Bucket=bucket, Delete=objects)
+                  logger.debug(f'delete_objects response: {resp}')
               except s3.exceptions.NoSuchBucket:
                   pass
           def handler(event, context):
