@@ -117,7 +117,10 @@ Resources:
                   if event['RequestType'] == 'Delete':
                       delete_objects(event['ResourceProperties']['DestBucket'], event['ResourceProperties']['Prefix'],
                                      event['ResourceProperties']['Objects'])
-                  else:
+                  elif event['RequestType'] == 'Update':
+                      delete_objects(event['OldResourceProperties']['DestBucket'], event['OldResourceProperties']['Prefix'],
+                                     event['OldResourceProperties']['Objects'])
+                  if event['RequestType'] == 'Create' or event['RequestType'] == 'Update':
                       copy_objects(event['ResourceProperties']['SourceBucket'], event['ResourceProperties']['DestBucket'],
                                    event['ResourceProperties']['Prefix'], event['ResourceProperties']['Objects'])
               except Exception:
