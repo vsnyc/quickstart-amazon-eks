@@ -185,3 +185,15 @@ tests:
       CalicoIntegration: Enabled
     regions:
     - us-west-2
+  rafaysystems:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Disabled
+      RafaySysIntegration: Enabled
+      RafaySysFirstName: override
+      RafaySysLastName: override
+      RafaySysOrganizationName: override
+      RafaySysEmail: override
+    regions:
+    - us-west-2

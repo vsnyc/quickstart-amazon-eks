@@ -39,6 +39,17 @@ Metadata:
     - HashiCorp
     - Hosted
     - Domain
+    - CalicoIntegration
+    - RafaySysIntegration
+    - RafaySysProject
+    - RafaySysBootstrapBucket
+    - RafaySysBootstrapKey
+    - RafaySysApiKey
+    - RafaySysApiSecret
+    - RafaySysFirstName
+    - RafaySysLastName
+    - RafaySysOrganizationName
+    - RafaySysEmail
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -96,6 +107,19 @@ Metadata:
           default: Calico Policy [APN security partner]
         Parameters:
           - CalicoIntegration
+      - Label:
+          default: Rafay System [APN Software & Internet partner]
+        Parameters:
+          - RafaySysIntegration
+          - RafaySysProject
+          - RafaySysBootstrapBucket
+          - RafaySysBootstrapKey
+          - RafaySysApiKey
+          - RafaySysApiSecret
+          - RafaySysFirstName
+          - RafaySysLastName
+          - RafaySysOrganizationName
+          - RafaySysEmail
       - Label:
           default: HashiCorp Vault (AWS Partner security)
         Parameters:
@@ -176,6 +200,26 @@ Metadata:
         default: License key
       CalicoIntegration:
         default: Calico Policy Intergration
+      RafaySysIntegration:
+        default: Rafay Systems Intergration
+      RafaySysProject:
+        default: Rafay project
+      RafaySysFirstName:
+        default: First name
+      RafaySysLastName:
+        default: Last name
+      RafaySysOrganizationName:
+        default: Organization name
+      RafaySysEmail:
+        default: Email
+      RafaySysApiKey:
+        default: API key
+      RafaySysApiSecret:
+        default: API secret
+      RafaySysBootstrapBucket:
+        default: Bootstrap S3 bucket
+      RafaySysBootstrapKey:
+        default: Bootstrap S3 key
       EKSPublicAccessEndpoint:
         default: EKS public access endpoint
       HttpProxy:
@@ -360,6 +404,48 @@ Parameters:
     AllowedValues: [ Enabled, Disabled ]
     Default: Disabled
     Description: "For more information see https://www.projectcalico.org/ ."
+  RafaySysIntegration:
+    Type: String
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
+    Description: "For more information see https://aws-quickstart.github.io/quickstart-eks-rafay-systems/ ."
+  RafaySysProject:
+    Type: String
+    Description: TODO
+    Default: "defaultproject"
+  RafaySysBootstrapBucket:
+    Type: String
+    Description: "(Optional) S3 bucket to place the the rafay bootstrap yaml file. If left blank the EKS Quick Start bucket will be used."
+    Default: ""
+  RafaySysBootstrapKey:
+    Type: String
+    Description: "(Optional) S3 key to place the the rafay bootstrap yaml file. If left blank the key will be rafay/<CLUSTER_NAME>/cluster-bootstrap.yaml."
+    Default: ""
+  RafaySysApiKey:
+    Type: String
+    Description: Required if using an existing Rafay account.
+    Default: ""
+  RafaySysApiSecret:
+    Type: String
+    Description: Required if using an existing Rafay account.
+    Default: ""
+    NoEcho: true
+  RafaySysFirstName:
+    Type: String
+    Description: Required if registering a new Rafay account.
+    Default: ""
+  RafaySysLastName:
+    Type: String
+    Description: Required if registering a new Rafay account.
+    Default: ""
+  RafaySysOrganizationName:
+    Type: String
+    Description: Required if registering a new Rafay account.
+    Default: ""
+  RafaySysEmail:
+    Type: String
+    Description: Required if registering a new Rafay account.
+    Default: ""
   PerAccountSharedResources:
     Type: String
     AllowedValues: ['AutoDetect', 'Yes', 'No']
@@ -590,6 +676,16 @@ Resources:
         ConsulUIHostedZoneID: !Ref ConsulUIHostedZoneID
         ConsulUIDomainName: !Ref ConsulUIDomainName
         CalicoIntegration: !Ref CalicoIntegration
+        RafaySysIntegration: !Ref RafaySysIntegration
+        RafaySysProject: !Ref RafaySysProject
+        RafaySysBootstrapBucket: !Ref RafaySysBootstrapBucket
+        RafaySysBootstrapKey: !Ref RafaySysBootstrapKey
+        RafaySysApiKey: !Ref RafaySysApiKey
+        RafaySysApiSecret: !Ref RafaySysApiSecret
+        RafaySysFirstName: !Ref RafaySysFirstName
+        RafaySysLastName: !Ref RafaySysLastName
+        RafaySysOrganizationName: !Ref RafaySysOrganizationName
+        RafaySysEmail: !Ref RafaySysEmail
 Outputs:
   EKSClusterName:
     Value: !GetAtt EKSStack.Outputs.EKSClusterName
