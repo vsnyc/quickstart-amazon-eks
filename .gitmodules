@@ -50,3 +50,4 @@
 [submodule "submodules/quickstart-eks-rafay-systems"]
 	path = submodules/quickstart-eks-rafay-systems
 	url = git@github.com:aws-quickstart/quickstart-eks-rafay-systems.git
+	branch = main
