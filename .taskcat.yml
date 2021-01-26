@@ -67,7 +67,6 @@ tests:
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
     regions:
-    - ca-central-1
     - cn-north-1
     - cn-northwest-1
   govcloud:
@@ -196,4 +195,4 @@ tests:
       RafaySysOrganizationName: override
       RafaySysEmail: override
     regions:
-    - us-west-2
+    - ca-central-1
