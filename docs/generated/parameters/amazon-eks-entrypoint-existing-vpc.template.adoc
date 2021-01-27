@@ -70,6 +70,21 @@
 |Parameter label (name) |Default value|Description|Calico Policy Intergration
 (`CalicoIntegration`)|`Disabled`|For more information see https://www.projectcalico.org/ .
 |===
+.Rafay System [APN Software & Internet partner]
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Rafay Systems Intergration
+(`RafaySysIntegration`)|`Disabled`|For more information see https://aws-quickstart.github.io/quickstart-eks-rafay-systems/ .|Rafay project
+(`RafaySysProject`)|`defaultproject`|TODO|Bootstrap S3 bucket
+(`RafaySysBootstrapBucket`)|`**__Blank string__**`|(Optional) S3 bucket to place the the rafay bootstrap yaml file. If left blank the EKS Quick Start bucket will be used.|Bootstrap S3 key
+(`RafaySysBootstrapKey`)|`**__Blank string__**`|(Optional) S3 key to place the the rafay bootstrap yaml file. If left blank the key will be rafay/<CLUSTER_NAME>/cluster-bootstrap.yaml.|API key
+(`RafaySysApiKey`)|`**__Blank string__**`|Required if using an existing Rafay account.|API secret
+(`RafaySysApiSecret`)|`**__Blank string__**`|Required if using an existing Rafay account.|First name
+(`RafaySysFirstName`)|`**__Blank string__**`|Required if registering a new Rafay account.|Last name
+(`RafaySysLastName`)|`**__Blank string__**`|Required if registering a new Rafay account.|Organization name
+(`RafaySysOrganizationName`)|`**__Blank string__**`|Required if registering a new Rafay account.|Email
+(`RafaySysEmail`)|`**__Blank string__**`|Required if registering a new Rafay account.
+|===
 .HashiCorp Vault (AWS Partner security)
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
