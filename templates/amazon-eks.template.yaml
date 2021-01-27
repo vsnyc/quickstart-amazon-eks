@@ -123,6 +123,48 @@ Parameters:
     AllowedValues: [ Enabled, Disabled ]
     Default: Disabled
     Description: "For more information see https://www.projectcalico.org/ ."
+  RafaySysIntegration:
+    Type: String
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
+    Description: "For more information see https://aws-quickstart.github.io/quickstart-eks-rafay-systems/ ."
+  RafaySysProject:
+    Type: String
+    Description: TODO
+    Default: "defaultproject"
+  RafaySysBootstrapBucket:
+    Type: String
+    Description: "(Optional) S3 bucket to place the the rafay bootstrap yaml file. If left blank the EKS Quick Start bucket will be used."
+    Default: ""
+  RafaySysBootstrapKey:
+    Type: String
+    Description: "(Optional) S3 key to place the the rafay bootstrap yaml file. If left blank the key will be rafay/<CLUSTER_NAME>/cluster-bootstrap.yaml."
+    Default: ""
+  RafaySysApiKey:
+    Type: String
+    Description: Required if using an existing Rafay account.
+    Default: ""
+  RafaySysApiSecret:
+    Type: String
+    Description: Required if using an existing Rafay account.
+    Default: ""
+    NoEcho: true
+  RafaySysFirstName:
+    Type: String
+    Description: Required if registering a new Rafay account.
+    Default: ""
+  RafaySysLastName:
+    Type: String
+    Description: Required if registering a new Rafay account.
+    Default: ""
+  RafaySysOrganizationName:
+    Type: String
+    Description: Required if registering a new Rafay account.
+    Default: ""
+  RafaySysEmail:
+    Type: String
+    Description: Required if registering a new Rafay account.
+    Default: ""
   ConfigSetName:
     Type: String
   TestSuite:
@@ -206,6 +248,7 @@ Conditions:
   EnableConsul: !Equals [ !Ref ConsulIntegration, Enabled]
   EnableNewRelic: !Equals [ !Ref NewRelicIntegration, Enabled]
   EnableCalico: !Equals [ !Ref CalicoIntegration, Enabled]
+  EnableRafaySys: !Equals [ !Ref RafaySysIntegration, Enabled ]
   EnableFargate: !Not [!Equals [ !Ref FargateNamespaces, ""]]
   3AZDeployment: !Not [!Equals [!Ref PrivateSubnet3ID, ""]]
   2AZDeployment: !Or
@@ -772,6 +815,33 @@ Resources:
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Sub '${QSS3KeyPrefix}submodules/quickstart-eks-tigera-calico/'
         QSS3BucketRegion: !Ref QSS3BucketRegion
+  RafaySysStack:
+    DependsOn: FunctionStack
+    Condition: EnableRafaySys
+    Type: AWS::CloudFormation::Stack
+    Metadata:
+      DependsOn:
+        - !Ref ControlPlaneSecurityGroupIngress
+        - !Ref NodeGroupStack
+        - !If [ EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue' ]
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-rafay-systems/templates/eks-rafay.template.yaml'
+        - S3Region: !If [ UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion ]
+          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
+      Parameters:
+        EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Sub '${QSS3KeyPrefix}submodules/quickstart-eks-rafay-systems/'
+        Project: !Ref RafaySysProject
+        BootstrapBucket: !Ref RafaySysBootstrapBucket
+        BootstrapKey: !Ref RafaySysBootstrapKey
+        ApiKey: !Ref RafaySysApiKey
+        ApiSecret: !Ref RafaySysApiSecret
+        FirstName: !Ref RafaySysFirstName
+        LastName: !Ref RafaySysLastName
+        OrganizationName: !Ref RafaySysOrganizationName
+        Email: !Ref RafaySysEmail
   WindowsSupportStack:
     DependsOn: WindowsSupportNodeGroupStack
     Condition: EnableWindows

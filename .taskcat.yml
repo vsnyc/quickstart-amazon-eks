@@ -67,7 +67,6 @@ tests:
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
     regions:
-    - ca-central-1
     - cn-north-1
     - cn-northwest-1
   govcloud:
@@ -185,3 +184,15 @@ tests:
       CalicoIntegration: Enabled
     regions:
     - us-west-2
+  rafaysystems:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      NodeGroupType: 'Unmanaged'
+      ALBIngressController: Disabled
+      RafaySysIntegration: Enabled
+      RafaySysFirstName: override
+      RafaySysLastName: override
+      RafaySysOrganizationName: override
+      RafaySysEmail: override
+    regions:
+    - ca-central-1
