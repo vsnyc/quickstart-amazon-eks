@@ -31,18 +31,6 @@ tests:
       ALBIngressController: Disabled
     regions:
     - eu-central-1
-  efs-prov:
-    parameters:
-      AvailabilityZones: $[taskcat_genaz_3]
-      EfsStorageClass: Enabled
-      ClusterAutoScaler: Disabled
-      EfsThroughputMode: provisioned
-      EfsProvisionedThroughputInMibps: 100
-      EKSPublicAccessEndpoint: Enabled
-      NodeGroupType: 'Unmanaged'
-      ALBIngressController: Disabled
-    regions:
-    - ap-east-1
   managed-node-group:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -142,7 +130,7 @@ tests:
       ALBIngressController: Enabled
   rancher:
     regions:
-    - us-west-1
+    - ap-east-1
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
