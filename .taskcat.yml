@@ -22,7 +22,7 @@ tests:
       ProvisionBastionHost: Disabled
       ALBIngressController: Disabled
     regions:
-      - ap-northeast-2
+    - ap-northeast-2
   cluster-autoscaler:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -31,18 +31,6 @@ tests:
       ALBIngressController: Disabled
     regions:
     - eu-central-1
-  efs-prov:
-    parameters:
-      AvailabilityZones: $[taskcat_genaz_3]
-      EfsStorageClass: Enabled
-      ClusterAutoScaler: Disabled
-      EfsThroughputMode: provisioned
-      EfsProvisionedThroughputInMibps: 100
-      EKSPublicAccessEndpoint: Enabled
-      NodeGroupType: 'Unmanaged'
-      ALBIngressController: Disabled
-    regions:
-    - ap-east-1
   managed-node-group:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -112,7 +100,7 @@ tests:
     - us-east-1
   enable-oidc:
     regions:
-      - eu-west-1
+    - eu-west-1
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       IamOidcProvider: Enabled
@@ -124,7 +112,7 @@ tests:
       ALBIngressController: Enabled
   snyk:
     regions:
-      - eu-west-3
+    - eu-west-3
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
@@ -133,12 +121,20 @@ tests:
       ALBIngressController: Enabled
   new-relic:
     regions:
-      - sa-east-1
+    - sa-east-1
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
       NewRelicIntegration: Enabled
       NewRelicLicenseKey: ---overridden---
+      ALBIngressController: Enabled
+  rancher:
+    regions:
+    - ap-east-1
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      EKSPublicAccessEndpoint: Enabled
+      RancherIntegration: Enabled
       ALBIngressController: Enabled
   managed-node-group-ASC:
     parameters:
