@@ -64,9 +64,9 @@ Resources:
               while True:
                   retries -= 1
                   status = c.describe_stacks(StackName=s)['Stacks'][0]['StackStatus']
-                  if status.endswith("COMPLETE"):
+                  if status in ["CREATE_COMPLETE", "UPDATE_COMPLETE"]:
                       break
-                  if status.endswith("FAILED") or retries == 0:
+                  if status.endswith("FAILED") or status in ["DELETE_COMPLETE", "UPDATE_ROLLBACK_COMPLETE"] or retries == 0:
                       raise RuntimeError(f"Stack operation failed: {o} {status} {s}")
                   sleep(randint(1000, 1500)/100)
               print(f"waiter({o}, {s}) done")
