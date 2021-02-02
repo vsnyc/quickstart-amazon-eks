@@ -59,7 +59,7 @@ Resources:
           BC = boto3.client
           CFN = 'cloudformation'
           def waiter(c, o, s):
-              print(f"waiter(o, s) started")
+              print(f"waiter({o}, {s}) started")
               retries = 50
               while True:
                   retries -= 1
@@ -69,7 +69,7 @@ Resources:
                   if status.endswith("FAILED") or retries == 0:
                       raise RuntimeError(f"Stack operation failed: {o} {status} {s}")
                   sleep(randint(1000, 1500)/100)
-              print(f"waiter(o, s) done")
+              print(f"waiter({o}, {s}) done")
           def get_stacks(key, val, region=None):
               cfn = BC(CFN, region_name=region, config=C)
               stacks = []
@@ -124,7 +124,7 @@ Resources:
                       put_stack(name, o_region, template_url, parameters, key, retries-1)
                       return
                   waiter(client, wait, stack_id)
-              except Exception as e:
+              except Exception:
                   traceback.print_exc()
                   if retries == 0:
                       raise
