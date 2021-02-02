@@ -138,6 +138,11 @@ Metadata:
           - ConsulUIHostedZoneID
           - ConsulUIDomainName
       - Label:
+          default: Rancher management (AWS Partner management)
+        Parameters:
+          - RancherIntegration
+          - RancherDomainName
+      - Label:
           default: Kubernetes add-ins
         Parameters:
           - ALBIngressController
@@ -268,6 +273,10 @@ Metadata:
         default: Route 53 hosted zone id
       ConsulUIDomainName:
         default: Consul UI Load balancer DNS name
+      RancherIntegration:
+        default: Rancher management integration
+      RancherDomainName:
+        default: Rancher domain name
 Parameters:
   AvailabilityZones:
     Description: List of Availability Zones to use for the subnets in the VPC. Three
@@ -581,6 +590,15 @@ Parameters:
       "Hosted zone id", provide a value for "ACM SSL certificate ARN".
     Type: String
     Default: ""
+  RancherIntegration:
+    Type: String
+    AllowedValues: [Enabled, Disabled]
+    Default: Disabled
+    Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-rancher/."
+  RancherDomainName:
+    Description: DNS domain name that users can use to access the Rancher console.
+    Type: String
+    Default: rancher.aws.private
 Conditions:
   DetectSharedStacks: !And
   - !Equals [!Ref PerAccountSharedResources, 'AutoDetect']
@@ -745,6 +763,8 @@ Resources:
         VaultUIHostedZoneID: !Ref VaultUIHostedZoneID
         VaultUIDomainName: !Ref VaultUIDomainName
         ConsulIntegration: !Ref ConsulIntegration
+        RancherIntegration: !Ref RancherIntegration
+        RancherDomainName: !Ref RancherDomainName
         ConsulUIACMSSLCertificateArn: !Ref ConsulUIACMSSLCertificateArn
         ConsulUIHostedZoneID: !Ref ConsulUIHostedZoneID
         ConsulUIDomainName: !Ref ConsulUIDomainName

@@ -236,6 +236,15 @@ Parameters:
       "Hosted zone id", provide a value for "ACM SSL certificate ARN".
     Type: String
     Default: ""
+  RancherIntegration:
+    Type: String
+    AllowedValues: [Enabled, Disabled]
+    Default: Disabled
+    Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-rancher/."
+  RancherDomainName:
+    Description: DNS domain name that users can use to access the Rancher console.
+    Type: String
+    Default: rancher.aws.private
 Mappings:
   Config:
     Prefix: { Value: 'eks-quickstart' }
@@ -250,6 +259,7 @@ Conditions:
   EnableCalico: !Equals [ !Ref CalicoIntegration, Enabled]
   EnableRafaySys: !Equals [ !Ref RafaySysIntegration, Enabled ]
   EnableFargate: !Not [!Equals [ !Ref FargateNamespaces, ""]]
+  EnableRancher: !Equals [!Ref RancherIntegration, Enabled]
   3AZDeployment: !Not [!Equals [!Ref PrivateSubnet3ID, ""]]
   2AZDeployment: !Or
     - !Not [!Equals [!Ref PrivateSubnet2ID, ""]]
@@ -858,6 +868,29 @@ Resources:
         OIDCProvider: !Join [ '', !Split [ 'https://', !GetAtt EKSControlPlane.Outputs.OIDCIssuerURL ] ]
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        QSS3BucketRegion: !Ref QSS3BucketRegion
+  RancherStack:
+    DependsOn: FunctionStack
+    Condition: EnableRancher
+    Type: AWS::CloudFormation::Stack
+    Metadata:
+      DependsOn:
+        - !Ref ControlPlaneSecurityGroupIngress
+        - !Ref NodeGroupStack
+        - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-rancher/templates/rancher.template.yaml'
+        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+      Parameters:
+        PrivateSubnet1ID: !Ref PrivateSubnet1ID
+        EKSClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        DomainName: !Ref RancherDomainName
+        IAMRole: !GetAtt IamStack.Outputs.BastionRole
+        SecurityGroup: !GetAtt NodeGroupStack.Outputs.EKSNodeSecurityGroup
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Sub '${QSS3KeyPrefix}submodules/quickstart-eks-rancher/'
         QSS3BucketRegion: !Ref QSS3BucketRegion
   ConfigureProxy:
     Condition: EnableProxy
