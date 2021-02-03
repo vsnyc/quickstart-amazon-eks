@@ -90,13 +90,20 @@ Resources:
               print(f"put_stack({name}, {region}, {template_url}, {parameters}, {key}, {retries})")
               o_region = region
               sleep(randint(0, 3000)/100) # jitter to reduce the chance of concurrent queries racing
-              if name == f'Account{SX}':
-                for r in [r['RegionName'] for r in BC('ec2').describe_regions()['Regions']]:
-                    acc_stack = get_stacks(key, name, r)
-                    if acc_stack:
-                        region = r
-                        break
-              stack_id = get_stacks(key, name, region)
+              try:
+                  if name == f'Account{SX}':
+                    for r in [r['RegionName'] for r in BC('ec2').describe_regions()['Regions']]:
+                        acc_stack = get_stacks(key, name, r)
+                        if acc_stack:
+                            region = r
+                            break
+                  stack_id = get_stacks(key, name, region)
+              except Exception:
+                  if retries == 0:
+                      raise
+                  sleep(randint(0, 3000)/100)
+                  put_stack(name, o_region, template_url, parameters, key, retries=retries-1)
+                  return
               client = BC(CFN, region_name=region)
               args = {
                   "StackName": stack_id if stack_id else f"{key}-{name}",
