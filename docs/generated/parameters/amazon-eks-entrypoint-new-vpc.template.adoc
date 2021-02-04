@@ -47,7 +47,7 @@
 (`NodeInstanceType`)|`t3.medium`|EC2 instance type.|Number of nodes
 (`NumberOfNodes`)|`3`|Number of Amazon EKS node instances. The default is one for each of the three Availability Zones.|Maximum number of nodes
 (`MaxNumberOfNodes`)|`3`|Maximum number of Amazon EKS node instances. The default is three.|Node group OS
-(`NodeGroupOS`)|`Amazon Linux 2`|Operating system to use for node instances. Note that if you choose "Windows," an additional Amazon Linux node group is created.|Node group type
+(`NodeGroupOS`)|`Amazon Linux 2`|Operating system to use for node instances. Choose "Bottlerocket" for the Amazon purpose-built container OS (unmanaged node groups only). Note that if you choose "Windows," an additional Amazon Linux node group is created.|Node group type
 (`NodeGroupType`)|`Managed`|Choose "Unmanaged" to create an Auto Scaling group without using the EKS-managed node groups feature.|Node instance family
 (`NodeInstanceFamily`)|`Standard`|Choose the instance family to match the value of "Node instance type."
 |===
