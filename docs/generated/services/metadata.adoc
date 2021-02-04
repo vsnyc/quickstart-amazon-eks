@@ -24,10 +24,12 @@
 :template_cloudformation:
 :template_clusteroidcprovider:
 :template_copyzips:
+:template_createcloudformationkubernetesvpcrole:
 :template_custom_cleanuploadbalancers:
 :template_custom_cliquery:
 :template_custom_clusteroidcprovider:
 :template_custom_copyzips:
+:template_custom_createcloudformationkubernetesvpcrole:
 :template_custom_enableproxy:
 :template_custom_fargate:
 :template_custom_generatename:
