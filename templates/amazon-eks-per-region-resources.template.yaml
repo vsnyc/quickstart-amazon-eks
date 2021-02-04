@@ -571,3 +571,65 @@ Resources:
       Name: 'QuickStartParameterResolver'
       Description: !Sub "Resolves ssm parameters in templates ${RandomStr}"
       FunctionName: !GetAtt ParameterResolverFunction.Arn
+  CloudformationVPCRoleCreationFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ['${Prefix}-CloudformationVPCRoleCreation', {Prefix: !FindInMap [Config, Prefix, Value]}]
+      Description: Creates the CloudformationVPCRoleCreation if it does not yet exist
+      Handler: index.handler
+      Runtime: python3.7
+      Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CloudformationVPCRoleCreation", {Prefix: !FindInMap [Config, Prefix, Value]}]
+      Timeout: 900
+      Code:
+        ZipFile: |
+          import cfnresponse
+          import logging
+          import boto3
+          from time import sleep
+          logger = logging.getLogger(__name__)
+          logger.setLevel(logging.DEBUG)
+          ASSUME_ROLE_POLICY="""{
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {
+                  "Service": "lambda.amazonaws.com"
+                },
+                "Action": "sts:AssumeRole"
+              }
+            ]
+          }"""
+          def handler(event, context):
+              logger.debug(event)
+              status = cfnresponse.SUCCESS
+              try:
+                  if event['RequestType'] == 'Create':
+                      iam = boto3.client('iam')
+                      partition = event['ResourceProperties']['Partition']
+                      try:
+                          iam.create_role(
+                              RoleName='CloudFormation-Kubernetes-VPC',
+                              AssumeRolePolicyDocument=ASSUME_ROLE_POLICY
+                          )
+                      except iam.exceptions.EntityAlreadyExistsException as e:
+                          logger.warning(e)
+                      while True:
+                          try:
+                              iam.attach_role_policy(
+                                  RoleName='CloudFormation-Kubernetes-VPC',
+                                  PolicyArn=f'arn:{partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+                              )
+                              iam.attach_role_policy(
+                                  RoleName='CloudFormation-Kubernetes-VPC',
+                                  PolicyArn=f'arn:{partition}:iam::aws:policy/service-role/AWSLambdaENIManagementAccess'
+                              )
+                              break
+                          except iam.exceptions.NoSuchEntityException as e:
+                              logger.warning(e)
+                              sleep(30)
+              except Exception:
+                  logger.error('Unhandled exception', exc_info=True)
+                  status = cfnresponse.FAILED
+              finally:
+                  cfnresponse.send(event, context, status, {}, event.get('PhysicalResourceId', context.log_stream_name))
