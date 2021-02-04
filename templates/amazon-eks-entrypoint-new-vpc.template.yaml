@@ -539,8 +539,8 @@ Parameters:
       - 'Bottlerocket'
       - 'Windows'
     Default: 'Amazon Linux 2'
-    Description: Operating system to use for node instances. Note that if you choose "Windows," an additional
-      Amazon Linux node group is created.
+    Description: Operating system to use for node instances. Choose "Bottlerocket" for the Amazon purpose-built container OS 
+      (unmanaged node groups only). Note that if you choose "Windows," an additional Amazon Linux node group is created.
     Type: String
   VaultIntegration:
     Type: String
