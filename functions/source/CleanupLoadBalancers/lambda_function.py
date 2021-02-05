@@ -8,6 +8,7 @@
 import boto3
 import logging
 from crhelper import CfnResource
+from time import sleep
 
 logger = logging.getLogger(__name__)
 helper = CfnResource(json_logging=True, log_level='DEBUG')
@@ -74,6 +75,10 @@ def delete_handler(event, _):
             for lb in lbs_to_remove:
                 print("removing elb %s" % lb)
                 elb.delete_load_balancer(**{lt[1]: lb})
+    del_sgs(tag_key, event["ResourceProperties"]["ClusterName"])
+
+
+def del_sgs(tag_key, cluster_name):
     ec2 = boto3.client('ec2')
     filters = [
         [
@@ -81,21 +86,29 @@ def delete_handler(event, _):
             {'Name': 'resource-type', 'Values': ['security-group']}
         ],
         [
-            {'Name': 'tag:elbv2.k8s.aws/cluster', 'Values': [event["ResourceProperties"]["ClusterName"]]},
+            {'Name': 'tag:elbv2.k8s.aws/cluster', 'Values': [cluster_name]},
             {'Name': 'resource-type', 'Values': ['security-group']}
         ]
     ]
+
     for f in filters:
         response = ec2.describe_tags(Filters=f)
         for t in [r['ResourceId'] for r in response['Tags']]:
-            try:
-                ec2.delete_security_group(GroupId=t)
-            except ec2.exceptions.ClientError as e:
-                if 'DependencyViolation' in str(e):
-                    print("Dependency error on %s" % t)
-                    delete_dependencies(t, ec2)
-                else:
-                    print(e)
+            clean = False
+            retries = 10
+            while not clean and retries > 0:
+                try:
+                    ec2.delete_security_group(GroupId=t)
+                    clean = True
+                except ec2.exceptions.ClientError as e:
+                    if 'DependencyViolation' in str(e):
+                        retries -= 1
+                        print("Dependency error on %s" % t)
+                        sleep(5)
+                        delete_dependencies(t, ec2)
+                    else:
+                        clean = True  # we don't know why it can't delete, so we're just logging it and moving on
+                        print(e)
 
 
 def lambda_handler(event, context):

@@ -89,6 +89,7 @@ Resources:
       }
   EKS:
     Type: "AWSQS::EKS::Cluster"
+    DependsOn: CleanupLoadBalancers
     Properties:
       Name: !Ref EKSClusterName
       ResourcesVpcConfig:
@@ -154,7 +155,7 @@ Resources:
     Type: Custom::CleanupLoadBalancers
     Properties:
       ServiceToken: !Sub ['arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-CleanupLoadBalancers', {Prefix: !FindInMap [Config, Prefix, Value]}]
-      ClusterName: !Ref EKS
+      ClusterName: !Ref EKSClusterName
   CallerArn:
     Type: Custom::GetCallerArn
     Properties:
