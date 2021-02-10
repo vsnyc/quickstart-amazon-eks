@@ -598,7 +598,7 @@ Parameters:
   RancherDomainName:
     Description: DNS domain name that users can use to access the Rancher console.
     Type: String
-    Default: rancher.aws.private
+    Default: aws.private
 Conditions:
   DetectSharedStacks: !And
   - !Equals [!Ref PerAccountSharedResources, 'AutoDetect']
