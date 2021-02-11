@@ -108,7 +108,7 @@
 |===
 |Parameter label (name) |Default value|Description|Rancher management integration
 (`RancherIntegration`)|`Disabled`|For more information, see https://github.com/aws-quickstart/quickstart-eks-rancher/.|Rancher management domain name
-(`RancherDomainName`)|`rancher.aws.private`|DNS domain name that users can use to access the Rancher console.
+(`RancherDomainName`)|`aws.private`|DNS domain name that users can use to access the Rancher console.
 |===
 .Kubernetes add-ins
 [width="100%",cols="16%,11%,73%",options="header",]
