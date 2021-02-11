@@ -560,7 +560,7 @@ Parameters:
   RancherDomainName:
     Description: DNS domain name that users can use to access the Rancher console.
     Type: String
-    Default: rancher.aws.private
+    Default: aws.private
 Mappings:
   Config:
     Prefix: { Value: 'eks-quickstart' }

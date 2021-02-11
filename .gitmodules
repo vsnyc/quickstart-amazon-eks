@@ -48,7 +48,7 @@
     branch = main
 [submodule "submodules/quickstart-eks-rancher"]
 	path = submodules/quickstart-eks-rancher
-	url = https://github.com/aws-quickstart/quickstart-eks-rancher.git
+	url = git@github.com:aws-quickstart/quickstart-eks-rancher.git
   	branch = main
 [submodule "submodules/quickstart-eks-rafay-systems"]
 	path = submodules/quickstart-eks-rafay-systems
