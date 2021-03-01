@@ -59,7 +59,9 @@ Metadata:
     - rafay
     - DomainName
     - Hosted
-    - Domain
+    - Domain Name
+    - Domain name
+    - Grafana
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -156,6 +158,8 @@ Metadata:
           - ALBIngressController
           - ClusterAutoScaler
           - EfsStorageClass
+          - PrometheusIntegration
+          - GrafanaIntegration
           - MonitoringStack
       - Label:
           default: AWS Quick Start configuration
@@ -285,6 +289,10 @@ Metadata:
         default: Rancher management integration
       RancherDomainName:
         default: Rancher domain name
+      PrometheusIntegration:
+        default: Prometheus integration
+      GrafanaIntegration:
+        default: Grafana integration
 Parameters:
   AvailabilityZones:
     Description: List of Availability Zones to use for the subnets in the VPC. Three
@@ -410,7 +418,17 @@ Parameters:
     Type: String
     AllowedValues: [ "Prometheus + Grafana", "None" ]
     Default: "None"
-    Description: Enable monitoring stack with "Prometheus+Grafana."
+    Description: 'Enable monitoring stack with "Prometheus+Grafana." Warning: this is a legacy parameter and will be dropped from the next version of this Quick Start. Please use the "Grafana integration" and "Prometheus integration" parameters instead.'
+  GrafanaIntegration:
+    Type: String
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
+    Description: 'Grafana requires "Prometheus integration" to be enabled. For more information see https://www.grafana.com/ .'
+  PrometheusIntegration:
+    Type: String
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
+    Description: 'For more information see https://prometheus.io/ .'
   NumberOfAZs:
     Type: String
     AllowedValues: ["2", "3"]
@@ -608,6 +626,12 @@ Parameters:
     Type: String
     Default: aws.private
 Conditions:
+  EnablePrometheus: !Or
+    - !Equals [!Ref PrometheusIntegration, "Enabled"]
+    - !Equals [!Ref MonitoringStack, "Prometheus + Grafana"]
+  EnableGrafana: !Or
+    - !Equals [!Ref GrafanaIntegration, "Enabled"]
+    - !Equals [!Ref MonitoringStack, "Prometheus + Grafana"]
   DetectSharedStacks: !And
   - !Equals [!Ref PerAccountSharedResources, 'AutoDetect']
   - !Equals [!Ref PerRegionSharedResources, 'AutoDetect']
@@ -714,7 +738,7 @@ Resources:
         - !If [CreatePerRegionSharedResources, !Ref RegionalSharedResources, !Ref 'AWS::NoValue']
         - !If [CreatePerAccountSharedResources, !Ref AccountSharedResources, !Ref 'AWS::NoValue']
         - !If [DetectSharedStacks, !Ref AutoDetectSharedResources, !Ref 'AWS::NoValue']
-      cfn-lint: { config: { ignore_checks: [ W9901 ] } }
+      cfn-lint: { config: { ignore_checks: [ W9901, E9902 ] } }
     Properties:
       TemplateURL: !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks.template.yaml'
@@ -755,7 +779,8 @@ Resources:
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         ProvisionClusterAutoScaler: !Ref ClusterAutoScaler
         EfsStorageClass: !Ref EfsStorageClass
-        ProvisionMonitoringStack: !Ref MonitoringStack
+        GrafanaIntegration: !If [EnableGrafana, 'Enabled', 'Disabled']
+        PrometheusIntegration: !If [EnablePrometheus, 'Enabled', 'Disabled']
         ProvisionBastionHost: !Ref ProvisionBastionHost
         EKSPublicAccessEndpoint: !Ref EKSPublicAccessEndpoint
         ProvisionALBIngressController: !Ref ALBIngressController

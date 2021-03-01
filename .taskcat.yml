@@ -42,7 +42,8 @@ tests:
   monitoring-prom-graf:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      MonitoringStack: Prometheus + Grafana
+      PrometheusIntegration: Enabled
+      GrafanaIntegration: Enabled
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled

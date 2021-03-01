@@ -54,3 +54,9 @@
 	path = submodules/quickstart-eks-rafay-systems
 	url = git@github.com:aws-quickstart/quickstart-eks-rafay-systems.git
 	branch = main
+[submodule "submodules/quickstart-eks-grafana"]
+	path = submodules/quickstart-eks-grafana
+	url = git@github.com:aws-quickstart/quickstart-eks-grafana.git
+[submodule "submodules/quickstart-eks-prometheus"]
+	path = submodules/quickstart-eks-prometheus
+	url = git@github.com:aws-quickstart/quickstart-eks-prometheus.git
