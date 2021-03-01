@@ -52,6 +52,14 @@ Metadata:
     - RafaySysLastName
     - RafaySysOrganizationName
     - RafaySysEmail
+    - Rafay Systems
+    - Rafay
+    - Rancher
+    - yaml
+    - rafay
+    - DomainName
+    - Hosted
+    - Domain
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -107,11 +115,11 @@ Metadata:
           - NewRelicIntegration
           - NewRelicLicenseKey
       - Label:
-          default: Calico Policy [APN security partner]
+          default: Calico policy [APN security partner]
         Parameters:
           - CalicoIntegration
       - Label:
-          default: Rafay System [APN Software & Internet partner]
+          default: Rafay Systems [APN software & internet partner]
         Parameters:
           - RafaySysIntegration
           - RafaySysProject
@@ -222,9 +230,9 @@ Metadata:
       NewRelicLicenseKey:
         default: License key
       CalicoIntegration:
-        default: Calico Policy Intergration
+        default: Calico policy integration
       RafaySysIntegration:
-        default: Rafay Systems Intergration
+        default: Rafay Systems integration
       RafaySysProject:
         default: Rafay project
       RafaySysFirstName:
@@ -264,7 +272,7 @@ Metadata:
       VaultUIHostedZoneID:
         default: Route 53 hosted zone id
       VaultUIDomainName:
-        default: Vault UI Load balancer DNS name
+        default: Vault UI load balancer DNS name
       ConsulIntegration:
         default: HashiCorp Consul integration
       ConsulUIACMSSLCertificateArn:
@@ -272,7 +280,7 @@ Metadata:
       ConsulUIHostedZoneID:
         default: Route 53 hosted zone id
       ConsulUIDomainName:
-        default: Consul UI Load balancer DNS name
+        default: Consul UI load balancer DNS name
       RancherIntegration:
         default: Rancher management integration
       RancherDomainName:
@@ -466,15 +474,15 @@ Parameters:
     Description: "For more information see https://aws-quickstart.github.io/quickstart-eks-rafay-systems/ ."
   RafaySysProject:
     Type: String
-    Description: TODO
+    Description: Name of the Rafay project to join this cluster to.
     Default: "defaultproject"
   RafaySysBootstrapBucket:
     Type: String
-    Description: "(Optional) S3 bucket to place the the rafay bootstrap yaml file. If left blank the EKS Quick Start bucket will be used."
+    Description: "(Optional) S3 bucket to place the the Rafay bootstrap yaml file. If left blank the EKS Quick Start bucket will be used."
     Default: ""
   RafaySysBootstrapKey:
     Type: String
-    Description: "(Optional) S3 key to place the the rafay bootstrap yaml file. If left blank the key will be rafay/<CLUSTER_NAME>/cluster-bootstrap.yaml."
+    Description: "(Optional) S3 key to place the the Rafay bootstrap yaml file. If left blank the key will be rafay/<CLUSTER_NAME>/cluster-bootstrap.yaml."
     Default: ""
   RafaySysApiKey:
     Type: String
@@ -666,7 +674,7 @@ Resources:
     Condition: CreatePerRegionSharedResources
     DeletionPolicy: Retain
     Metadata:
-      cfn-lint: { config: { ignore_checks: [W3011] } }
+      cfn-lint: { config: { ignore_checks: [W3011, W9901] } }
       DependsOn: !If [CreatePerAccountSharedResources, !Ref AccountSharedResources, !Ref 'AWS::NoValue']
     Properties:
       TemplateURL: !Sub
