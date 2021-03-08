@@ -75,7 +75,7 @@
 |===
 |Parameter label (name) |Default value|Description|Rafay Systems Intergration
 (`RafaySysIntegration`)|`Disabled`|For more information see https://aws-quickstart.github.io/quickstart-eks-rafay-systems/ .|Rafay project
-(`RafaySysProject`)|`defaultproject`|TODO|Bootstrap S3 bucket
+(`RafaySysProject`)|`defaultproject`|This is the name you want to use for you Rafay deployment.|Bootstrap S3 bucket
 (`RafaySysBootstrapBucket`)|`**__Blank string__**`|(Optional) S3 bucket to place the the rafay bootstrap yaml file. If left blank the EKS Quick Start bucket will be used.|Bootstrap S3 key
 (`RafaySysBootstrapKey`)|`**__Blank string__**`|(Optional) S3 key to place the the rafay bootstrap yaml file. If left blank the key will be rafay/<CLUSTER_NAME>/cluster-bootstrap.yaml.|API key
 (`RafaySysApiKey`)|`**__Blank string__**`|Required if using an existing Rafay account.|API secret
