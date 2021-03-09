@@ -75,10 +75,14 @@ Parameters:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Disabled"
-  ProvisionMonitoringStack:
+  GrafanaIntegration:
     Type: String
-    AllowedValues: [ "Prometheus + Grafana", "None" ]
-    Default: "None"
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
+  PrometheusIntegration:
+    Type: String
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
   ProvisionBastionHost:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
@@ -274,7 +278,8 @@ Conditions:
   EnableClusterAutoScaler: !Equals [!Ref 'ProvisionClusterAutoScaler', 'Enabled']
   EnableMetricsServer: !Equals [!Ref 'ProvisionMetricsServer', 'Enabled']
   EnableLoadBalancerController: !Equals [!Ref 'ProvisionALBIngressController', 'Enabled']
-  EnableMonitoringPrometheusGrafana: !Equals [!Ref 'ProvisionMonitoringStack', 'Prometheus + Grafana']
+  EnableGrafana: !Equals [!Ref 'GrafanaIntegration', 'Enabled']
+  EnablePrometheus: !Equals [!Ref 'PrometheusIntegration', 'Enabled']
   EnableEfs: !Equals [!Ref 'EfsStorageClass', 'Enabled']
   EnableWindows: !Equals [!Ref 'NodeGroupOS', 'Windows']
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
@@ -350,6 +355,7 @@ Resources:
   NodeGroupStack:
     Type: "AWS::CloudFormation::Stack"
     Metadata:
+      cfn-lint: { config: { ignore_checks: [ W9901 ] } }
       DependsOn:
         - !If [EnableWindows, !Ref WindowsSupportNodeGroupStack, !Ref 'AWS::NoValue']
         - !Ref EKSControlPlane
@@ -588,34 +594,36 @@ Resources:
         EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
   PrometheusStack:
     Metadata:
+      cfn-lint: { config: { ignore_checks: [ W9901 ] } }
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
-    Condition: EnableMonitoringPrometheusGrafana
+    Condition: EnablePrometheus
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-prometheus.template.yaml'
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-prometheus/templates/eks-prometheus.template.yaml'
         - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
-        ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
   GrafanaStack:
     Metadata:
+      cfn-lint: { config: { ignore_checks: [ W9901 ] } }
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
-    Condition: EnableMonitoringPrometheusGrafana
+    Condition: EnableGrafana
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-grafana.template.yaml'
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-grafana/templates/eks-grafana.template.yaml'
         - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
-        ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
   FargateStack:
     Condition: EnableFargate
     Type: AWS::CloudFormation::Stack

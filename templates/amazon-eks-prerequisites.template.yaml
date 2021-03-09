@@ -89,7 +89,7 @@ Resources:
           def put_stack(name, region, template_url, parameters, key):
               print(f"put_stack({name}, {region}, {template_url}, {parameters}, {key})")
               o_region = region
-              sleep(randint(0, 3000) / 100)  # jitter to reduce the chance of concurrent queries racing
+              sleep(randint(0, 6000) / 100)  # jitter to reduce the chance of concurrent queries racing
               if name == f'Account{SX}':
                   for r in [r['RegionName'] for r in BC('ec2').describe_regions()['Regions']]:
                       acc_stack = get_stacks(key, name, r)

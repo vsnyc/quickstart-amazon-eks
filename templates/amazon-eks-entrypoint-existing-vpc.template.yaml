@@ -38,7 +38,8 @@ Metadata:
     - Consul
     - HashiCorp
     - Hosted
-    - Domain
+    - Domain Name
+    - DomainName
     - CalicoIntegration
     - RafaySysIntegration
     - RafaySysProject
@@ -50,6 +51,12 @@ Metadata:
     - RafaySysLastName
     - RafaySysOrganizationName
     - RafaySysEmail
+    - Rafay Systems
+    - Rafay
+    - Rancher
+    - yaml
+    - rafay
+    - Domain name
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -104,11 +111,11 @@ Metadata:
           - NewRelicIntegration
           - NewRelicLicenseKey
       - Label:
-          default: Calico Policy [APN security partner]
+          default: Calico policy [APN security partner]
         Parameters:
           - CalicoIntegration
       - Label:
-          default: Rafay System [APN Software & Internet partner]
+          default: Rafay Systems [APN software & internet partner]
         Parameters:
           - RafaySysIntegration
           - RafaySysProject
@@ -145,6 +152,8 @@ Metadata:
           - ALBIngressController
           - ClusterAutoScaler
           - EfsStorageClass
+          - PrometheusIntegration
+          - GrafanaIntegration
           - MonitoringStack
       - Label:
           default: AWS Quick Start configuration
@@ -204,9 +213,9 @@ Metadata:
       NewRelicLicenseKey:
         default: License key
       CalicoIntegration:
-        default: Calico Policy Intergration
+        default: Calico policy integration
       RafaySysIntegration:
-        default: Rafay Systems Intergration
+        default: Rafay Systems integration
       RafaySysProject:
         default: Rafay project
       RafaySysFirstName:
@@ -269,6 +278,10 @@ Metadata:
         default: Rancher management integration
       RancherDomainName:
         default: Rancher management domain name
+      PrometheusIntegration:
+        default: Prometheus integration
+      GrafanaIntegration:
+        default: Grafana integration
 Parameters:
   KeyPairName:
     Description: Name of an existing key pair, which allows you
@@ -469,7 +482,17 @@ Parameters:
     Type: String
     AllowedValues: [ "Prometheus + Grafana", "None" ]
     Default: "None"
-    Description: Enable monitoring stack with "Prometheus+Grafana."
+    Description: 'Enable monitoring stack with "Prometheus+Grafana." Warning: this is a legacy parameter and will be dropped from the next version of this Quick Start. Please use the "Grafana integration" and "Prometheus integration" parameters instead.'
+  GrafanaIntegration:
+    Type: String
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
+    Description: 'Grafana requires "Prometheus integration" to be enabled. For more information see https://www.grafana.com/ .'
+  PrometheusIntegration:
+    Type: String
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
+    Description: 'For more information see https://prometheus.io/ .'
   MaxNumberOfNodes:
     Default: 3
     Description: Maximum number of Amazon EKS node instances. The default is three.
@@ -574,6 +597,12 @@ Conditions:
   CreatePerRegionSharedResources: !Equals [!Ref PerRegionSharedResources, 'Yes']
   WindowsNodes: !Equals [!Ref NodeGroupOS, 'Windows']
   VaultEnabled: !Equals [!Ref VaultIntegration, 'Enabled']
+  EnablePrometheus: !Or
+    - !Equals [!Ref PrometheusIntegration, "Enabled"]
+    - !Equals [!Ref MonitoringStack, "Prometheus + Grafana"]
+  EnableGrafana: !Or
+    - !Equals [!Ref GrafanaIntegration, "Enabled"]
+    - !Equals [!Ref MonitoringStack, "Prometheus + Grafana"]
 Resources:
   AutoDetectSharedResources:
     Type: AWS::CloudFormation::Stack
@@ -609,7 +638,7 @@ Resources:
     Condition: CreatePerRegionSharedResources
     DeletionPolicy: Retain
     Metadata:
-      cfn-lint: { config: { ignore_checks: [W3011] } }
+      cfn-lint: { config: { ignore_checks: [W3011, W9901] } }
       DependsOn: !If [CreatePerAccountSharedResources, !Ref AccountSharedResources, !Ref 'AWS::NoValue']
     Properties:
       TemplateURL: !Sub
@@ -638,7 +667,7 @@ Resources:
   EKSStack:
     Type: AWS::CloudFormation::Stack
     Metadata:
-      cfn-lint: { config: { ignore_checks: [ W9901 ] } }
+      cfn-lint: { config: { ignore_checks: [ W9901, E9902 ] } }
       DependsOn:
       - !If [CreatePerRegionSharedResources, !Ref RegionalSharedResources, !Ref 'AWS::NoValue']
       - !If [CreatePerAccountSharedResources, !Ref AccountSharedResources, !Ref 'AWS::NoValue']
@@ -679,7 +708,8 @@ Resources:
         NewRelicLicenseKey: !Ref NewRelicLicenseKey
         NewRelicIntegration: !Ref NewRelicIntegration
         ConfigSetName: !If [CreateAdvancedConfigWithDefaults, !Ref 'AWS::StackName', !Ref ConfigSetName]
-        ProvisionMonitoringStack: !Ref MonitoringStack
+        GrafanaIntegration: !If [EnableGrafana, 'Enabled', 'Disabled']
+        PrometheusIntegration: !If [EnablePrometheus, 'Enabled', 'Disabled']
         FargateLabels: !Ref FargateLabels
         FargateNamespaces: !Ref FargateNamespaces
         NodeGroupOS: !Ref NodeGroupOS

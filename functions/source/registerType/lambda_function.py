@@ -73,7 +73,17 @@ def put_role(role_name, policy, trust_policy):
                 if len(versions) >= 5:
                     oldest = [v for v in versions if not v['IsDefaultVersion']][-1]['VersionId']
                     iam.delete_policy_version(PolicyArn=arn, VersionId=oldest)
-                iam.create_policy_version(PolicyArn=arn, PolicyDocument=json.dumps(policy), SetAsDefault=True)
+                while True:
+                    try:
+                        iam.create_policy_version(PolicyArn=arn, PolicyDocument=json.dumps(policy), SetAsDefault=True)
+                        break
+                    except Exception as e:
+                        if 'you must delete an existing version' in str(e):
+                            versions = iam.list_policy_versions(PolicyArn=arn)['Versions']
+                            oldest = [v for v in versions if not v['IsDefaultVersion']][-1]['VersionId']
+                            iam.delete_policy_version(PolicyArn=arn, VersionId=oldest)
+                            continue
+                        raise
             iam.attach_role_policy(RoleName=role_name, PolicyArn=arn)
             return role_arn
         except Exception as e:
