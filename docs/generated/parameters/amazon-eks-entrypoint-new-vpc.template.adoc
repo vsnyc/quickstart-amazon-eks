@@ -65,20 +65,20 @@
 (`NewRelicIntegration`)|`Disabled`|For more information, see https://github.com/aws-quickstart/quickstart-eks-newrelic-infrastructure/."|License key
 (`NewRelicLicenseKey`)|`**__Blank string__**`|If the NewRelicIntegration parameter is set to "Enabled," a value must be provided. For more information see https://docs.newrelic.com/docs/accounts/install-new-relic/account-setup/license-key/.
 |===
-.Calico Policy [APN security partner]
+.Calico policy [APN security partner]
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
-|Parameter label (name) |Default value|Description|Calico Policy Intergration
+|Parameter label (name) |Default value|Description|Calico policy integration
 (`CalicoIntegration`)|`Disabled`|For more information see https://www.projectcalico.org/ .
 |===
-.Rafay System [APN Software & Internet partner]
+.Rafay Systems [APN software & internet partner]
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
-|Parameter label (name) |Default value|Description|Rafay Systems Intergration
+|Parameter label (name) |Default value|Description|Rafay Systems integration
 (`RafaySysIntegration`)|`Disabled`|For more information see https://aws-quickstart.github.io/quickstart-eks-rafay-systems/ .|Rafay project
 (`RafaySysProject`)|`defaultproject`|This is the name you want to use for you Rafay deployment.|Bootstrap S3 bucket
-(`RafaySysBootstrapBucket`)|`**__Blank string__**`|(Optional) S3 bucket to place the the rafay bootstrap yaml file. If left blank the EKS Quick Start bucket will be used.|Bootstrap S3 key
-(`RafaySysBootstrapKey`)|`**__Blank string__**`|(Optional) S3 key to place the the rafay bootstrap yaml file. If left blank the key will be rafay/<CLUSTER_NAME>/cluster-bootstrap.yaml.|API key
+(`RafaySysBootstrapBucket`)|`**__Blank string__**`|(Optional) S3 bucket to place the the Rafay bootstrap yaml file. If left blank the EKS Quick Start bucket will be used.|Bootstrap S3 key
+(`RafaySysBootstrapKey`)|`**__Blank string__**`|(Optional) S3 key to place the the Rafay bootstrap yaml file. If left blank the key will be rafay/<CLUSTER_NAME>/cluster-bootstrap.yaml.|API key
 (`RafaySysApiKey`)|`**__Blank string__**`|Required if using an existing Rafay account.|API secret
 (`RafaySysApiSecret`)|`**__Blank string__**`|Required if using an existing Rafay account.|First name
 (`RafaySysFirstName`)|`**__Blank string__**`|Required if registering a new Rafay account.|Last name
@@ -92,7 +92,7 @@
 |Parameter label (name) |Default value|Description|HashiCorp Vault integration
 (`VaultIntegration`)|`Disabled`|For more information, see https://github.com/aws-quickstart/quickstart-eks-hashicorp-vault/.|Vault UI ACM SSL certificate ARN
 (`VaultUIACMSSLCertificateArn`)|`**__Blank string__**`|ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and "Hosted zone id", provide a value for "ACM SSL certificate ARN".|Route 53 hosted zone id
-(`VaultUIHostedZoneID`)|`**__Blank string__**`|Route 53-hosted zone ID of the domain name. If you don't provide an ACMSSLCertificateArn value, the Quick Start creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.|Vault UI Load balancer DNS name
+(`VaultUIHostedZoneID`)|`**__Blank string__**`|Route 53-hosted zone ID of the domain name. If you don't provide an ACMSSLCertificateArn value, the Quick Start creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.|Vault UI load balancer DNS name
 (`VaultUIDomainName`)|`**__Blank string__**`|Fully qualified DNS name for the vault-ui service load balancer. If you don't provide a value for "ACM SSL certificate ARN", use the HostedZoneID.
 |===
 .HashiCorp Consul (AWS Partner containers)
@@ -101,7 +101,7 @@
 |Parameter label (name) |Default value|Description|HashiCorp Consul integration
 (`ConsulIntegration`)|`Disabled`|For more information, see https://github.com/aws-quickstart/quickstart-eks-hashicorp-consul/.|ACM SSL certificate ARN
 (`ConsulUIACMSSLCertificateArn`)|`**__Blank string__**`|ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and "Hosted zone id", provide a value for "ACM SSL certificate ARN".|Route 53 hosted zone id
-(`ConsulUIHostedZoneID`)|`**__Blank string__**`|Route 53-hosted zone ID of the domain name. If you don't provide an ACMSSLCertificateArn value, the Quick Start creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.|Consul UI Load balancer DNS name
+(`ConsulUIHostedZoneID`)|`**__Blank string__**`|Route 53-hosted zone ID of the domain name. If you don't provide an ACMSSLCertificateArn value, the Quick Start creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.|Consul UI load balancer DNS name
 (`ConsulUIDomainName`)|`**__Blank string__**`|Fully qualified DNS name for the consul-ui service load balancer. If you don't provide a value for "ACM SSL certificate ARN", use the HostedZoneID.
 |===
 .Rancher management (AWS Partner management)
@@ -117,8 +117,10 @@
 |Parameter label (name) |Default value|Description|AWS load balancer controller
 (`ALBIngressController`)|`Enabled`|Choose "Disabled" to skip deploying the AWS load balancer controller.|Cluster autoscaler
 (`ClusterAutoScaler`)|`Disabled`|Choose "Enabled" to enable Kubernetes cluster autoscaler.|EFS storage class
-(`EfsStorageClass`)|`Disabled`|Choose "Enabled" to enable EFS storage class.|Monitoring stack
-(`MonitoringStack`)|`None`|Enable monitoring stack with "Prometheus+Grafana."
+(`EfsStorageClass`)|`Disabled`|Choose "Enabled" to enable EFS storage class.|Prometheus integration
+(`PrometheusIntegration`)|`Disabled`|For more information see https://prometheus.io/ .|Grafana integration
+(`GrafanaIntegration`)|`Disabled`|Grafana requires "Prometheus integration" to be enabled. For more information see https://www.grafana.com/ .|Monitoring stack
+(`MonitoringStack`)|`None`|Enable monitoring stack with "Prometheus+Grafana." Warning: this is a legacy parameter and will be dropped from the next version of this Quick Start. Please use the "Grafana integration" and "Prometheus integration" parameters instead.
 |===
 .AWS Quick Start configuration
 [width="100%",cols="16%,11%,73%",options="header",]

@@ -64,16 +64,16 @@
 (`NewRelicIntegration`)|`Disabled`|For more information, see https://github.com/aws-quickstart/quickstart-eks-newrelic-infrastructure/.|License key
 (`NewRelicLicenseKey`)|`**__Blank string__**`|If New Relic is enabled, this must be provided. For more information, see https://docs.newrelic.com/docs/accounts/install-new-relic/account-setup/license-key.
 |===
-.Calico Policy [APN security partner]
+.Calico policy [APN security partner]
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
-|Parameter label (name) |Default value|Description|Calico Policy Intergration
+|Parameter label (name) |Default value|Description|Calico policy integration
 (`CalicoIntegration`)|`Disabled`|For more information see https://www.projectcalico.org/ .
 |===
-.Rafay System [APN Software & Internet partner]
+.Rafay Systems [APN software & internet partner]
 [width="100%",cols="16%,11%,73%",options="header",]
 |===
-|Parameter label (name) |Default value|Description|Rafay Systems Intergration
+|Parameter label (name) |Default value|Description|Rafay Systems integration
 (`RafaySysIntegration`)|`Disabled`|For more information see https://aws-quickstart.github.io/quickstart-eks-rafay-systems/ .|Rafay project
 (`RafaySysProject`)|`defaultproject`|This is the name you want to use for you Rafay deployment.|Bootstrap S3 bucket
 (`RafaySysBootstrapBucket`)|`**__Blank string__**`|(Optional) S3 bucket to place the the rafay bootstrap yaml file. If left blank the EKS Quick Start bucket will be used.|Bootstrap S3 key
@@ -116,8 +116,10 @@
 |Parameter label (name) |Default value|Description|AWS load balancer controller
 (`ALBIngressController`)|`Enabled`|Choose "Enabled" to deploy the AWS load balancer controller.|Cluster autoscaler
 (`ClusterAutoScaler`)|`Disabled`|Choose "Enabled" to enable Kubernetes cluster autoscaler.|EFS storage class
-(`EfsStorageClass`)|`Disabled`|Choose "Enabled" to enable EFS storage class.|Monitoring stack
-(`MonitoringStack`)|`None`|Enable monitoring stack with "Prometheus+Grafana."
+(`EfsStorageClass`)|`Disabled`|Choose "Enabled" to enable EFS storage class.|Prometheus integration
+(`PrometheusIntegration`)|`Disabled`|For more information see https://prometheus.io/ .|Grafana integration
+(`GrafanaIntegration`)|`Disabled`|Grafana requires "Prometheus integration" to be enabled. For more information see https://www.grafana.com/ .|Monitoring stack
+(`MonitoringStack`)|`None`|Enable monitoring stack with "Prometheus+Grafana." Warning: this is a legacy parameter and will be dropped from the next version of this Quick Start. Please use the "Grafana integration" and "Prometheus integration" parameters instead.
 |===
 .AWS Quick Start configuration
 [width="100%",cols="16%,11%,73%",options="header",]
