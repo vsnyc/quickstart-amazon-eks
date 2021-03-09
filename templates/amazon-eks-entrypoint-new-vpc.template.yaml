@@ -492,7 +492,7 @@ Parameters:
     Description: "For more information see https://aws-quickstart.github.io/quickstart-eks-rafay-systems/ ."
   RafaySysProject:
     Type: String
-    Description: Name of the Rafay project to join this cluster to.
+    Description: "This is the name you want to use for you Rafay deployment."
     Default: "defaultproject"
   RafaySysBootstrapBucket:
     Type: String
