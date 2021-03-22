@@ -389,6 +389,8 @@ Resources:
         NodeSecurityGroupId: ~~/<ConfigSetName>/default-nodegroup/NodeSecurityGroupId~~
         LaunchTemplateId: ~~/<ConfigSetName>/default-nodegroup/LaunchTemplateId~~
         LaunchTemplateVersion: ~~/<ConfigSetName>/default-nodegroup/LaunchTemplateVersion~~
+        WindowsVersion: ~~/<ConfigSetName>/windows-nodegroup/WindowsNodeVersion~~
+        WindowsEdition: ~~/<ConfigSetName>/windows-nodegroup/WindowsNodeEdition~~
   WindowsSupportNodeGroupStack:
     Type: "AWS::CloudFormation::Stack"
     Condition: EnableWindows

@@ -405,6 +405,16 @@ Parameters:
     Description: 'The CIDR IP range that is permitted to access Consul Note: A value
       of 0.0.0.0/0 allows access from ANY IP address.'
     Type: String
+  WindowsNodeEdition:
+    Type: String
+    AllowedValues: [Core, Full]
+    Default: Core
+    Description: 'The edition of Windows AMI to use for Windows Nodegroups.'
+  WindowsNodeVersion:
+    Type: String
+    AllowedValues: ['2004', '2019']
+    Default: '2004'
+    Description: 'The version of windows to use for Windows Nodegroups.'
 Mappings:
   Config:
     ParameterPrefix: { Value: '/quickstart/amazon-eks' }
@@ -665,3 +675,15 @@ Resources:
       Type: String
       Value: !Sub '{ "Value": "${ConsulNodes}" }'
       Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/hashicorp/consul/Nodes", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+  WindowsNodeEditionParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Value: !Sub '{ "Value": "${WindowsNodeEdition}" }'
+      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/windows-nodegroup/WindowsNodeEdition", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+  WindowsNodeVersionParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Value: !Sub '{ "Value": "${WindowsNodeVersion}" }'
+      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/windows-nodegroup/WindowsNodeVersion", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
