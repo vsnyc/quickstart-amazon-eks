@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Enables IRSA for the aws-node daemonset (qs-1r15gqig4)"
+Metadata:
+  QSLint:
+    Exclusions: [W9002, W9003, W9004, W9006]
+Parameters:
+  ClusterName:
+    Type: String
+  OIDCProvider:
+    Type: String
+Resources:
+  RBACRole:
+    Type: "AWSQS::Kubernetes::Resource"
+    Properties:
+      ClusterName: !Ref ClusterName
+      Namespace: kube-system
+      Manifest: |
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: Role
+        metadata:
+          name: aws-node-enable-irsa
+        rules:
+          - apiGroups: [""]
+            resources:
+              - daemonset
+              - serviceaccount
+            verbs:
+              - patch
+  ServiceAccount:
+    Type: "AWSQS::Kubernetes::Resource"
+    Properties:
+      ClusterName: !Ref ClusterName
+      Namespace: kube-system
+      # Kubernetes manifest
+      Manifest: |
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          name: aws-node-enable-irsa
+  ServiceClusterRoleBinding:
+    Type: "AWSQS::Kubernetes::Resource"
+    Properties:
+      ClusterName: !Ref ClusterName
+      Namespace: kube-system
+      Manifest: |
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: aws-node-enable-irsa
+        subjects:
+          - kind: ServiceAccount
+            name: aws-node-enable-irsa
+            namespace: kube-system
+        roleRef:
+          kind: Role
+          name: aws-node-enable-irsa
+          apiGroup: rbac.authorization.k8s.io
+  AWSNodeIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: !Sub
+      - |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "arn:aws:iam::${AWS::AccountId}:oidc-provider/${OIDCProvider}"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "${OIDCProvider}:sub": "system:serviceaccount:${NameSpace}:${ResourceName}"
+                }
+              }
+            }
+          ]
+        }
+      - NameSpace: kube-system
+        ResourceName: aws-node-enable-irsa
+      Path: "/"
+      ManagedPolicyArns:
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonEKS_CNI_Policy'
+  JobResource:
+    Type: "AWSQS::Kubernetes::Resource"
+    Properties:
+      ClusterName: !Ref ClusterName
+      Namespace: kube-system
+      Manifest: !Sub |
+        apiVersion: batch/v1
+        kind: Job
+        metadata:
+          name: aws-node-enable-irsa
+        spec:
+          template:
+            spec:
+              serviceAccountName: aws-node-enable-irsa
+              containers:
+              - name: aws-node-enable-irsa
+                image: bitnami/kubectl:1.18
+                command: ["/bin/bash","-c"]
+                args: 
+                  - >
+                    sleep 10;
+                    kubectl patch sa aws-node -p '{"metadata": {"annotations": {"eks.amazonaws.com/role-arn": "${AWSNodeIAMRole.Arn}" }}}'
+                    kubectl patch daemonset aws-node -p '{"spec": {"template": {"metadata": {"annotations": {"irsa": "enabled"}}}}}'
+              restartPolicy: OnFailure
+          backoffLimit: 4
