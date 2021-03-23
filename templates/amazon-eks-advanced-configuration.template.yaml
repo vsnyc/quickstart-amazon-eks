@@ -415,6 +415,11 @@ Parameters:
     AllowedValues: ['2004', '2019']
     Default: '2004'
     Description: 'The version of windows to use for Windows Nodegroups.'
+  RestrictNodeIamRole:
+    Type: String
+    AllowedValues: [Disabled, Enabled]
+    Default: Enabled
+    Description: Enabling the parameter blocks pods from accessing the NodeGroup's IAM instance profile. Only applies if LaunchTemplateId is blank.
 Mappings:
   Config:
     ParameterPrefix: { Value: '/quickstart/amazon-eks' }
@@ -687,3 +692,9 @@ Resources:
       Type: String
       Value: !Sub '{ "Value": "${WindowsNodeVersion}" }'
       Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/windows-nodegroup/WindowsNodeVersion", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+  RestrictNodeIamRoleParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Value: !Sub '{ "Value": "${RestrictNodeIamRole}" }'
+      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/RestrictNodeIamRole", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]

@@ -391,6 +391,7 @@ Resources:
         LaunchTemplateVersion: ~~/<ConfigSetName>/default-nodegroup/LaunchTemplateVersion~~
         WindowsVersion: ~~/<ConfigSetName>/windows-nodegroup/WindowsNodeVersion~~
         WindowsEdition: ~~/<ConfigSetName>/windows-nodegroup/WindowsNodeEdition~~
+        RestrictNodeIamRole: ~~/<ConfigSetName>/default-nodegroup/RestrictNodeIamRole~~
   WindowsSupportNodeGroupStack:
     Type: "AWS::CloudFormation::Stack"
     Condition: EnableWindows
@@ -416,6 +417,7 @@ Resources:
         EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
         NodeInstanceFamily: Standard
         NodeGroupType: Managed
+        RestrictNodeIamRole: ~~/<ConfigSetName>/default-nodegroup/RestrictNodeIamRole~~
   BastionSShToNodes:
     Condition: EnableBastion
     Type: "AWS::EC2::SecurityGroupIngress"
@@ -918,7 +920,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-rancher/templates/aws-node-daemonset-IRSA.template.yaml'
+        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/aws-node-daemonset-IRSA.template.yaml'
         - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
