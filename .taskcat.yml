@@ -55,6 +55,7 @@ tests:
       NumberOfAZs: "2"
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
+      ProvisionBastionHost: Disabled
     regions:
     - cn-north-1
     - cn-northwest-1
