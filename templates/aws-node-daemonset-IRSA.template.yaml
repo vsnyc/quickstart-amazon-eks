@@ -16,7 +16,7 @@ Resources:
       Namespace: kube-system
       Manifest: |
         apiVersion: rbac.authorization.k8s.io/v1
-        kind: Role
+        kind: ClusterRole
         metadata:
           name: aws-node-enable-irsa
         rules:
@@ -52,7 +52,7 @@ Resources:
             name: aws-node-enable-irsa
             namespace: kube-system
         roleRef:
-          kind: Role
+          kind: ClusterRole
           name: aws-node-enable-irsa
           apiGroup: rbac.authorization.k8s.io
   AWSNodeIAMRole:

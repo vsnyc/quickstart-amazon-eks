@@ -916,6 +916,7 @@ Resources:
       VpcId: !Ref VPCID
       ClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
   AwsNodeIrsa:
+    DependsOn: NodeGroupStack
     Condition: EnableOIDC
     Type: AWS::CloudFormation::Stack
     Properties:
