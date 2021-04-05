@@ -8,6 +8,8 @@ Parameters:
     Type: String
   EksClusterName:
     Type: String
+  VpcId:
+    Type: String
 Mappings: 
   RegionMap: 
     me-south-1:
@@ -266,6 +268,7 @@ Resources:
         serviceAccount.name: aws-load-balancer-controller
         region: !Sub '${AWS::Region}'
         image.repository: !FindInMap [RegionMap, !Ref "AWS::Region", lbrepo]
+        vpcId: !Ref VpcId
       ValueYaml: |
         nodeSelector:
           kubernetes.io/os: linux

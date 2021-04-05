@@ -20,25 +20,33 @@ Resources:
         metadata:
           name: aws-node-enable-irsa
         rules:
-          - apiGroups: [""]
+          - apiGroups: ["apps"]
             resources:
-              - daemonset
-              - serviceaccount
+              - daemonsets
             verbs:
               - patch
+              - get
+          - apiGroups: [""]
+            resources:
+              - serviceaccounts
+            verbs:
+              - patch
+              - get
   ServiceAccount:
     Type: "AWSQS::Kubernetes::Resource"
     Properties:
       ClusterName: !Ref ClusterName
       Namespace: kube-system
-      # Kubernetes manifest
-      Manifest: |
+      Manifest: !Sub |
         apiVersion: v1
         kind: ServiceAccount
         metadata:
           name: aws-node-enable-irsa
+          annotations:
+            eks.amazonaws.com/role-arn: ${AWSNodeIAMRole.Arn}
   ServiceClusterRoleBinding:
     Type: "AWSQS::Kubernetes::Resource"
+    DependsOn: [ServiceAccount, RBACRole]
     Properties:
       ClusterName: !Ref ClusterName
       Namespace: kube-system
@@ -84,6 +92,7 @@ Resources:
       - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonEKS_CNI_Policy'
   JobResource:
     Type: "AWSQS::Kubernetes::Resource"
+    DependsOn: ServiceClusterRoleBinding
     Properties:
       ClusterName: !Ref ClusterName
       Namespace: kube-system
@@ -96,6 +105,8 @@ Resources:
           template:
             spec:
               serviceAccountName: aws-node-enable-irsa
+              nodeSelector:
+                kubernetes.io/os: linux
               containers:
               - name: aws-node-enable-irsa
                 image: bitnami/kubectl:1.18
@@ -103,7 +114,7 @@ Resources:
                 args: 
                   - >
                     sleep 10;
-                    kubectl patch sa aws-node -p '{"metadata": {"annotations": {"eks.amazonaws.com/role-arn": "${AWSNodeIAMRole.Arn}" }}}'
+                    kubectl patch sa aws-node -p '{"metadata": {"annotations": {"eks.amazonaws.com/role-arn": "${AWSNodeIAMRole.Arn}" }}}';
                     kubectl patch daemonset aws-node -p '{"spec": {"template": {"metadata": {"annotations": {"irsa": "enabled"}}}}}'
               restartPolicy: OnFailure
           backoffLimit: 4
