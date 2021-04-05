@@ -34,19 +34,15 @@ Resources:
       ClusterName: !Ref KubeClusterName
       Namespace: kube-system
       # Kubernetes manifest
-      Manifest:
+      Manifest: !Sub |
         apiVersion: v1
         kind: ConfigMap
-        # metadata:
-          # If name is not specified it will be automatically generated,
-          # and can be retrieved with !GetAtt LogicalID.name
-          #
-          # name: test
-          #
+        metadata:
+          name: test
         data:
           # examples of consuming outputs of the HelmExample resource below's output. Creates an implicit dependency, so
           # this resource will only launch once the HelmExample resource has completed successfully
-          GrafanaId: !Ref HelmExample
+          GrafanaId: ${HelmExample}
   # This resource deploys the kubernetes service catalog from it's helm chart.
   #
   # using !GetAtt you can fetch Name (release name) and Namespace, as well as all of the created resources, who's keys
