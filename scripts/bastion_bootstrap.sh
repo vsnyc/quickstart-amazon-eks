@@ -434,7 +434,7 @@ EOF
 
 function install_kubernetes_client_tools() {
     mkdir -p /usr/local/bin/
-    retry_command 20 curl --retry 5 -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.8/2020-09-18/bin/linux/amd64/kubectl
+    retry_command 20 curl --retry 5 -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl
     chmod +x ./kubectl
     mv ./kubectl /usr/local/bin/
     cat > /etc/profile.d/kubectl.sh <<EOF

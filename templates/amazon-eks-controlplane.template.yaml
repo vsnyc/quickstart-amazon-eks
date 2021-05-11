@@ -1,8 +1,10 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "Deploys the EKS control plane (qs-1p7nknofn)"
+#Transform: [QuickStartParameterResolver]
 Metadata:
   QSLint:
     Exclusions: [W9002, W9003, W9004, W9006]
+  #ConfigSetName: !Ref ConfigSetName
 Parameters:
   SecurityGroupIds:
     Type: List<AWS::EC2::SecurityGroup::Id>
@@ -18,8 +20,7 @@ Parameters:
     Default: ""
   KubernetesVersion:
     Type: String
-    AllowedValues: [ "1.18", "1.17", "1.16", "1.15" ]
-    Default: "1.18"
+    Default: ""
   BastionRole:
     Type: String
     Default: ""
@@ -52,6 +53,8 @@ Parameters:
     Default: "Enabled"
   EKSClusterName:
     Type: String
+  #ConfigSetName:
+  #  Type: String
 Conditions:
   AddUser: !Not [ !Equals [ !Ref AdditionalEKSAdminUserArn, "" ] ]
   AddRole: !Not [ !Equals [ !Ref AdditionalEKSAdminRoleArn, "" ] ]
