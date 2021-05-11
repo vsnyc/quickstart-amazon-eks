@@ -37,7 +37,7 @@ CloudFormation operations on the stack to behave unexpectedly.
 
 This deployment enables users of the Amazon EKS cluster to create elastic load balancers and Amazon EBS volumes
 as part of their Kubernetes applications. Because these carry additional costs, we recommend that you grant users of the
-Amazon EKS cluster the minumum permissions required according to https://kubernetes.io/docs/reference/access-authn-authz/rbac/[Kubernetes Role Based Access Control (RBAC)^]
+Amazon EKS cluster the minimum permissions required according to https://kubernetes.io/docs/reference/access-authn-authz/rbac/[Kubernetes Role Based Access Control (RBAC)^]
 and that you monitor resource usage by using the Kubernetes CLI or API to describe persistent
 volume claims (PVC) and `LoadBalancer` resources across all namespaces. To disable this functionality, update the
 `ControlPlaneRole` IAM role in the child stack to restrict access to the Kubernetes control plane for specific AWS
