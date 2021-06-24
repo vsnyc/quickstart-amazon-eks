@@ -747,6 +747,8 @@ Outputs:
     Value: !GetAtt EKSStack.Outputs.NodeGroupSecurityGroup
   ControlPlaneSecurityGroup:
     Value: !GetAtt EKSStack.Outputs.ControlPlaneSecurityGroup
+  OIDCIssuerURL:
+    Value: !GetAtt EKSStack.Outputs.OIDCIssuerURL
 Rules:
   AutoDetectSharedParams:
     RuleCondition: !Or
