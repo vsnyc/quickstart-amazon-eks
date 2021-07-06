@@ -74,6 +74,12 @@ Resources:
   KMSKey:
     Condition: CreateKey
     Type: "AWS::KMS::Key"
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks: [EIAMPolicyActionWildcard]
+          ignore_reasons:
+            EIAMPolicyWildcardResource: 'this is the default kms policy as per https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default'
     Properties:
       KeyPolicy: {
         "Version": "2012-10-17",

@@ -61,6 +61,12 @@ Mappings:
 Resources:
   LoadBalancerControllerIAMRole:
     Type: AWS::IAM::Role
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks: [EIAMPolicyWildcardResource]
+          ignore_reasons:
+            EIAMPolicyWildcardResource: "resources are created dynamically by the k8s cloud controller, and aren't known at the time of policy creation"
     Properties:
       AssumeRolePolicyDocument: !Sub |
         {
