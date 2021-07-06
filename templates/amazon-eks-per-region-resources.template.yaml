@@ -73,7 +73,19 @@ Resources:
         Version: '2012-10-17'
         Statement:
         - Effect: Allow
-          Action: 's3:*'
+          Action: [
+            "s3:GetObjectAcl",
+            "s3:GetObject",
+            "s3:DeleteObjectVersion",
+            "s3:ListBucketVersions",
+            "s3:GetObjectVersionAcl",
+            "s3:ListBucket",
+            "s3:GetBucketVersioning",
+            "s3:DeleteObject",
+            "s3:GetBucketAcl",
+            "s3:GetBucketLocation",
+            "s3:GetObjectVersion"
+          ]
           Resource:
           - !Sub 'arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/*'
           - !Sub 'arn:${AWS::Partition}:s3:::${LambdaZipsBucket}'
@@ -267,6 +279,12 @@ Resources:
   RegisterEksClusterType:
     DependsOn: ArtifactCopyPolicy
     Type: Custom::RegisterType
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks: [EIAMPolicyWildcardResource]
+          ignore_reasons:
+            EIAMPolicyWildcardResource: cfn resource type schema's do not support resource constraints
     Properties:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       Version: "3.0.6"
@@ -278,20 +296,45 @@ Resources:
         Statement:
         - Effect: Allow
           Action:
-          - "ec2:*"
-          - "eks:CreateCluster"
-          - "eks:DeleteCluster"
-          - "eks:DescribeCluster"
-          - "eks:ListClusters"
-          - "eks:UpdateClusterConfig"
-          - "eks:UpdateClusterVersion"
-          - "iam:*"
-          - "kms:*"
-          - "lambda:*"
+            - "sts:GetCallerIdentity"
+            - "eks:CreateCluster"
+            - "eks:DeleteCluster"
+            - "eks:DescribeCluster"
+            - "eks:ListTagsForResource"
+            - "eks:UpdateClusterVersion"
+            - "eks:UpdateClusterConfig"
+            - "eks:TagResource"
+            - "eks:UntagResource"
+            - "iam:PassRole"
+            - "sts:AssumeRole"
+            - "lambda:UpdateFunctionConfiguration"
+            - "lambda:DeleteFunction"
+            - "lambda:GetFunction"
+            - "lambda:InvokeFunction"
+            - "lambda:CreateFunction"
+            - "lambda:UpdateFunctionCode"
+            - "ec2:DescribeVpcs"
+            - "ec2:DescribeSubnets"
+            - "ec2:DescribeSecurityGroups"
+            - "kms:CreateGrant"
+            - "kms:DescribeKey"
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:DescribeLogGroups"
+            - "logs:DescribeLogStreams"
+            - "logs:PutLogEvents"
+            - "cloudwatch:ListMetrics"
+            - "cloudwatch:PutMetricData"
           Resource: "*"
   RegisterHelmType:
     DependsOn: ArtifactCopyPolicy
     Type: Custom::RegisterType
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks: [EIAMPolicyWildcardResource]
+          ignore_reasons:
+            EIAMPolicyWildcardResource: cfn resource type schema's do not support resource constraints
     Properties:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       TypeName: "AWSQS::Kubernetes::Helm"
@@ -303,28 +346,43 @@ Resources:
         Statement:
         - Effect: Allow
           Action:
-          - "secretsmanager:GetSecretValue"
-          - "kms:Decrypt"
-          - "eks:DescribeCluster"
-          - "s3:GetObject"
-          - "sts:AssumeRole"
-          - "iam:PassRole"
-          - "iam:ListRolePolicies"
-          - "iam:ListAttachedRolePolicies"
-          - "iam:GetRole"
-          - "iam:GetPolicy"
-          - "iam:GetPolicyVersion"
-          - "ec2:CreateNetworkInterface"
-          - "ec2:DeleteNetworkInterface"
-          - "ec2:Describe*"
-          - "logs:CreateLogGroup"
-          - "logs:CreateLogStream"
-          - "logs:PutLogEvents"
-          - "lambda:*"
+            - "secretsmanager:GetSecretValue"  # required for deploying helm charts into non-EKS kubernetes clusters
+            - "kms:Decrypt"
+            - "eks:DescribeCluster"
+            - "s3:GetObject"
+            - "sts:AssumeRole"
+            - "iam:PassRole"  # required for EKS clusters with Public Endpoint disabled
+            - "ec2:CreateNetworkInterface"  # required for EKS clusters with Public Endpoint disabled
+            - "ec2:DescribeNetworkInterfaces"  # required for EKS clusters with Public Endpoint disabled
+            - "ec2:DeleteNetworkInterface"  # required for EKS clusters with Public Endpoint disabled
+            - "ec2:DescribeVpcs"  # required for EKS clusters with Public Endpoint disabled
+            - "ec2:DescribeSubnets"  # required for EKS clusters with Public Endpoint disabled
+            - "ec2:DescribeRouteTables"  # required for EKS clusters with Public Endpoint disabled
+            - "ec2:DescribeSecurityGroups"  # required for EKS clusters with Public Endpoint disabled
+            - "logs:CreateLogGroup"  # required for EKS clusters with Public Endpoint disabled
+            - "logs:CreateLogStream"  # required for EKS clusters with Public Endpoint disabled
+            - "logs:PutLogEvents"  # required for EKS clusters with Public Endpoint disabled
+            - "lambda:UpdateFunctionConfiguration"  # required for EKS clusters with Public Endpoint disabled
+            - "lambda:DeleteFunction"  # required for EKS clusters with Public Endpoint disabled
+            - "lambda:GetFunction"  # required for EKS clusters with Public Endpoint disabled
+            - "lambda:InvokeFunction"  # required for EKS clusters with Public Endpoint disabled
+            - "lambda:CreateFunction"  # required for EKS clusters with Public Endpoint disabled
+            - "lambda:UpdateFunctionCode"  # required for EKS clusters with Public Endpoint disabled
+            - "cloudformation:ListExports"  # required for fetching contract test inputs
+            - "ecr:GetAuthorizationToken" # required for fetching charts from ECR
+            - "ecr:BatchCheckLayerAvailability" # required for fetching charts from ECR
+            - "ecr:GetDownloadUrlForLayer" # required for fetching charts from ECR
+            - "ecr:BatchGetImage" # required for fetching charts from ECR
           Resource: "*"
   RegisterKubeGetType:
     DependsOn: ArtifactCopyPolicy
     Type: Custom::RegisterType
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks: [EIAMPolicyWildcardResource]
+          ignore_reasons:
+            EIAMPolicyWildcardResource: cfn resource type schema's do not support resource constraints
     Properties:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       TypeName: "AWSQS::Kubernetes::Get"
@@ -335,23 +393,46 @@ Resources:
         Version: '2012-10-17'
         Statement:
           - Effect: Allow
-            Action: [
-              "ec2:CreateNetworkInterface",
-              "ec2:DeleteNetworkInterface",
-              "ec2:Describe*",
-              "eks:DescribeCluster",
-              "iam:PassRole",
-              "lambda:*",
-              "ssm:GetParameter",
-              "sts:GetCallerIdentity",
-              "logs:CreateLogGroup",
-              "logs:CreateLogStream",
-              "logs:PutLogEvents"
-            ]
+            Action:
+              - "secretsmanager:GetSecretValue"  # required for deploying helm charts into non-EKS kubernetes clusters
+              - "kms:Decrypt"
+              - "eks:DescribeCluster"
+              - "s3:GetObject"
+              - "sts:AssumeRole"
+              - "iam:PassRole"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:CreateNetworkInterface"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:DescribeNetworkInterfaces"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:DeleteNetworkInterface"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:DescribeVpcs"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:DescribeSubnets"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:DescribeRouteTables"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:DescribeSecurityGroups"  # required for EKS clusters with Public Endpoint disabled
+              - "logs:CreateLogGroup"  # required for EKS clusters with Public Endpoint disabled
+              - "logs:CreateLogStream"  # required for EKS clusters with Public Endpoint disabled
+              - "logs:PutLogEvents"  # required for EKS clusters with Public Endpoint disabled
+              - "lambda:UpdateFunctionConfiguration"  # required for EKS clusters with Public Endpoint disabled
+              - "lambda:DeleteFunction"  # required for EKS clusters with Public Endpoint disabled
+              - "lambda:GetFunction"  # required for EKS clusters with Public Endpoint disabled
+              - "lambda:InvokeFunction"  # required for EKS clusters with Public Endpoint disabled
+              - "lambda:CreateFunction"  # required for EKS clusters with Public Endpoint disabled
+              - "lambda:UpdateFunctionCode"  # required for EKS clusters with Public Endpoint disabled
+              - "logs:CreateLogGroup"  # required if this role is also used for Resource type logging
+              - "logs:CreateLogStream"  # required if this role is also used for Resource type logging
+              - "logs:DescribeLogGroups"  # required if this role is also used for Resource type logging
+              - "logs:DescribeLogStreams"  # required if this role is also used for Resource type logging
+              - "logs:PutLogEvents"  # required if this role is also used for Resource type logging
+              - "cloudwatch:ListMetrics"  # required if this role is also used for Resource type logging
+              - "cloudwatch:PutMetricData"  # required if this role is also used for Resource type logging
             Resource: "*"
   RegisterKubeApplyType:
     DependsOn: ArtifactCopyPolicy
     Type: Custom::RegisterType
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks: [EIAMPolicyWildcardResource]
+          ignore_reasons:
+            EIAMPolicyWildcardResource: cfn resource type schema's do not support resource constraints
     Properties:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       TypeName: "AWSQS::Kubernetes::Resource"
@@ -362,20 +443,36 @@ Resources:
         Version: '2012-10-17'
         Statement:
           - Effect: Allow
-            Action: [
-              "ec2:CreateNetworkInterface",
-              "ec2:DeleteNetworkInterface",
-              "ec2:Describe*",
-              "eks:DescribeCluster",
-              "iam:PassRole",
-              "lambda:*",
-              "ssm:GetParameter",
-              "sts:GetCallerIdentity",
-              "logs:CreateLogGroup",
-              "logs:CreateLogStream",
-              "logs:PutLogEvents",
-              "s3:GetObject"
-            ]
+            Action:
+              - "secretsmanager:GetSecretValue"  # required for deploying helm charts into non-EKS kubernetes clusters
+              - "kms:Decrypt"
+              - "eks:DescribeCluster"
+              - "s3:GetObject"
+              - "sts:AssumeRole"
+              - "iam:PassRole"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:CreateNetworkInterface"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:DescribeNetworkInterfaces"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:DeleteNetworkInterface"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:DescribeVpcs"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:DescribeSubnets"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:DescribeRouteTables"  # required for EKS clusters with Public Endpoint disabled
+              - "ec2:DescribeSecurityGroups"  # required for EKS clusters with Public Endpoint disabled
+              - "logs:CreateLogGroup"  # required for EKS clusters with Public Endpoint disabled
+              - "logs:CreateLogStream"  # required for EKS clusters with Public Endpoint disabled
+              - "logs:PutLogEvents"  # required for EKS clusters with Public Endpoint disabled
+              - "lambda:UpdateFunctionConfiguration"  # required for EKS clusters with Public Endpoint disabled
+              - "lambda:DeleteFunction"  # required for EKS clusters with Public Endpoint disabled
+              - "lambda:GetFunction"  # required for EKS clusters with Public Endpoint disabled
+              - "lambda:InvokeFunction"  # required for EKS clusters with Public Endpoint disabled
+              - "lambda:CreateFunction"  # required for EKS clusters with Public Endpoint disabled
+              - "lambda:UpdateFunctionCode"  # required for EKS clusters with Public Endpoint disabled
+              - "logs:CreateLogGroup"  # required if this role is also used for Resource type logging
+              - "logs:CreateLogStream"  # required if this role is also used for Resource type logging
+              - "logs:DescribeLogGroups"  # required if this role is also used for Resource type logging
+              - "logs:DescribeLogStreams"  # required if this role is also used for Resource type logging
+              - "logs:PutLogEvents"  # required if this role is also used for Resource type logging
+              - "cloudwatch:ListMetrics"  # required if this role is also used for Resource type logging
+              - "cloudwatch:PutMetricData"  # required if this role is also used for Resource type logging
             Resource: "*"
   CleanupSecurityGroupDependenciesLambda:
     Type: "AWS::Lambda::Function"
