@@ -391,7 +391,8 @@ Resources:
         LaunchTemplateVersion: ~~/<ConfigSetName>/default-nodegroup/LaunchTemplateVersion~~
         WindowsVersion: ~~/<ConfigSetName>/windows-nodegroup/WindowsNodeVersion~~
         WindowsEdition: ~~/<ConfigSetName>/windows-nodegroup/WindowsNodeEdition~~
-        RestrictNodeIamRole: ~~/<ConfigSetName>/default-nodegroup/RestrictNodeIamRole~~
+        EC2MetadataPutResponseHopLimit: ~~/<ConfigSetName>/default-nodegroup/EC2MetadataPutResponseHopLimit~~
+        EC2MetadataHttpTokens: ~~/<ConfigSetName>/default-nodegroup/EC2MetadataHttpTokens~~
   WindowsSupportNodeGroupStack:
     Type: "AWS::CloudFormation::Stack"
     Condition: EnableWindows
@@ -417,7 +418,8 @@ Resources:
         EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
         NodeInstanceFamily: Standard
         NodeGroupType: Managed
-        RestrictNodeIamRole: ~~/<ConfigSetName>/default-nodegroup/RestrictNodeIamRole~~
+        EC2MetadataPutResponseHopLimit: ~~/<ConfigSetName>/default-nodegroup/EC2MetadataPutResponseHopLimit~~
+        EC2MetadataHttpTokens: ~~/<ConfigSetName>/default-nodegroup/EC2MetadataHttpTokens~~
   BastionSShToNodes:
     Condition: EnableBastion
     Type: "AWS::EC2::SecurityGroupIngress"
