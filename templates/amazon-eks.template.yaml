@@ -7,7 +7,8 @@ Metadata:
   ConfigSetName: !Ref ConfigSetName
 Parameters:
   KeyPairName:
-    Type: AWS::EC2::KeyPair::KeyName
+    Type: String
+    Default: ""
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     Default: aws-quickstart
@@ -288,6 +289,7 @@ Conditions:
     - !Equals [!Ref 'ProvisionALBIngressController', 'Enabled']
     - !Equals [!Ref 'NodeGroupOS', 'Windows']
     - !Equals [~~/<ConfigSetName>/cluster/IamOidcProvider~~, "Enabled"]
+  UseKeyPair: !Not [ !Equals [ !Ref KeyPairName, "" ] ]
 Resources:
   BastionEksPermissions:
     Condition: EnableBastion
@@ -366,7 +368,7 @@ Resources:
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         HttpProxy: !Ref HttpProxy
-        KeyPairName: !Ref 'KeyPairName'
+        KeyPairName: !If [UseKeyPair, !Ref KeyPairName, !Ref 'AWS::NoValue']
         NodeGroupOS: !Ref NodeGroupOS
         Subnet1ID: !Ref PrivateSubnet1ID
         Subnet2ID: !If [2AZDeployment, !Ref PrivateSubnet2ID, !Ref "AWS::NoValue" ]
@@ -406,7 +408,7 @@ Resources:
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         HttpProxy: !Ref HttpProxy
-        KeyPairName: !Ref 'KeyPairName'
+        KeyPairName: !If [UseKeyPair, !Ref KeyPairName, !Ref 'AWS::NoValue']
         NodeGroupOS: "Amazon Linux 2"
         Subnet1ID: !Ref PrivateSubnet1ID
         Subnet2ID: !If [2AZDeployment, !Ref PrivateSubnet2ID, !Ref "AWS::NoValue" ]
