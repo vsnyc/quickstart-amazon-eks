@@ -399,6 +399,7 @@ Resources:
               - "eks:DescribeCluster"
               - "s3:GetObject"
               - "sts:AssumeRole"
+              - "sts:GetCallerIdentity"
               - "iam:PassRole"  # required for EKS clusters with Public Endpoint disabled
               - "ec2:CreateNetworkInterface"  # required for EKS clusters with Public Endpoint disabled
               - "ec2:DescribeNetworkInterfaces"  # required for EKS clusters with Public Endpoint disabled
@@ -423,6 +424,9 @@ Resources:
               - "logs:PutLogEvents"  # required if this role is also used for Resource type logging
               - "cloudwatch:ListMetrics"  # required if this role is also used for Resource type logging
               - "cloudwatch:PutMetricData"  # required if this role is also used for Resource type logging
+              - "ssm:PutParameter"  # ssm parameters are used by the ::Get resource to track requests
+              - "ssm:GetParameter"  # ssm parameters are used by the ::Get resource to track requests
+              - "ssm:DeleteParameter"  # ssm parameters are used by the ::Get resource to track requests
             Resource: "*"
   RegisterKubeApplyType:
     DependsOn: ArtifactCopyPolicy
