@@ -66,8 +66,7 @@ Resources:
   AWSNodeIAMRole:
     Type: AWS::IAM::Role
     Properties:
-      AssumeRolePolicyDocument: !Sub
-      - |
+      AssumeRolePolicyDocument: !Sub |
         {
           "Version": "2012-10-17",
           "Statement": [
@@ -79,14 +78,12 @@ Resources:
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
-                  "${OIDCProvider}:sub": "system:serviceaccount:${NameSpace}:${ResourceName}"
+                  "${OIDCProvider}:sub": "system:serviceaccount:kube-system:aws-node"
                 }
               }
             }
           ]
         }
-      - NameSpace: kube-system
-        ResourceName: aws-node-enable-irsa
       Path: "/"
       ManagedPolicyArns:
       - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonEKS_CNI_Policy'
