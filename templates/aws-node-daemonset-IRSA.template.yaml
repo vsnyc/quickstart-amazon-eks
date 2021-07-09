@@ -112,6 +112,17 @@ Resources:
                   - >
                     sleep 10;
                     kubectl patch sa aws-node -p '{"metadata": {"annotations": {"eks.amazonaws.com/role-arn": "${AWSNodeIAMRole.Arn}" }}}';
-                    kubectl patch daemonset aws-node -p '{"spec": {"template": {"metadata": {"annotations": {"irsa": "enabled"}}}}}'
+                    kubectl patch daemonset aws-node -p '{"spec": {"template": {"metadata": {"annotations": {"irsa": "enabled"}}}}}';
+                    RETRIES=0 ;
+                    while true ; do
+                      DESIRED=$(kubectl get daemonset aws-node -n kube-system -o jsonpath={.status.desiredNumberScheduled});
+                      UPDATED=$(kubectl get daemonset aws-node -n kube-system -o jsonpath={.status.updatedNumberScheduled});
+                      READY=$(kubectl get daemonset aws-node -n kube-system -o jsonpath={.status.numberReady});
+                      if [[ "$DESIRED" == "$UPDATED" && "$DESIRED" == "$READY" ]]; then break ; fi ;
+                      echo "Desired: $DESIRED Updated: $UPDATED Ready: $READY" ;
+                      ((RETRIES=RETRIES+1));
+                      if [ $RETRIES -gt 40 ]; then echo "Timed out waiting for pods to become ready"; exit 1; fi;
+                      sleep 15;
+                    done
               restartPolicy: OnFailure
           backoffLimit: 4
