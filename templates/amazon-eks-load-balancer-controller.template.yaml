@@ -8,6 +8,8 @@ Parameters:
     Type: String
   EksClusterName:
     Type: String
+  VpcId:
+    Type: String
 Mappings: 
   RegionMap: 
     me-south-1:
@@ -61,6 +63,12 @@ Mappings:
 Resources:
   LoadBalancerControllerIAMRole:
     Type: AWS::IAM::Role
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks: [EIAMPolicyWildcardResource]
+          ignore_reasons:
+            EIAMPolicyWildcardResource: "resources are created dynamically by the k8s cloud controller, and aren't known at the time of policy creation"
     Properties:
       AssumeRolePolicyDocument: !Sub |
         {
@@ -90,6 +98,7 @@ Resources:
                 - 'iam:CreateServiceLinkedRole'
                 - 'ec2:DescribeAccountAttributes'
                 - 'ec2:DescribeAddresses'
+                - 'ec2:DescribeAvailabilityZones'
                 - 'ec2:DescribeInternetGateways'
                 - 'ec2:DescribeVpcs'
                 - 'ec2:DescribeSubnets'
@@ -97,6 +106,8 @@ Resources:
                 - 'ec2:DescribeInstances'
                 - 'ec2:DescribeNetworkInterfaces'
                 - 'ec2:DescribeTags'
+                - 'ec2:GetCoipPoolUsage'
+                - 'ec2:DescribeCoipPools'
                 - 'elasticloadbalancing:DescribeLoadBalancers'
                 - 'elasticloadbalancing:DescribeLoadBalancerAttributes'
                 - 'elasticloadbalancing:DescribeListeners'
@@ -193,6 +204,15 @@ Resources:
                   'aws:ResourceTag/elbv2.k8s.aws/cluster': 'false'
             - Effect: Allow
               Action:
+                - 'elasticloadbalancing:AddTags'
+                - 'elasticloadbalancing:RemoveTags'
+              Resource:
+                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:listener/net/*/*/*'
+                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:listener/app/*/*/*'
+                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:listener-rule/net/*/*/*'
+                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:listener-rule/app/*/*/*'
+            - Effect: Allow
+              Action:
                 - 'elasticloadbalancing:ModifyLoadBalancerAttributes'
                 - 'elasticloadbalancing:SetIpAddressType'
                 - 'elasticloadbalancing:SetSecurityGroups'
@@ -241,12 +261,14 @@ Resources:
       Namespace: kube-system
       Repository: https://aws.github.io/eks-charts
       Chart: aws-load-balancer-controller
+      Version: 1.2.3
       Values:
         clusterName: !Ref EksClusterName
         serviceAccount.create: false
         serviceAccount.name: aws-load-balancer-controller
         region: !Sub '${AWS::Region}'
         image.repository: !FindInMap [RegionMap, !Ref "AWS::Region", lbrepo]
+        vpcId: !Ref VpcId
       ValueYaml: |
         nodeSelector:
           kubernetes.io/os: linux
