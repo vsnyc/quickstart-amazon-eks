@@ -441,9 +441,9 @@ function install_kubernetes_client_tools() {
     mkdir -p /usr/local/bin/
     HARDWARE=`uname -m`
     if [[ "${HARDWARE}" == "aarch64" ]]; then
-        retry_command 20 curl --retry 5 -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/arm64/kubectl
+        retry_command 20 curl --retry 5 -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/arm64/kubectl
     elif [[ "${HARDWARE}" == "x86_64" ]]; then
-        retry_command 20 curl --retry 5 -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl
+        retry_command 20 curl --retry 5 -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
     fi
     chmod +x ./kubectl
     mv ./kubectl /usr/local/bin/
