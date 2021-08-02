@@ -9,6 +9,7 @@ from ruamel import yaml
 from datetime import date, datetime
 from crhelper import CfnResource
 from time import sleep
+from uuid import UUID
 
 logger = logging.getLogger(__name__)
 helper = CfnResource(json_logging=True, log_level='DEBUG')
@@ -259,9 +260,9 @@ def create_handler(event, _):
         return physical_resource_id
     outp = run_command("kubectl create --save-config -o json -f %s" % manifest_file)
     helper.Data = build_output(json.loads(outp))
-    if helper.Data["selfLink"].startswith('/apis/batch') and 'cronjobs' not in helper.Data["selfLink"]:
+    if helper.Data.get("selfLink", "").startswith('/apis/batch') and 'cronjobs' not in helper.Data.get("selfLink", ""):
         stabilize_job(helper.Data["namespace"], helper.Data["name"])
-    return helper.Data["selfLink"]
+    return helper.Data.get("selfLink", physical_resource_id)
 
 
 @helper.update
@@ -271,7 +272,7 @@ def update_handler(event, _):
         return physical_resource_id
     outp = run_command("kubectl apply -o json -f %s" % manifest_file)
     helper.Data = build_output(json.loads(outp))
-    return helper.Data["selfLink"]
+    return helper.Data.get("selfLink", physical_resource_id)
 
 
 @helper.delete
