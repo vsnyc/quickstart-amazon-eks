@@ -404,6 +404,7 @@ function prevent_process_snooping() {
 
 function setup_kubeconfig() {
     mkdir -p /home/${user}/.kube
+    source /root/.bashrc
     cat > /home/${user}/.kube/config <<EOF
 apiVersion: v1
 clusters:
@@ -433,7 +434,8 @@ users:
         - "--region"
         - "${REGION}"
 EOF
-    cp -r /home/${user}/.kube/ /root/.kube/
+    mkdir -p /root/.kube/
+    cp /home/${user}/.kube/config /root/.kube/
     chown -R ${user}:${user_group} /home/${user}/.kube/
 }
 
@@ -447,11 +449,11 @@ function install_kubernetes_client_tools() {
     fi
     chmod +x ./kubectl
     mv ./kubectl /usr/local/bin/
-
+    mkdir -p /root/bin
+    ln -s /usr/local/bin/kubectl /root/bin/
     cat > /etc/profile.d/kubectl.sh <<EOF
 #!/bin/bash
-if [[ ":$PATH:" != *":/usr/local/bin:"* ]]; then     PATH="$PATH:/usr/local/bin";   fi
-source <(kubectl completion bash)
+source <(/usr/local/bin/kubectl completion bash)
 EOF
 
     chmod +x /etc/profile.d/kubectl.sh
