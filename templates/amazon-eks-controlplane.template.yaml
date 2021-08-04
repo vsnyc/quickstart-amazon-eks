@@ -77,8 +77,9 @@ Resources:
     Metadata:
       cfn-lint:
         config:
-          ignore_checks: [EIAMPolicyActionWildcard]
+          ignore_checks: [EIAMPolicyActionWildcard, EKMSKeyEnableKeyRotation]
           ignore_reasons:
+            EKMSKeyEnableKeyRotation: 'Need to experiment further with the effets of rotating keys and EKS secrets'
             EIAMPolicyWildcardResource: 'this is the default kms policy as per https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default'
     Properties:
       KeyPolicy: {

@@ -10,7 +10,7 @@ Parameters:
     Type: String
   KubernetesVersion:
     Type: String
-    AllowedValues: [ "1.21", "1.20", "1.19", "1.18" ]
+    AllowedValues: [ "1.21", "1.20", "1.19", "1.18", "1.17" ]
     Default: "1.21"
 # NOTE: The cluster autoscaler version number is dependant on the K8S version it is being
 #       deployed into. See...
@@ -28,6 +28,8 @@ Mappings:
     Prefix: { Value: 'eks-quickstart' }
   # From : https://github.com/kubernetes/autoscaler/releases/tag/ 
   K8sVersionMap:
+    "1.17":
+      ImageTag: v1.17.3
     "1.18":
       ImageTag: v1.18.3
     "1.19":
