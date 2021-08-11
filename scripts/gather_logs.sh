@@ -11,12 +11,11 @@ if [ -z $REGION ] || [ -z $STACK_ID ]; then
 fi
 
 function gather_stack(){
-  mkdir -p /tmp/eks-qs-logs/
   echo "gathering logs for CloudFormation stack $1..."
   n=$(echo $1 | awk -F/ '{print $2}')
-  aws cloudformation describe-stacks --stack-name $1 --region $REGION > /tmp/eks-qs-logs/${n}-describe-stack.json
-  aws cloudformation describe-stack-events --stack-name $1 --region $REGION > /tmp/eks-qs-logs/${n}-describe-stack-events.json
-  aws cloudformation describe-stack-resources --stack-name $1 --region $REGION > /tmp/eks-qs-logs/${n}-describe-stack-resources.json
+  aws cloudformation describe-stacks --stack-name $1 --region $REGION > /tmp/eks-qs-logs/overview/${n}-describe-stack.json
+  aws cloudformation describe-stack-events --stack-name $1 --region $REGION > /tmp/eks-qs-logs/events/${n}-describe-stack-events.json
+  aws cloudformation describe-stack-resources --stack-name $1 --region $REGION > /tmp/eks-qs-logs/resources/${n}-describe-stack-resources.json
 }
 
 function get_children(){
@@ -27,6 +26,11 @@ function get_children(){
   done
 }
 
+mkdir -p /tmp/eks-qs-logs/overview/
+mkdir -p /tmp/eks-qs-logs/events/
+mkdir -p /tmp/eks-qs-logs/resources/
+mkdir -p /tmp/eks-qs-logs/lambda-logs/
+mkdir -p /tmp/eks-qs-logs/cfn-registry-type-logs/
 STACK_ARN=$(aws cloudformation describe-stacks --stack-name $STACK_ID --region $REGION --query 'Stacks[0].StackId' --output text)
 gather_stack $STACK_ARN
 get_children $STACK_ARN
@@ -37,7 +41,7 @@ for prefix in $FUNCTIONS; do
   for group in $(aws logs describe-log-groups --log-group-name-prefix /aws/lambda/${prefix} --query logGroups[].logGroupName --output text --region $REGION); do
     n=$(echo $group | awk -F/ '{print $4}')
     echo "getting logs from $group..."
-    aws logs filter-log-events --log-group-name $group --query 'events[].{t: join(`: `, [to_string(timestamp), message])}' --output text --region $REGION > /tmp/eks-qs-logs/${n}.log
+    aws logs filter-log-events --log-group-name $group --query 'events[].{t: join(`: `, [to_string(timestamp), message])}' --output text --region $REGION > /tmp/eks-qs-logs/lambda-logs/${n}.log
   done
 done
 
@@ -46,14 +50,14 @@ echo "gathering logs for cfn resource types..."
 for group in $TYPE_LOG_GROUPS; do
   n=$(echo $group | awk -F/ '{print $4}')
   echo "getting logs from $group..."
-  aws logs filter-log-events --log-group-name $group --query 'events[].{t: join(`: `, [to_string(timestamp), message])}' --output text --region $REGION > /tmp/eks-qs-logs/${n}.log
+  aws logs filter-log-events --log-group-name $group --query 'events[].{t: join(`: `, [to_string(timestamp), message])}' --output text --region $REGION > /tmp/eks-qs-logs/cfn-registry-type-logs/${n}.log
 done
 
 echo ""
 echo "compressing logs..."
 pwd=$(pwd)
 cd /tmp/eks-qs-logs || exit 1
-zip $pwd/logs.zip ./*
+zip -r $pwd/logs.zip ./*
 cd $pwd || exit 1
 rm -rf /tmp/eks-qs-logs
 echo ""
