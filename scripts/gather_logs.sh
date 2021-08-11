@@ -10,6 +10,13 @@ if [ -z $REGION ] || [ -z $STACK_ID ]; then
   exit 1
 fi
 
+echo "The zip file outputted by this script may contain sensitive information and should not be shared publicly."
+read -p "Do you wish to proceed? (y/n)" -n 1 -r
+if [[ ! $REPLY =~ ^[Yy]$ ]]
+then
+  exit 1
+fi
+
 function gather_stack(){
   echo "gathering logs for CloudFormation stack $1..."
   n=$(echo $1 | awk -F/ '{print $2}')
