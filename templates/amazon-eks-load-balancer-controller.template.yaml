@@ -240,38 +240,24 @@ Resources:
                 - 'elasticloadbalancing:RemoveListenerCertificates'
                 - 'elasticloadbalancing:ModifyRule'
               Resource: '*'
-  LoadBalancerControllerServiceAccount:
-    Type: "AWSQS::Kubernetes::Resource"
-    Properties:
-      ClusterName: !Ref EksClusterName
-      Namespace: kube-system
-      Manifest: !Sub |
-        apiVersion: v1
-        kind: ServiceAccount
-        metadata:
-          labels:
-            app.kubernetes.io/name: aws-load-balancer-controller
-          annotations:
-            eks.amazonaws.com/role-arn: ${LoadBalancerControllerIAMRole.Arn}
-          name: aws-load-balancer-controller
   LoadBalancerControllerHelmChart:
     Type: "AWSQS::Kubernetes::Helm"
-    DependsOn: LoadBalancerControllerServiceAccount
     Metadata: { cfn-lint: { config: { ignore_checks: [ E3012 ] } } }
     Properties:
       ClusterID: !Ref EksClusterName
       Namespace: kube-system
       Repository: https://aws.github.io/eks-charts
       Chart: aws-load-balancer-controller
-      Version: 1.2.3
+      Version: 1.2.7
       Values:
         clusterName: !Ref EksClusterName
-        serviceAccount.create: false
-        serviceAccount.name: aws-load-balancer-controller
         region: !Sub '${AWS::Region}'
         image.repository: !FindInMap [RegionMap, !Ref "AWS::Region", lbrepo]
         vpcId: !Ref VpcId
       ValueYaml: |
+        serviceAccount:
+          annotations:
+            eks.amazonaws.com/role-arn: ${LoadBalancerControllerIAMRole.Arn}
         nodeSelector:
           kubernetes.io/os: linux
 Outputs:
