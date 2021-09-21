@@ -8,6 +8,8 @@ Parameters:
     Type: String
   EksClusterName:
     Type: String
+  VpcId:
+    Type: String
   ControllerCPULimit:
     Type: String
     Default: "100m"
@@ -287,6 +289,7 @@ Resources:
         replicaCount: !Ref ControllerReplicaCount
         hostNetwork: !If [ HostNetworkEnabled, "true", "false" ]
         image.repository: !FindInMap [RegionMap, !Ref "AWS::Region", lbrepo]
+        vpcId: !Ref VpcId
       ValueYaml: |
         nodeSelector:
           kubernetes.io/os: linux
