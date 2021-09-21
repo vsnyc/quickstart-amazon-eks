@@ -8,10 +8,23 @@ Parameters:
     Type: String
   EksClusterName:
     Type: String
-  VpcId:
+  ControllerCPULimit:
     Type: String
-Mappings: 
-  RegionMap: 
+    Default: "100m"
+  ControllerMemoryLimit:
+    Type: String
+    Default: "80Mi"
+  ControllerReplicaCount:
+    Type: Number
+    Default: 1
+  ControllerHostNetwork:
+    Type: String
+    AllowedValues: [ Enabled, Disabled ]
+    Default: Disabled
+Conditions:
+  HostNetworkEnabled: !Equals [ !Ref ControllerHostNetwork, Enabled ]
+Mappings:
+  RegionMap:
     me-south-1:
       lbrepo: 558608220178.dkr.ecr.me-south-1.amazonaws.com/amazon/aws-load-balancer-controller
     eu-south-1:
@@ -269,8 +282,11 @@ Resources:
         serviceAccount.create: false
         serviceAccount.name: aws-load-balancer-controller
         region: !Sub '${AWS::Region}'
+        resources.limits.cpu: !Ref ControllerCPULimit
+        resources.limits.memory: !Ref ControllerMemoryLimit
+        replicaCount: !Ref ControllerReplicaCount
+        hostNetwork: !If [ HostNetworkEnabled, "true", "false" ]
         image.repository: !FindInMap [RegionMap, !Ref "AWS::Region", lbrepo]
-        vpcId: !Ref VpcId
       ValueYaml: |
         nodeSelector:
           kubernetes.io/os: linux
