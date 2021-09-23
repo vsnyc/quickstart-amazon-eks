@@ -21,6 +21,9 @@ Parameters:
   KubernetesVersion:
     Type: String
     Default: ""
+  CustomNodeRole:
+    Type: String
+    Default: ""
   BastionRole:
     Type: String
     Default: ""
@@ -58,6 +61,7 @@ Parameters:
 Conditions:
   AddUser: !Not [ !Equals [ !Ref AdditionalEKSAdminUserArn, "" ] ]
   AddRole: !Not [ !Equals [ !Ref AdditionalEKSAdminRoleArn, "" ] ]
+  CustomeNodeRoleProvided: !Not [ !Equals [ !Ref CustomNodeRole, "" ] ]
   BastionRole: !Not [ !Equals [ !Ref BastionRole, "" ] ]
   EnablePrivateEndpoint: !Equals [ !Ref EKSPrivateAccessEndpoint, "Enabled" ]
   EnablePublicEndpoint: !Equals [ !Ref EKSPublicAccessEndpoint, "Enabled" ]
@@ -119,7 +123,12 @@ Resources:
       Version: !Ref KubernetesVersion
       KubernetesApiAccess:
         Roles:
-          - Arn: !Sub ['arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-UnmanagedNodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
+          - Arn: !Sub
+              - 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${NodeRole}'
+              - NodeRole: !If
+                  - CustomeNodeRoleProvided
+                  - !Ref CustomNodeRole
+                  - !Sub [ '${Prefix}-UnmanagedNodeInstance', { Prefix: !FindInMap [ Config, Prefix, Value ] } ]
             Username: 'system:node:{{EC2PrivateDNSName}}'
             Groups: [ 'system:bootstrappers', 'system:nodes', 'eks:kube-proxy-windows' ]
           - Arn: !Ref FunctionRoleArn
