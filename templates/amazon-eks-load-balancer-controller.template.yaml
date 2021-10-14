@@ -273,7 +273,7 @@ Resources:
         hostNetwork: !If [ HostNetworkEnabled, "true", "false" ]
         image.repository: !FindInMap [RegionMap, !Ref "AWS::Region", lbrepo]
         vpcId: !Ref VpcId
-      ValueYaml: |
+      ValueYaml: !Sub |
         serviceAccount:
           annotations:
             eks.amazonaws.com/role-arn: ${LoadBalancerControllerIAMRole.Arn}
