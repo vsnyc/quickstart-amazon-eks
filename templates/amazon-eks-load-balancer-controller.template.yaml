@@ -261,6 +261,7 @@ Resources:
     Properties:
       ClusterID: !Ref EksClusterName
       Namespace: kube-system
+      Name: aws-load-balancer-controller
       Repository: https://aws.github.io/eks-charts
       Chart: aws-load-balancer-controller
       Version: 1.2.7
