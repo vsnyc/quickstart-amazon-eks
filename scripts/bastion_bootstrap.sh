@@ -451,6 +451,7 @@ function install_kubernetes_client_tools() {
     mv ./kubectl /usr/local/bin/
     mkdir -p /root/bin
     ln -s /usr/local/bin/kubectl /root/bin/
+    ln -s /usr/local/bin/kubectl /opt/aws/bin
     cat > /etc/profile.d/kubectl.sh <<EOF
 #!/bin/bash
 source <(/usr/local/bin/kubectl completion bash)
@@ -462,6 +463,7 @@ EOF
         tar -xvf helm.tar.gz
         chmod +x ./linux-arm64/helm
         mv ./linux-arm64/helm /usr/local/bin/helm
+        ln -s /usr/local/bin/helm /opt/aws/bin
         rm -rf ./linux-arm64/
 
     elif [[ "${HARDWARE}" == "x86_64" ]]; then
@@ -469,6 +471,7 @@ EOF
         tar -xvf helm.tar.gz
         chmod +x ./linux-amd64/helm
         mv ./linux-amd64/helm /usr/local/bin/helm
+        ln -s /usr/local/bin/helm /opt/aws/bin        
         rm -rf ./linux-amd64/
     fi
 }
