@@ -437,6 +437,9 @@ EOF
     mkdir -p /root/.kube/
     cp /home/${user}/.kube/config /root/.kube/
     chown -R ${user}:${user_group} /home/${user}/.kube/
+    mkdir -p /home/ssm-user/.kube/
+    cp /home/${user}/.kube/config /home/ssm-user/.kube/config
+    chown -R ssm-user:ssm-user /home/ssm-user/.kube/
 }
 
 function install_kubernetes_client_tools() {
