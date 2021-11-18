@@ -359,13 +359,11 @@ Parameters:
     Type: "AWS::EC2::Subnet::Id"
     Description: ID of the private subnet in Availability Zone 1 of your existing VPC (e.g., subnet-fe9a8b32).
   PrivateSubnet2ID:
-    Type: String
+    Type: "AWS::EC2::Subnet::Id"
     Description: ID of the private subnet in Availability Zone 2 of your existing VPC (e.g., subnet-be8b01ea).
-    Default: ""
   PrivateSubnet3ID:
-    Type: String
+    Type: "AWS::EC2::Subnet::Id"
     Description: ID of the private subnet in Availability Zone 3 of your existing VPC (e.g., subnet-abd39039).
-    Default: ""
   ClusterAutoScaler:
     Type: String
     AllowedValues: [ Enabled, Disabled ]
