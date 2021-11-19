@@ -286,8 +286,7 @@ Parameters:
   KeyPairName:
     Description: Name of an existing key pair, which allows you
       to securely connect to your instance after it launches.
-    Type: String
-    Default: ""
+    Type: "AWS::EC2::KeyPair::KeyName"
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     ConstraintDescription: Quick Start bucket name can include numbers, lowercase
