@@ -385,10 +385,12 @@ Parameters:
     Type: String
   AdditionalEKSAdminUserArn:
     Default: ""
+    AllowedPattern: '^arn:(aws|aws-cn|aws-us-gov):iam::[0-9]{12}:.*|^$'
     Description: "(Optional) IAM user ARN to be granted administrative access to the EKS cluster."
     Type: String
   AdditionalEKSAdminRoleArn:
     Default: ""
+    AllowedPattern: '^arn:(aws|aws-cn|aws-us-gov):iam::[0-9]{12}:.*|^$'
     Description: "(Optional) IAM role ARN to be granted administrative access to the EKS cluster."
     Type: String
   NodeInstanceType:
@@ -399,10 +401,14 @@ Parameters:
     Type: String
   NumberOfNodes:
     Default: 3
+    MinValue: 0
+    MaxValue: 450
     Description: Number of Amazon EKS node instances. The default is one for each of the three Availability Zones.
     Type: Number
   MaxNumberOfNodes:
     Default: 3
+    MinValue: 0
+    MaxValue: 450
     Description: Maximum number of Amazon EKS node instances. The default is three.
     Type: Number
   ClusterAutoScaler:
@@ -592,6 +598,7 @@ Parameters:
       ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and
       "Hosted zone id", provide a value for "ACM SSL certificate ARN".
     Type: String
+    AllowedPattern: '^arn:(aws|aws-cn|aws-us-gov):acm:.*:[0-9]{12}:certificate.*|^$'
     Default: ""
   ConsulIntegration:
     Type: String
@@ -616,6 +623,7 @@ Parameters:
       ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and
       "Hosted zone id", provide a value for "ACM SSL certificate ARN".
     Type: String
+    AllowedPattern: '^arn:(aws|aws-cn|aws-us-gov):acm:.*:[0-9]{12}:certificate.*|^$'
     Default: ""
   RancherIntegration:
     Type: String
