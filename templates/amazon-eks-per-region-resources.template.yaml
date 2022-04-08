@@ -287,7 +287,7 @@ Resources:
             EIAMPolicyWildcardResource: cfn resource type schema's do not support resource constraints
     Properties:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
-      Version: "3.1.0"
+      Version: "3.1.4"
       RandomStr: !Ref RandomStr
       TypeName: "AWSQS::EKS::Cluster"
       SchemaHandlerPackage: !Sub ["s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/EksClusterResource/awsqs-eks-cluster.zip", {Prefix: !FindInMap [Config, Prefix, Value]}]

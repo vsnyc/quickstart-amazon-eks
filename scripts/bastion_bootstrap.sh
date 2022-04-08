@@ -437,6 +437,9 @@ EOF
     mkdir -p /root/.kube/
     cp /home/${user}/.kube/config /root/.kube/
     chown -R ${user}:${user_group} /home/${user}/.kube/
+
+    # Add SSM Config for ssm-user
+    /sbin/useradd -d /home/ssm-user  -u 1001 -s /bin/bash -m --user-group ssm-user
     mkdir -p /home/ssm-user/.kube/
     cp /home/${user}/.kube/config /home/ssm-user/.kube/config
     chown -R ssm-user:ssm-user /home/ssm-user/.kube/
@@ -474,7 +477,7 @@ EOF
         tar -xvf helm.tar.gz
         chmod +x ./linux-amd64/helm
         mv ./linux-amd64/helm /usr/local/bin/helm
-        ln -s /usr/local/bin/helm /opt/aws/bin        
+        ln -s /usr/local/bin/helm /opt/aws/bin
         rm -rf ./linux-amd64/
     fi
 }
