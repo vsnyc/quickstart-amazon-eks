@@ -188,7 +188,7 @@ Metadata:
 Parameters:
   ConfigSetName:
     Type: String
-    Description: "(Optional) Name used to map advanced parameters to an EKS cluster. In order to apply the defined parameters, 
+    Description: "(Optional) Name used to map advanced parameters to an EKS cluster. In order to apply the defined parameters,
     the name must match the name used when launching the main EKS Quick Start."
   EKSPrivateAccessEndpoint:
     Type: String
@@ -412,8 +412,8 @@ Parameters:
     Description: 'The edition of Windows AMI to use for Windows Nodegroups.'
   WindowsNodeVersion:
     Type: String
-    AllowedValues: ['2004', '2019']
-    Default: '2004'
+    AllowedValues: ['2019']
+    Default: '2019'
     Description: 'The version of windows to use for Windows Nodegroups.'
   EC2MetadataPutResponseHopLimit:
     Type: String
