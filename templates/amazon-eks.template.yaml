@@ -350,10 +350,12 @@ Resources:
         - >
           K8S_CLUSTER_NAME=${EKSControlPlane.Outputs.EKSName},
           K8S_CA_DATA=${EKSControlPlane.Outputs.CAData},
+          K8S_VERSION=${KubernetesVersion},
           K8S_ENDPOINT=${EKSControlPlane.Outputs.EKSEndpoint}${Joiner}
           ${BastionVariables}
         - Joiner: !If [AdditionalVars, ",", ""]
           BastionVariables: ~~/<ConfigSetName>/bastion/BastionVariables~~
+          KubernetesVersion: ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
   NodeGroupStack:
     Type: "AWS::CloudFormation::Stack"
     Metadata:

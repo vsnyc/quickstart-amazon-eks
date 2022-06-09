@@ -449,10 +449,33 @@ function install_kubernetes_client_tools() {
     mkdir -p /usr/local/bin/
     HARDWARE=`uname -m`
     if [[ "${HARDWARE}" == "aarch64" ]]; then
-        retry_command 20 curl --retry 5 -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/arm64/kubectl
+        ARCH="arm64"
     elif [[ "${HARDWARE}" == "x86_64" ]]; then
-        retry_command 20 curl --retry 5 -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+        ARCH="amd64"
     fi
+
+    # https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
+    # You must use a kubectl version that is within one minor version
+    # difference of your Amazon EKS cluster control plane. For example, a 1.21
+    # kubectl client works with Kubernetes 1.20, 1.21 and 1.22 clusters.
+    case "${K8S_VERSION}" in
+        "1.19")
+            KUBECTL_VERSION="1.20.4/2021-04-12"
+            ;;
+        "1.20")
+            KUBECTL_VERSION="1.21.2/2021-07-05"
+            ;;
+        "1.21" | "1.22")
+            KUBECTL_VERSION="1.22.6/2022-03-09"
+            ;;
+        *)
+            echo "[ERROR] Unsupported kubectl Kubernetes cluster version"
+            exit 1
+            ;;
+    esac
+
+    retry_command 20 curl --retry 5 -o kubectl "https://amazon-eks.s3-us-west-2.amazonaws.com/${KUBECTL_VERSION}/bin/linux/${ARCH}/kubectl"
+
     chmod +x ./kubectl
     mv ./kubectl /usr/local/bin/
     mkdir -p /root/bin
