@@ -4,6 +4,8 @@
 # NOTE: This requires GNU getopt. On Mac OS X and FreeBSD you must install GNU getopt and mod the checkos function so that it's supported
 
 
+source /root/.bashrc
+
 # Configuration
 PROGRAM='Linux Bastion'
 
@@ -404,7 +406,6 @@ function prevent_process_snooping() {
 
 function setup_kubeconfig() {
     mkdir -p /home/${user}/.kube
-    source /root/.bashrc
     cat > /home/${user}/.kube/config <<EOF
 apiVersion: v1
 clusters:
