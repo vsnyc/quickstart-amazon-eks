@@ -11,7 +11,7 @@ Parameters:
   KubernetesVersion:
     Type: String
     AllowedValues: [ "1.22", "1.21", "1.20", "1.19" ]
-    Default: "1.22"
+    Default: "1.21"
 # NOTE: The cluster autoscaler version number is dependant on the K8S version it is being
 #       deployed into. See...
 #       https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler#releases
