@@ -264,7 +264,7 @@ Resources:
       Name: aws-load-balancer-controller
       Repository: https://aws.github.io/eks-charts
       Chart: aws-load-balancer-controller
-      Version: 1.2.7
+      Version: 2.4.2
       Values:
         clusterName: !Ref EksClusterName
         region: !Sub '${AWS::Region}'
