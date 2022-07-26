@@ -250,7 +250,9 @@ Parameters:
   BastionBootstrapScript:
     Default: ""
     Type: String
-    Description: "(Optional) Custom initialization script to run during setup. If left blank, the default bootstrap script is used."
+    AllowedPattern: ^https.*|^$
+    ConstraintDescription: URL must begin with https.
+    Description: "(Optional) Custom initialization script to run during setup. If left blank, the default bootstrap script is used. URL must begin with https."
   BastionInstanceType:
     Default: "t3.micro"
     Type: String
