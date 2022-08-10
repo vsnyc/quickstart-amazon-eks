@@ -9,23 +9,23 @@
 [submodule "functions/source/EksClusterResource"]
 	path = functions/source/EksClusterResource
 	url = https://github.com/aws-quickstart/quickstart-amazon-eks-cluster-resource-provider.git
-        branch = main
+	branch = main
 [submodule "functions/source/HelmReleaseResource"]
 	path = functions/source/HelmReleaseResource
 	url = https://github.com/aws-quickstart/quickstart-helm-resource-provider.git
-        branch = main
+	branch = main
 [submodule "submodules/quickstart-eks-snyk"]
 	path = submodules/quickstart-eks-snyk
 	url = https://github.com/aws-quickstart/quickstart-eks-snyk.git
-        branch = main
+	branch = main
 [submodule "submodules/quickstart-eks-newrelic-infrastructure"]
 	path = submodules/quickstart-eks-newrelic-infrastructure
 	url = https://github.com/aws-quickstart/quickstart-eks-newrelic-infrastructure.git
-        branch = main
+	branch = main
 [submodule "functions/source/kubernetesResources"]
 	path = functions/source/kubernetesResources
 	url = https://github.com/aws-quickstart/quickstart-kubernetes-resource-provider.git
-        branch = main
+	branch = main
 [submodule "docs/boilerplate"]
 	path = docs/boilerplate
 	url = https://github.com/aws-quickstart/quickstart-documentation-base-common.git
@@ -45,11 +45,11 @@
 [submodule "submodules/quickstart-eks-tigera-calico"]
 	path = submodules/quickstart-eks-tigera-calico
 	url = https://github.com/aws-quickstart/quickstart-eks-tigera-calico.git
-    branch = main
+	branch = main
 [submodule "submodules/quickstart-eks-rancher"]
 	path = submodules/quickstart-eks-rancher
 	url = https://github.com/aws-quickstart/quickstart-eks-rancher.git
-        branch = main
+	branch = main
 [submodule "submodules/quickstart-eks-rafay-systems"]
 	path = submodules/quickstart-eks-rafay-systems
 	url = https://github.com/aws-quickstart/quickstart-eks-rafay-systems.git
@@ -60,3 +60,7 @@
 [submodule "submodules/quickstart-eks-prometheus"]
 	path = submodules/quickstart-eks-prometheus
 	url = https://github.com/aws-quickstart/quickstart-eks-prometheus.git
+[submodule "submodules/quickstart-eks-mulesoft-runtime-fabric"]
+	path = submodules/quickstart-eks-mulesoft-runtime-fabric
+	url = https://github.com/aws-quickstart/quickstart-eks-mulesoft-runtime-fabric.git
+	branch = main
