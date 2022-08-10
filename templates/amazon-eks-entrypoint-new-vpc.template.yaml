@@ -319,9 +319,13 @@ Parameters:
     Description: List of Availability Zones to use for the subnets in the VPC. Three
       Availability Zones are used for this deployment.
     Type: List<AWS::EC2::AvailabilityZone::Name>
+  # NOTE: Don't change the type of KeyPairName parameter back to AWS::EC2::KeyPair::KeyName.
+  # String type is intentional as it enables default (empty) value. By using defaults, we
+  # promote AWS Systems Manager Session Manager service, which is a recommended way
+  # to connect to EC2 instances.
   KeyPairName:
-    Description: Name of an existing key pair, which allows you
-      to securely connect to your instance after it launches.
+    Description: Name of an existing key pair, which allows you to securely connect to your instance after it launches.
+      Leave empty to proceed without a key pair. You would need to use AWS Systems Manager Session Manager to connect to the provisioned EC2 instances.
     Type: String
     Default: ""
   PrivateSubnet1CIDR:
