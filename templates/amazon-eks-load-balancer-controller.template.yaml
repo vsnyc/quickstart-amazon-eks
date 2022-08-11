@@ -65,7 +65,7 @@ Mappings:
       lbrepo: 602401143452.dkr.ecr.us-west-1.amazonaws.com/amazon/aws-load-balancer-controller
     us-west-2:
       lbrepo: 602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon/aws-load-balancer-controller
-    ap-east-1:  
+    ap-east-1:
       lbrepo: 800184023465.dkr.ecr.ap-east-1.amazonaws.com/amazon/aws-load-balancer-controller
     af-south-1:
       lbrepo: 877085696533.dkr.ecr.af-south-1.amazonaws.com/amazon/aws-load-balancer-controller
@@ -264,7 +264,7 @@ Resources:
       Name: aws-load-balancer-controller
       Repository: https://aws.github.io/eks-charts
       Chart: eks/aws-load-balancer-controller
-      Version: 2.4.2
+      Version: 1.4.4
       Values:
         clusterName: !Ref EksClusterName
         region: !Sub '${AWS::Region}'
