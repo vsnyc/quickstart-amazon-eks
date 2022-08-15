@@ -29,13 +29,13 @@ Mappings:
   # From : https://github.com/kubernetes/autoscaler/releases/tag/ 
   K8sVersionMap:
     "1.19":
-      ImageTag: v1.19.1
+      ImageTag: v1.19.3
     "1.20":
-      ImageTag: v1.20.0
+      ImageTag: v1.20.3
     "1.21":
-      ImageTag: v1.21.0
+      ImageTag: v1.21.3
     "1.22":
-      ImageTag: v1.22.1
+      ImageTag: v1.22.3
     "1.23":
       ImageTag: v1.23.1
 Resources:
