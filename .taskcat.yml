@@ -74,7 +74,7 @@ tests:
       ProvisionBastionHost: Disabled
       ALBIngressController: Disabled
     regions:
-    - ap-northeast-2
+      - ap-northeast-2
   cluster-autoscaler:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -82,7 +82,7 @@ tests:
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled
     regions:
-    - eu-central-1
+      - eu-central-1
   managed-node-group:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -90,7 +90,7 @@ tests:
       EKSPublicAccessEndpoint: Enabled
       ALBIngressController: Disabled
     regions:
-    - ap-south-1
+      - ap-south-1
   monitoring-prom-graf:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -100,7 +100,7 @@ tests:
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled
     regions:
-    - ap-southeast-2
+      - ap-southeast-2
   2az:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
@@ -109,8 +109,8 @@ tests:
       NodeGroupType: 'Unmanaged'
       ProvisionBastionHost: Disabled
     regions:
-    - cn-north-1
-    - cn-northwest-1
+      - cn-north-1
+      - cn-northwest-1
   govcloud:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -126,7 +126,7 @@ tests:
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled
     regions:
-    - eu-west-2
+      - eu-west-2
   with-hybrid:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -134,13 +134,13 @@ tests:
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled
     regions:
-    - us-west-2
+      - us-west-2
   load-balancer-controller:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       NodeGroupType: 'Unmanaged'
     regions:
-    - us-east-2
+      - us-east-2
   fargate:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -151,10 +151,10 @@ tests:
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Enabled
     regions:
-    - us-east-1
+      - us-east-1
   enable-oidc:
     regions:
-    - eu-west-1
+      - eu-west-1
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       IamOidcProvider: Enabled
@@ -166,7 +166,7 @@ tests:
       ALBIngressController: Enabled
   snyk:
     regions:
-    - eu-west-3
+      - eu-west-3
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
@@ -175,7 +175,7 @@ tests:
       ALBIngressController: Enabled
   new-relic:
     regions:
-    - sa-east-1
+      - sa-east-1
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
@@ -184,7 +184,7 @@ tests:
       ALBIngressController: Enabled
   rancher:
     regions:
-    - ap-east-1
+      - ap-east-1
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
@@ -198,7 +198,7 @@ tests:
       ProvisionBastionHost: Disabled
       ALBIngressController: Enabled
     regions:
-    - af-south-1
+      - af-south-1
   windows:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -207,7 +207,7 @@ tests:
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Enabled
     regions:
-    - eu-north-1
+      - eu-north-1
   vault:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -217,7 +217,7 @@ tests:
       VaultUIDomainName: ---overridden---
       VaultUIHostedZoneID: ---overridden---
     regions:
-    - eu-north-1
+      - eu-north-1
   consul:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -226,7 +226,7 @@ tests:
       ConsulUIDomainName: ---overridden---
       ConsulUIHostedZoneID: ---overridden---
     regions:
-    - eu-west-1
+      - eu-west-1
   calico:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -234,7 +234,7 @@ tests:
       ALBIngressController: Disabled
       CalicoIntegration: Enabled
     regions:
-    - us-west-2
+      - us-west-2
   rafaysystems:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -246,4 +246,4 @@ tests:
       RafaySysOrganizationName: override
       RafaySysEmail: override
     regions:
-    - ca-central-1
+      - ca-central-1
