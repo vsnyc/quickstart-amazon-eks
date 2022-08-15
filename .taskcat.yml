@@ -212,6 +212,7 @@ tests:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       ALBIngressController: Enabled
+      KubernetesVersion: 1.19
       VaultIntegration: Enabled
       VaultUIDomainName: ---overridden---
       VaultUIHostedZoneID: ---overridden---
