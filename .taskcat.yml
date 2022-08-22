@@ -128,8 +128,6 @@ tests:
     regions:
       - us-east-1
   enable-oidc:
-    regions:
-      - eu-west-1
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       IamOidcProvider: Enabled
@@ -139,32 +137,34 @@ tests:
       NodeInstanceType: c6g.medium
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Enabled
-  snyk:
     regions:
-      - eu-west-3
+      - eu-west-1
+  snyk:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
       SnykIntegration: Enabled
       SnykIntegrationId: ---overridden---
       ALBIngressController: Enabled
-  new-relic:
     regions:
-      - sa-east-1
+      - eu-west-3
+  new-relic:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
       NewRelicIntegration: Enabled
       NewRelicLicenseKey: ---overridden---
       ALBIngressController: Enabled
-  rancher:
     regions:
-      - ap-east-1
+      - sa-east-1
+  rancher:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
       RancherIntegration: Enabled
       ALBIngressController: Enabled
+    regions:
+      - ap-east-1
   managed-node-group-ASC:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
