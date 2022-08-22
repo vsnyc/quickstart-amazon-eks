@@ -27,6 +27,7 @@ Conditions:
   HostNetworkEnabled: !Equals [ !Ref ControllerHostNetwork, Enabled ]
 Mappings:
   RegionMap:
+  # https://docs.aws.amazon.com/eks/latest/userguide/add-ons-images.html
     me-south-1:
       lbrepo: 558608220178.dkr.ecr.me-south-1.amazonaws.com/amazon/aws-load-balancer-controller
     eu-south-1:
