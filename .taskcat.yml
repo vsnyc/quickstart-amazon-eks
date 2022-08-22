@@ -183,16 +183,16 @@ tests:
       ALBIngressController: Enabled
     regions:
       - eu-north-1
-  vault:
-    parameters:
-      AvailabilityZones: $[taskcat_genaz_3]
-      ALBIngressController: Enabled
-      KubernetesVersion: 1.19
-      VaultIntegration: Enabled
-      VaultUIDomainName: ---overridden---
-      VaultUIHostedZoneID: ---overridden---
-    regions:
-      - eu-north-1
+  # # Disabling until is Vault is upgraded to a supported interop level
+  # vault:
+  #   parameters:
+  #     AvailabilityZones: $[taskcat_genaz_3]
+  #     ALBIngressController: Enabled
+  #     VaultIntegration: Enabled
+  #     VaultUIDomainName: ---overridden---
+  #     VaultUIHostedZoneID: ---overridden---
+  #   regions:
+  #     - eu-north-1
   consul:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]

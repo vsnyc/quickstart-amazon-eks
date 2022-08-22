@@ -38,7 +38,7 @@ Metadata:
     - Integration
     - Auto Scaling
     - Partner
-    - Vault
+    # - Vault
     - Consul
     - HashiCorp
     - CalicoIntegration
@@ -133,13 +133,13 @@ Metadata:
           - RafaySysLastName
           - RafaySysOrganizationName
           - RafaySysEmail
-      - Label:
-          default: HashiCorp Vault (AWS Partner security)
-        Parameters:
-          - VaultIntegration
-          - VaultUIACMSSLCertificateArn
-          - VaultUIHostedZoneID
-          - VaultUIDomainName
+      # - Label:
+      #     default: HashiCorp Vault (AWS Partner security)
+      #   Parameters:
+      #     - VaultIntegration
+      #     - VaultUIACMSSLCertificateArn
+      #     - VaultUIHostedZoneID
+      #     - VaultUIDomainName
       - Label:
           default: HashiCorp Consul (AWS Partner containers)
         Parameters:
@@ -278,14 +278,14 @@ Metadata:
         default: Node instance family
       NodeGroupOS:
         default: Node group OS
-      VaultIntegration:
-        default: HashiCorp Vault integration
-      VaultUIACMSSLCertificateArn:
-        default: Vault UI ACM SSL certificate ARN
-      VaultUIHostedZoneID:
-        default: Route 53 hosted zone id
-      VaultUIDomainName:
-        default: Vault UI load balancer DNS name
+      # VaultIntegration:
+      #   default: HashiCorp Vault integration
+      # VaultUIACMSSLCertificateArn:
+      #   default: Vault UI ACM SSL certificate ARN
+      # VaultUIHostedZoneID:
+      #   default: Route 53 hosted zone id
+      # VaultUIDomainName:
+      #   default: Vault UI load balancer DNS name
       ConsulIntegration:
         default: HashiCorp Consul integration
       ConsulUIACMSSLCertificateArn:
@@ -1141,31 +1141,31 @@ Parameters:
     Description: Operating system to use for node instances. Choose "Bottlerocket" for the Amazon purpose-built container OS
       (unmanaged node groups only). Note that if you choose "Windows," an additional Amazon Linux node group is created.
     Type: String
-  VaultIntegration:
-    Type: String
-    AllowedValues: [Enabled, Disabled]
-    Default: Disabled
-    Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-hashicorp-vault/."
-  VaultUIDomainName:
-    Type: String
-    Description: >-
-      Fully qualified DNS name for the vault-ui service load balancer.
-      If you don't provide a value for "ACM SSL certificate ARN", use the HostedZoneID.
-    MaxLength: 128
-    Default: ""
-  VaultUIHostedZoneID:
-    Type: String
-    Description: >-
-      Route 53-hosted zone ID of the domain name. If you don't provide an ACMSSLCertificateArn value, the Quick Start
-      creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.
-    Default: ""
-  VaultUIACMSSLCertificateArn:
-    Description: >-
-      ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and
-      "Hosted zone id", provide a value for "ACM SSL certificate ARN".
-    Type: String
-    AllowedPattern: '^arn:(aws|aws-cn|aws-us-gov):acm:.*:[0-9]{12}:certificate.*|^$'
-    Default: ""
+  # VaultIntegration:
+  #   Type: String
+  #   AllowedValues: [Enabled, Disabled]
+  #   Default: Disabled
+  #   Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-hashicorp-vault/."
+  # VaultUIDomainName:
+  #   Type: String
+  #   Description: >-
+  #     Fully qualified DNS name for the vault-ui service load balancer.
+  #     If you don't provide a value for "ACM SSL certificate ARN", use the HostedZoneID.
+  #   MaxLength: 128
+  #   Default: ""
+  # VaultUIHostedZoneID:
+  #   Type: String
+  #   Description: >-
+  #     Route 53-hosted zone ID of the domain name. If you don't provide an ACMSSLCertificateArn value, the Quick Start
+  #     creates an ACM certificate for you using HostedZoneID in conjunction with DomainName.
+  #   Default: ""
+  # VaultUIACMSSLCertificateArn:
+  #   Description: >-
+  #     ARN of the load balancer's ACM SSL certificate. If you don't provide values for "Domain name" and
+  #     "Hosted zone id", provide a value for "ACM SSL certificate ARN".
+  #   Type: String
+  #   AllowedPattern: '^arn:(aws|aws-cn|aws-us-gov):acm:.*:[0-9]{12}:certificate.*|^$'
+  #   Default: ""
   ConsulIntegration:
     Type: String
     AllowedValues: [Enabled, Disabled]
@@ -1247,7 +1247,7 @@ Conditions:
     - !Equals [!Ref NumberOfAZs, "3"]
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
   WindowsNodes: !Equals [!Ref NodeGroupOS, 'Windows']
-  VaultEnabled: !Equals [!Ref VaultIntegration, 'Enabled']
+  # VaultEnabled: !Equals [!Ref VaultIntegration, 'Enabled']
 Mappings:
   Config:
     Prefix: { Value: 'eks-quickstart' }
@@ -1266,9 +1266,10 @@ Resources:
         NodeVolumeSize: !If [WindowsNodes, 50, !Ref 'AWS::NoValue']
         # As of 08/03/2021 there are no eks optimized ami's for eks 1.21
         # TODO: remove forcing windows clusters to 1.20 once ami's are available https://github.com/aws/containers-roadmap/issues/1461
-        KubernetesVersion: !If [VaultEnabled, '1.17', !If [WindowsNodes, '1.20', !Ref 'AWS::NoValue']]
+        # KubernetesVersion: !If [VaultEnabled, '1.17', !If [WindowsNodes, '1.20', !Ref 'AWS::NoValue']]
+        KubernetesVersion: !Ref AWS::NoValue
         ConsulUIAccessCIDR: !Ref RemoteAccessCIDR
-        VaultUIAccessCIDR: !Ref RemoteAccessCIDR
+        # VaultUIAccessCIDR: !Ref RemoteAccessCIDR
   AutoDetectSharedResources:
     Type: AWS::CloudFormation::Stack
     Condition: DetectSharedStacks
@@ -1395,10 +1396,10 @@ Resources:
         SnykIntegration: !Ref SnykIntegration
         NewRelicLicenseKey: !Ref NewRelicLicenseKey
         NewRelicIntegration: !Ref NewRelicIntegration
-        VaultIntegration: !Ref VaultIntegration
-        VaultUIACMSSLCertificateArn: !Ref VaultUIACMSSLCertificateArn
-        VaultUIHostedZoneID: !Ref VaultUIHostedZoneID
-        VaultUIDomainName: !Ref VaultUIDomainName
+        # VaultIntegration: !Ref VaultIntegration
+        # VaultUIACMSSLCertificateArn: !Ref VaultUIACMSSLCertificateArn
+        # VaultUIHostedZoneID: !Ref VaultUIHostedZoneID
+        # VaultUIDomainName: !Ref VaultUIDomainName
         ConsulIntegration: !Ref ConsulIntegration
         RancherIntegration: !Ref RancherIntegration
         RancherDomainName: !Ref RancherDomainName
@@ -1459,38 +1460,38 @@ Rules:
       - AssertDescription: You must specify at least one Fargate namespace to enable Fargate.
         Assert: !Not
           - !Equals [ !Ref FargateNamespaces, "" ]
-  # Vault
-  VaultUIDomainNamePresentWithHostedID:
-    RuleCondition: !And
-      - !Equals [!Ref VaultIntegration, 'Enabled']
-      - !Equals [ !Ref VaultUIHostedZoneID, '' ]
-    Assertions:
-      - Assert: !Not [!Equals [!Ref VaultUIDomainName, '']]
-        AssertDescription: "Vault: Please specify a 'Domain Name' if you specify 'Route 53 Hosted Zone ID'"
-  VaultUIHostedIDPresentWithDomainName:
-    RuleCondition: !And
-      - !Equals [!Ref VaultIntegration, 'Enabled']
-      - !Equals [ !Ref VaultUIDomainName, '' ]
-    Assertions:
-      - Assert: !Not [!Equals [!Ref VaultUIHostedZoneID, '']]
-        AssertDescription: "Vault: Please specify a 'Route 53 Hosted Zone ID' if you specify 'Domain Name'"
-  VaultUIGenerateOrProvideSSL:
-    RuleCondition: !And
-      - !Equals [!Ref VaultIntegration, 'Enabled']
-      - !Not [!Equals [!Ref VaultUIACMSSLCertificateArn, '']]
-    Assertions:
-      - Assert: !And
-        - !Equals [!Ref VaultUIHostedZoneID, '']
-        - !Equals [!Ref VaultUIDomainName, '']
-        AssertDescription: "Vault1: Using an SSL certificate is enforced. A CertificateArn or a HostedZoneID and Domain Name must be provided."
-  VaultUINoLoadBalancerInfoSupplied:
-    RuleCondition: !Equals [!Ref VaultIntegration, 'Enabled']
-    Assertions:
-      - Assert: !Or
-        - !Not [!Equals [!Ref VaultUIHostedZoneID, '']]
-        - !Not [!Equals [!Ref VaultUIACMSSLCertificateArn, '']]
-        - !Not [!Equals [!Ref VaultUIDomainName, '']]
-        AssertDescription: "Vault2: Using an SSL certificate is enforced. A CertificateArn or a HostedZoneID and Domain Name must be provided."
+  # # Vault
+  # VaultUIDomainNamePresentWithHostedID:
+  #   RuleCondition: !And
+  #     - !Equals [!Ref VaultIntegration, 'Enabled']
+  #     - !Equals [ !Ref VaultUIHostedZoneID, '' ]
+  #   Assertions:
+  #     - Assert: !Not [!Equals [!Ref VaultUIDomainName, '']]
+  #       AssertDescription: "Vault: Please specify a 'Domain Name' if you specify 'Route 53 Hosted Zone ID'"
+  # VaultUIHostedIDPresentWithDomainName:
+  #   RuleCondition: !And
+  #     - !Equals [!Ref VaultIntegration, 'Enabled']
+  #     - !Equals [ !Ref VaultUIDomainName, '' ]
+  #   Assertions:
+  #     - Assert: !Not [!Equals [!Ref VaultUIHostedZoneID, '']]
+  #       AssertDescription: "Vault: Please specify a 'Route 53 Hosted Zone ID' if you specify 'Domain Name'"
+  # VaultUIGenerateOrProvideSSL:
+  #   RuleCondition: !And
+  #     - !Equals [!Ref VaultIntegration, 'Enabled']
+  #     - !Not [!Equals [!Ref VaultUIACMSSLCertificateArn, '']]
+  #   Assertions:
+  #     - Assert: !And
+  #       - !Equals [!Ref VaultUIHostedZoneID, '']
+  #       - !Equals [!Ref VaultUIDomainName, '']
+  #       AssertDescription: "Vault1: Using an SSL certificate is enforced. A CertificateArn or a HostedZoneID and Domain Name must be provided."
+  # VaultUINoLoadBalancerInfoSupplied:
+  #   RuleCondition: !Equals [!Ref VaultIntegration, 'Enabled']
+  #   Assertions:
+  #     - Assert: !Or
+  #       - !Not [!Equals [!Ref VaultUIHostedZoneID, '']]
+  #       - !Not [!Equals [!Ref VaultUIACMSSLCertificateArn, '']]
+  #       - !Not [!Equals [!Ref VaultUIDomainName, '']]
+  #       AssertDescription: "Vault2: Using an SSL certificate is enforced. A CertificateArn or a HostedZoneID and Domain Name must be provided."
   # Consul
   ConsulUIDomainNamePresentWithHostedID:
     RuleCondition: !And
