@@ -183,7 +183,7 @@ tests:
       ALBIngressController: Enabled
     regions:
       - eu-north-1
-  # # Disabling until is Vault is upgraded to a supported interop level
+  # # Disabled due to interop
   # vault:
   #   parameters:
   #     AvailabilityZones: $[taskcat_genaz_3]
@@ -193,15 +193,16 @@ tests:
   #     VaultUIHostedZoneID: ---overridden---
   #   regions:
   #     - eu-north-1
-  consul:
-    parameters:
-      AvailabilityZones: $[taskcat_genaz_3]
-      ALBIngressController: Enabled
-      ConsulIntegration: Enabled
-      ConsulUIDomainName: ---overridden---
-      ConsulUIHostedZoneID: ---overridden---
-    regions:
-      - eu-west-1
+  # # Disabled due to interop
+  # consul:
+  #   parameters:
+  #     AvailabilityZones: $[taskcat_genaz_3]
+  #     ALBIngressController: Enabled
+  #     ConsulIntegration: Enabled
+  #     ConsulUIDomainName: ---overridden---
+  #     ConsulUIHostedZoneID: ---overridden---
+  #   regions:
+  #     - eu-west-1
   calico:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]

@@ -34,10 +34,6 @@
 	path = submodules/quickstart-amazon-eks-nodegroup
 	url = https://github.com/aws-quickstart/quickstart-amazon-eks-nodegroup.git
 	branch = main
-[submodule "submodules/quickstart-eks-hashicorp-consul"]
-	path = submodules/quickstart-eks-hashicorp-consul
-	url = https://github.com/aws-quickstart/quickstart-eks-hashicorp-consul.git
-	branch = main
 [submodule "submodules/quickstart-eks-tigera-calico"]
 	path = submodules/quickstart-eks-tigera-calico
 	url = https://github.com/aws-quickstart/quickstart-eks-tigera-calico.git
