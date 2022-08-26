@@ -460,9 +460,6 @@ function install_kubernetes_client_tools() {
     # difference of your Amazon EKS cluster control plane. For example, a 1.21
     # kubectl client works with Kubernetes 1.20, 1.21 and 1.22 clusters.
     case "${K8S_VERSION}" in
-        "1.19")
-            KUBECTL_VERSION="1.20.4/2021-04-12"
-            ;;
         "1.20")
             KUBECTL_VERSION="1.21.2/2021-07-05"
             ;;

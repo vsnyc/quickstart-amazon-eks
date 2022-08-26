@@ -233,8 +233,9 @@ Parameters:
     Default: ""
     Description: "(Optional) If an AMI ID is specified, it is used instead of the AMI from your OS/Region."
   KubernetesVersion:
+  # https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar
     Type: String
-    AllowedValues: [ "1.19", "1.20", "1.21", "1.22", "1.23" ]
+    AllowedValues: [ "1.20", "1.21", "1.22", "1.23" ]
     Default: "1.22"
     Description: Kubernetes control plane version.
   IamOidcProvider:
