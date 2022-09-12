@@ -147,7 +147,7 @@ Metadata:
           - RancherIntegration
           - RancherDomainName
       - Label:
-          default: MuleSoft RunTimeFabric (AWS Partner Integration)
+          default: MuleSoft Runtime Fabric (AWS Partner Integration)
         Parameters:
           - MuleSoftRtfIntegration
           - RTFFabricName
@@ -288,7 +288,7 @@ Metadata:
       RancherDomainName:
         default: Rancher management domain name
       MuleSoftRtfIntegration:
-        default: MuleSoft RunTimeFabric integration
+        default: MuleSoft Runtime Fabric integration
       RTFFabricName:
         default: Runtime Fabric Name
       OrgID:
