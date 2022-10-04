@@ -1217,14 +1217,17 @@ Parameters:
     Description: Anypoint Platform Username
     Type: String
     Default: ""
+    NoEcho: true
   Password:
     Description: Anypoint Platform Password
     Type: String
     Default: ""
+    NoEcho: true
   MuleLicenseKeyinbase64:
     Description: Mule License Key in Base 64 Format
     Type: String
     Default: ""
+    NoEcho: true
 Conditions:
   EnablePrometheus: !Or
     - !Equals [!Ref PrometheusIntegration, "Enabled"]
