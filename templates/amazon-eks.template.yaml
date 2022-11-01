@@ -344,23 +344,23 @@ Resources:
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion-entrypoint-existing-vpc.template.yaml
-        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+        - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         BastionHostName: EKSBastion
         BastionBanner: !Sub
-          - 's3://${S3Bucket}/${QSS3KeyPrefix}scripts/bastion_banner_message.txt'
+          - s3://${S3Bucket}/${QSS3KeyPrefix}scripts/bastion_banner_message.txt
           - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
         EnableBanner: true
         BastionTenancy: default
-        NumBastionHosts: "1"
+        NumBastionHosts: 1
         OSImageOverride: !Ref BastionAMIID
         VPCID: !Ref VPCID
         PublicSubnet1ID: !Ref PublicSubnet1ID
-        PublicSubnet2ID: !If [2AZDeployment, !Ref PublicSubnet2ID, !Ref "AWS::NoValue"]
+        PublicSubnet2ID: !If [2AZDeployment, !Ref PublicSubnet2ID, !Ref AWS::NoValue]
         KeyPairName: !Ref KeyPairName
         QSS3BucketName: !Ref QSS3BucketName
-        QSS3KeyPrefix: !Sub '${QSS3KeyPrefix}submodules/quickstart-linux-bastion/'
+        QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-linux-bastion/
         QSS3BucketRegion: !Ref QSS3BucketRegion
         RemoteAccessCIDR: !Ref RemoteAccessCIDR
         BastionInstanceType: ~~/<ConfigSetName>/bastion/BastionInstanceType~~
@@ -368,8 +368,8 @@ Resources:
         AlternativeInitializationScript: !If
           - DefaultBastionBootstrap
           - !Sub
-            - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}scripts/bastion_bootstrap.sh'
-            - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+            - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}scripts/bastion_bootstrap.sh
+            - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
               S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
           - ~~/<ConfigSetName>/bastion/BastionBootstrapScript~~
         AlternativeIAMRole: !GetAtt IamStack.Outputs.BastionRole
@@ -383,7 +383,7 @@ Resources:
           K8S_VERSION=${KubernetesVersion},
           K8S_ENDPOINT=${EKSControlPlane.Outputs.EKSEndpoint}${Joiner}
           ${BastionVariables}
-        - Joiner: !If [AdditionalVars, ",", ""]
+        - Joiner: !If [AdditionalVars, ',', '']
           BastionVariables: ~~/<ConfigSetName>/bastion/BastionVariables~~
           KubernetesVersion: ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
   NodeGroupStack:
