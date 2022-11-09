@@ -2,10 +2,6 @@
 	path = submodules/quickstart-aws-vpc
 	url = https://github.com/aws-quickstart/quickstart-aws-vpc.git
 	branch = main
-[submodule "submodules/quickstart-linux-bastion"]
-	path = submodules/quickstart-linux-bastion
-	url = https://github.com/aws-quickstart/quickstart-linux-bastion.git
-	branch = main
 [submodule "functions/source/EksClusterResource"]
 	path = functions/source/EksClusterResource
 	url = https://github.com/aws-quickstart/quickstart-amazon-eks-cluster-resource-provider.git
