@@ -52,3 +52,6 @@
 	path = submodules/quickstart-eks-mulesoft-runtime-fabric
 	url = https://github.com/aws-quickstart/quickstart-eks-mulesoft-runtime-fabric.git
 	branch = main
+[submodule "submodules/quickstart-linux-bastion"]
+	path = submodules/quickstart-linux-bastion
+	url = https://github.com/aws-quickstart/quickstart-linux-bastion.git
