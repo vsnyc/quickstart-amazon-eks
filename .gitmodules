@@ -2,10 +2,6 @@
 	path = submodules/quickstart-aws-vpc
 	url = https://github.com/aws-quickstart/quickstart-aws-vpc.git
 	branch = main
-[submodule "submodules/quickstart-linux-bastion"]
-	path = submodules/quickstart-linux-bastion
-	url = https://github.com/aws-quickstart/quickstart-linux-bastion.git
-	branch = main
 [submodule "functions/source/EksClusterResource"]
 	path = functions/source/EksClusterResource
 	url = https://github.com/aws-quickstart/quickstart-amazon-eks-cluster-resource-provider.git
@@ -34,14 +30,6 @@
 	path = submodules/quickstart-amazon-eks-nodegroup
 	url = https://github.com/aws-quickstart/quickstart-amazon-eks-nodegroup.git
 	branch = main
-[submodule "submodules/quickstart-eks-hashicorp-vault"]
-	path = submodules/quickstart-eks-hashicorp-vault
-	url = https://github.com/aws-quickstart/quickstart-eks-hashicorp-vault.git
-	branch = main
-[submodule "submodules/quickstart-eks-hashicorp-consul"]
-	path = submodules/quickstart-eks-hashicorp-consul
-	url = https://github.com/aws-quickstart/quickstart-eks-hashicorp-consul.git
-	branch = main
 [submodule "submodules/quickstart-eks-tigera-calico"]
 	path = submodules/quickstart-eks-tigera-calico
 	url = https://github.com/aws-quickstart/quickstart-eks-tigera-calico.git
@@ -64,3 +52,6 @@
 	path = submodules/quickstart-eks-mulesoft-runtime-fabric
 	url = https://github.com/aws-quickstart/quickstart-eks-mulesoft-runtime-fabric.git
 	branch = main
+[submodule "submodules/quickstart-linux-bastion"]
+	path = submodules/quickstart-linux-bastion
+	url = https://github.com/aws-quickstart/quickstart-linux-bastion.git
