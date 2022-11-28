@@ -45,9 +45,11 @@
 [submodule "submodules/quickstart-eks-grafana"]
 	path = submodules/quickstart-eks-grafana
 	url = https://github.com/aws-quickstart/quickstart-eks-grafana.git
+	branch = main
 [submodule "submodules/quickstart-eks-prometheus"]
 	path = submodules/quickstart-eks-prometheus
 	url = https://github.com/aws-quickstart/quickstart-eks-prometheus.git
+	branch = main
 [submodule "submodules/quickstart-eks-mulesoft-runtime-fabric"]
 	path = submodules/quickstart-eks-mulesoft-runtime-fabric
 	url = https://github.com/aws-quickstart/quickstart-eks-mulesoft-runtime-fabric.git
@@ -55,3 +57,4 @@
 [submodule "submodules/quickstart-linux-bastion"]
 	path = submodules/quickstart-linux-bastion
 	url = https://github.com/aws-quickstart/quickstart-linux-bastion.git
+	branch = main
