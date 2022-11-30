@@ -883,15 +883,9 @@ Outputs:
   BastionIP:
     Value: !If [EnableBastionWithEIP, !GetAtt BastionStack.Outputs.EIP1, '']
   BastionSecurityGroup:
-    Value: !If
-      - EnableBastion
-      - !GetAtt BastionStack.Outputs.BastionSecurityGroupID
-      - ""
+    Value: !If [EnableBastion, !GetAtt BastionStack.Outputs.BastionSecurityGroupID, '']
   BastionAutoScalingGroup:
-    Value: !If
-      - EnableBastion
-      - !GetAtt BastionStack.Outputs.BastionAutoScalingGroup
-      - ""
+    Value: !If [EnableBastion, !GetAtt BastionStack.Outputs.BastionAutoScalingGroup, '']
   EKSClusterName:
     Value: !GetAtt EKSControlPlane.Outputs.EKSName
   ControlPlaneSecurityGroup:
