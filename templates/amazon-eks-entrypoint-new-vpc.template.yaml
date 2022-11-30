@@ -1167,7 +1167,7 @@ Conditions:
   2AZDeployment: !Or
     - !Equals [!Ref NumberOfAZs, "2"]
     - !Equals [!Ref NumberOfAZs, "3"]
-  OnlySsmAccess: !Equals [!Ref RemoteAccessCIDR, disabled-onlyssmaccess]
+  # OnlySsmAccess: !Equals [!Ref RemoteAccessCIDR, disabled-onlyssmaccess]
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
   WindowsNodes: !Equals [!Ref NodeGroupOS, 'Windows']
 Mappings:
