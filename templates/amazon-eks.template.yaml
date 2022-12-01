@@ -212,23 +212,23 @@ Parameters:
     Default: Disabled
     Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-rancher/."
   RTFFabricName:
-    Description: Runtime Fabric Name
+    Description: Runtime Fabric name.
     Type: String
     Default: ""
   OrgID:
-    Description: Oraganization ID of your Anypoint
+    Description: Organization ID of your Anypoint.
     Type: String
     Default: ""
   UserName:
-    Description: Anypoint Platform Username
+    Description: Anypoint platform username.
     Type: String
     Default: ""
   Password:
-    Description: Anypoint Platform Password
+    Description: Anypoint platform password.
     Type: String
     Default: ""
   MuleLicenseKeyinbase64:
-    Description: Mule License Key in Base 64 Format.
+    Description: MuleSoft license key in base64 format.
     Type: String
     Default: ""
 Mappings:

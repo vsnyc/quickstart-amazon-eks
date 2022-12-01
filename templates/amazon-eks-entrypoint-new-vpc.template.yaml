@@ -92,7 +92,7 @@ Metadata:
           - RancherIntegration
           - RancherDomainName
       - Label:
-          default: MuleSoft Anypoint Runtime Fabric (AWS Partner Integration)
+          default: MuleSoft Anypoint Runtime Fabric (AWS Partner integration)
         Parameters:
           - MuleSoftRtfIntegration
           - RTFFabricName
@@ -226,13 +226,13 @@ Metadata:
       RTFFabricName:
         default: Runtime Fabric Name
       OrgID:
-        default: Oraganization ID of your Anypoint
+        default: Organization ID of your Anypoint
       UserName:
-        default: Anypoint Platform Username
+        default: Anypoint platform username
       Password:
-        default: Anypoint Platform Password
+        default: Anypoint platform password
       MuleLicenseKeyinbase64:
-        default: Mule License Key in Base 64 Format
+        default: Mule license key in base64 format
       PrometheusIntegration:
         default: Prometheus integration
       GrafanaIntegration:
@@ -1083,25 +1083,25 @@ Parameters:
     Default: Disabled
     Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-mulesoft-runtime-fabric/."
   RTFFabricName:
-    Description: Runtime Fabric Name
+    Description: Runtime Fabric name.
     Type: String
     Default: ""
   OrgID:
-    Description: Oraganization ID of your Anypoint
+    Description: Organization ID of your Anypoint.
     Type: String
     Default: ""
   UserName:
-    Description: Anypoint Platform Username
+    Description: Anypoint platform username.
     Type: String
     Default: ""
     NoEcho: true
   Password:
-    Description: Anypoint Platform Password
+    Description: Anypoint platform password.
     Type: String
     Default: ""
     NoEcho: true
   MuleLicenseKeyinbase64:
-    Description: Mule License Key in Base 64 Format
+    Description: MuleSoft license key in base64 format.
     Type: String
     Default: ""
     NoEcho: true
