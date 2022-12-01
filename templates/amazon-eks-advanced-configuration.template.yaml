@@ -1,6 +1,12 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Configure advanced options for the Amazon EKS Quick Start. (qs-1r0q2rlel)
 Metadata:
+  cfn-lint:
+    config:
+      ignore_checks: [W9002, W9003]
+      ignore_reasons:
+        W9002: Workload template
+        W9003: Workload template
   QuickStartDocumentation:
     EntrypointName: "Configure advanced options"
     Order: Index d
