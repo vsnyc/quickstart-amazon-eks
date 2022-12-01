@@ -254,6 +254,9 @@ Conditions:
   EnableBastion: !And
     - !Equals [!Ref 'ProvisionBastionHost', 'Enabled']
     - !Not [!Equals [!Ref PublicSubnet1ID, ""]]
+  EnableBastionWithEIP: !And
+    - !Condition EnableBastion
+    - !Not [!Equals [!Ref RemoteAccessCIDR, disabled-onlyssmaccess]]
   CustomBastionRole: !Not [!Equals [~~/<ConfigSetName>/bastion/BastionIAMRoleName~~, '']]
   AdditionalVars: !Not [!Equals [~~/<ConfigSetName>/bastion/BastionVariables~~, '']]
   EnableClusterAutoScaler: !Equals [!Ref 'ProvisionClusterAutoScaler', 'Enabled']
@@ -878,20 +881,11 @@ Resources:
         ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
 Outputs:
   BastionIP:
-    Value: !If
-      - EnableBastion
-      - !GetAtt BastionStack.Outputs.EIP1
-      - ""
+    Value: !If [EnableBastionWithEIP, !GetAtt BastionStack.Outputs.EIP1, '']
   BastionSecurityGroup:
-    Value: !If
-      - EnableBastion
-      - !GetAtt BastionStack.Outputs.BastionSecurityGroupID
-      - ""
+    Value: !If [EnableBastion, !GetAtt BastionStack.Outputs.BastionSecurityGroupID, '']
   BastionAutoScalingGroup:
-    Value: !If
-      - EnableBastion
-      - !GetAtt BastionStack.Outputs.BastionAutoScalingGroup
-      - ""
+    Value: !If [EnableBastion, !GetAtt BastionStack.Outputs.BastionAutoScalingGroup, '']
   EKSClusterName:
     Value: !GetAtt EKSControlPlane.Outputs.EKSName
   ControlPlaneSecurityGroup:
