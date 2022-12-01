@@ -9,57 +9,12 @@ Metadata:
     EntrypointName: "Launch into a new VPC"
     Order: Index a
   LintSpellExclude:
-    - Kubernetes
-    - ARNs
-    - Resource Names
-    - autoscaler
-    - IOPS
-    - EfsStorageClass
-    - Lambda
-    - maxIO
-    - Resource Name
-    - Enabled
-    - Disabled
-    - Prometheus
-    - Encrypt
-    - Fargate
-    - namespace
     - Snyk
-    - Security
     - New Relic
-    - APN
-    - '"No"'
-    - Windows
-    - '"Config '
-    - '(Optional)'
-    - Unmanaged
-    - Node
-    - NewRelicIntegration
-    - Integration
-    - Auto Scaling
-    - Partner
-    - HashiCorp
-    - CalicoIntegration
-    - RafaySysIntegration
-    - RafaySysProject
-    - RafaySysBootstrapBucket
-    - RafaySysBootstrapKey
-    - RafaySysApiKey
-    - RafaySysApiSecret
-    - RafaySysFirstName
-    - RafaySysLastName
-    - RafaySysOrganizationName
-    - RafaySysEmail
-    - Rafay Systems
     - Rafay
     - Rancher
-    - yaml
-    - rafay
-    - DomainName
-    - Hosted
-    - Domain Name
-    - Domain name
-    - Grafana
+    - MuleSoft
+    - Anypoint
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -137,7 +92,7 @@ Metadata:
           - RancherIntegration
           - RancherDomainName
       - Label:
-          default: MuleSoft Anypoint Runtime Fabric (AWS Partner Integration)
+          default: MuleSoft Anypoint Runtime Fabric (AWS Partner integration)
         Parameters:
           - MuleSoftRtfIntegration
           - RTFFabricName
@@ -271,13 +226,13 @@ Metadata:
       RTFFabricName:
         default: Runtime Fabric Name
       OrgID:
-        default: Oraganization ID of your Anypoint
+        default: Organization ID of your Anypoint
       UserName:
-        default: Anypoint Platform Username
+        default: Anypoint platform username
       Password:
-        default: Anypoint Platform Password
+        default: Anypoint platform password
       MuleLicenseKeyinbase64:
-        default: Mule License Key in Base 64 Format
+        default: Mule license key in base64 format
       PrometheusIntegration:
         default: Prometheus integration
       GrafanaIntegration:
@@ -298,39 +253,39 @@ Parameters:
     Default: ""
   PrivateSubnet1CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16–28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
     Default: 10.0.0.0/19
     Description: CIDR block for private subnet 1, located in Availability Zone 1.
     Type: String
   PrivateSubnet2CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16–28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
     Default: 10.0.32.0/19
     Description: CIDR block for private subnet 2, located in Availability Zone 2.
     Type: String
   PrivateSubnet3CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16–28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
     Default: 10.0.64.0/19
     Description: CIDR block for private subnet 3, located in Availability Zone 3.
     Type: String
   PublicSubnet1CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16–28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
     Default: 10.0.128.0/20
     Description: CIDR block for the public (DMZ) subnet 1, located in Availability
       Zone 1.
     Type: String
   PublicSubnet2CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16–28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
     Default: 10.0.144.0/20
     Description: CIDR block for the public (DMZ) subnet 2, located in Availability
       Zone 2.
     Type: String
   PublicSubnet3CIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16–28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
     Default: 10.0.160.0/20
     Description: CIDR block for the public (DMZ) subnet 3, located in Availability
       Zone 3.
@@ -376,7 +331,7 @@ Parameters:
     Description: Configure access to the Kubernetes API server endpoint from outside of your VPC.
   VPCCIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16–28
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
     Default: 10.0.0.0/16
     Description: CIDR block for the VPC.
     Type: String
@@ -1128,25 +1083,25 @@ Parameters:
     Default: Disabled
     Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-mulesoft-runtime-fabric/."
   RTFFabricName:
-    Description: Runtime Fabric Name
+    Description: Runtime Fabric name.
     Type: String
     Default: ""
   OrgID:
-    Description: Oraganization ID of your Anypoint
+    Description: Organization ID of your Anypoint.
     Type: String
     Default: ""
   UserName:
-    Description: Anypoint Platform Username
+    Description: Anypoint platform username.
     Type: String
     Default: ""
     NoEcho: true
   Password:
-    Description: Anypoint Platform Password
+    Description: Anypoint platform password.
     Type: String
     Default: ""
     NoEcho: true
   MuleLicenseKeyinbase64:
-    Description: Mule License Key in Base 64 Format
+    Description: MuleSoft license key in base64 format.
     Type: String
     Default: ""
     NoEcho: true
