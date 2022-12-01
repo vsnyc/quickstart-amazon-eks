@@ -489,7 +489,7 @@ EOF
 
   chmod +x /etc/profile.d/kubectl.sh
   if [[ "${HARDWARE}" == "aarch64" ]]; then
-    retry_command 20 curl --retry 5 -o helm.tar.gz https://get.helm.sh/helm-v3.3.4-linux-arm64.tar.gz
+    retry_command 20 curl --retry 5 -o helm.tar.gz https://get.helm.sh/helm-v3.10.2-linux-arm64.tar.gz
     tar -xvf helm.tar.gz
     chmod +x ./linux-arm64/helm
     mv ./linux-arm64/helm /usr/local/bin/helm
@@ -497,7 +497,7 @@ EOF
     rm -rf ./linux-arm64/
 
     elif [[ "${HARDWARE}" == "x86_64" ]]; then
-    retry_command 20 curl --retry 5 -o helm.tar.gz https://get.helm.sh/helm-v3.3.4-linux-amd64.tar.gz
+    retry_command 20 curl --retry 5 -o helm.tar.gz https://get.helm.sh/helm-v3.10.2-linux-amd64.tar.gz
     tar -xvf helm.tar.gz
     chmod +x ./linux-amd64/helm
     mv ./linux-amd64/helm /usr/local/bin/helm
