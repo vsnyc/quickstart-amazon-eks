@@ -9,57 +9,12 @@ Metadata:
     EntrypointName: "Launch into a new VPC"
     Order: Index a
   LintSpellExclude:
-    - Kubernetes
-    - ARNs
-    - Resource Names
-    - autoscaler
-    - IOPS
-    - EfsStorageClass
-    - Lambda
-    - maxIO
-    - Resource Name
-    - Enabled
-    - Disabled
-    - Prometheus
-    - Encrypt
-    - Fargate
-    - namespace
     - Snyk
-    - Security
     - New Relic
-    - APN
-    - '"No"'
-    - Windows
-    - '"Config '
-    - '(Optional)'
-    - Unmanaged
-    - Node
-    - NewRelicIntegration
-    - Integration
-    - Auto Scaling
-    - Partner
-    - HashiCorp
-    - CalicoIntegration
-    - RafaySysIntegration
-    - RafaySysProject
-    - RafaySysBootstrapBucket
-    - RafaySysBootstrapKey
-    - RafaySysApiKey
-    - RafaySysApiSecret
-    - RafaySysFirstName
-    - RafaySysLastName
-    - RafaySysOrganizationName
-    - RafaySysEmail
-    - Rafay Systems
     - Rafay
     - Rancher
-    - yaml
-    - rafay
-    - DomainName
-    - Hosted
-    - Domain Name
-    - Domain name
-    - Grafana
+    - MuleSoft
+    - Anypoint
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:

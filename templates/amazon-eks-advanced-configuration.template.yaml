@@ -5,33 +5,8 @@ Metadata:
     EntrypointName: "Configure advanced options"
     Order: Index d
   ConfigSetName: !Ref ConfigSetName
-  LintSpellExclude:
-    - https://github.com/awslabs/amazon-eks-ami/
-    - Kubernetes
-    - Encrypt
-    - Mibps
-    - initialization
-    - bootstrapping
-    - maxIO
-    - CloudWatch Logs
-    - Linux
-    - Enabled
-    - Disabled
-    - Managed
-    - '(Optional)'
-    - Node
-    - Unmanaged
-    - Default
-    - Launch
-    - Latest
-    - Custom
-    - Security Group
-    # - Consul
-    # - Vault
-    - namespace
-    - HashiCorp
-    - Partner
-    - UI
+  SentenceCaseExclude:
+    - This
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
