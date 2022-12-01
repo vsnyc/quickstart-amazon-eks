@@ -226,6 +226,7 @@ Parameters:
   Password:
     Description: Anypoint platform password.
     Type: String
+    NoEcho: true
     Default: ""
   MuleLicenseKeyinbase64:
     Description: MuleSoft license key in base64 format.
