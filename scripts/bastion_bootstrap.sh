@@ -461,13 +461,16 @@ install_kubernetes_client_tools() {
   # kubectl client works with Kubernetes 1.20, 1.21 and 1.22 clusters.
   case "${K8S_VERSION}" in
     "1.20")
-      KUBECTL_VERSION="1.21.2/2021-07-05"
+      KUBECTL_VERSION="1.21.14/2022-10-31"
     ;;
     "1.21")
-      KUBECTL_VERSION="1.22.6/2022-03-09"
+      KUBECTL_VERSION="1.22.15/2022-10-31"
     ;;
-    "1.22" | "1.23")
-      KUBECTL_VERSION="1.23.7/2022-06-29"
+    "1.22")
+      KUBECTL_VERSION="1.23.13/2022-10-31"
+    ;;
+    "1.23" | "1.24")
+      KUBECTL_VERSION="1.24.7/2022-10-31"
     ;;
     *)
       echo "[ERROR] Unsupported kubectl Kubernetes cluster version"
