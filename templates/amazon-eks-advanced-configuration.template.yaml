@@ -202,8 +202,15 @@ Parameters:
     Description: Enables IAM roles for Kubernetes service accounts.
   BastionOS:
     Type: String
-    AllowedValues: [ "Amazon-Linux2-HVM", "Amazon-Linux-HVM", "CentOS-7-HVM", "Ubuntu-Server-14.04-LTS-HVM", "Ubuntu-Server-16.04-LTS-HVM", "SUSE-SLES-15-HVM" ]
-    Default: "Amazon-Linux2-HVM"
+    AllowedValues:
+      - Amazon-Linux2-HVM
+      - Amazon-Linux2-HVM-ARM
+      - CentOS-7-HVM
+      - Ubuntu-Server-20.04-LTS-HVM
+      - Ubuntu-Server-22.04-LTS-HVM
+      - Ubuntu-Server-22.04-LTS-HVM-ARM
+      - SUSE-SLES-15-HVM
+    Default: Amazon-Linux2-HVM
     Description: Linux distribution of the bastion host.
   BastionBootstrapScript:
     Default: ""
