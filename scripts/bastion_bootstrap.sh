@@ -425,6 +425,8 @@ install_kubernetes_client_tools() {
   mv "./linux-${ARCHITECTURE}/helm" /usr/local/bin/helm
   ln -s /usr/local/bin/helm /opt/aws/bin
   rm -rf "./linux-${ARCHITECTURE}/"
+  # https://helm.sh/docs/helm/helm_completion_bash/
+  helm completion bash > /etc/bash_completion.d/helm
 }
 ##################################### End Function Definitions
 
