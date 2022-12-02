@@ -365,38 +365,10 @@ prevent_process_snooping() {
 }
 
 setup_kubeconfig() {
+  aws eks update-kubeconfig --name "${K8S_CLUSTER_NAME}"
+
   mkdir -p /home/${user}/.kube
-    cat > /home/${user}/.kube/config <<EOF
-apiVersion: v1
-clusters:
-- cluster:
-    server: ${K8S_ENDPOINT}
-    certificate-authority-data: ${K8S_CA_DATA}
-  name: kubernetes
-contexts:
-- context:
-    cluster: kubernetes
-    user: aws
-  name: aws
-current-context: aws
-kind: Config
-preferences: {}
-users:
-- name: aws
-  user:
-    exec:
-      apiVersion: client.authentication.k8s.io/v1alpha1
-      command: aws
-      args:
-        - "eks"
-        - "get-token"
-        - "--cluster-name"
-        - "${K8S_CLUSTER_NAME}"
-        - "--region"
-        - "${REGION}"
-EOF
-  mkdir -p /root/.kube/
-  cp /home/${user}/.kube/config /root/.kube/
+  cp /root/.kube/config /home/${user}/.kube/
   chown -R ${user}:${user_group} /home/${user}/.kube/
 
   # Add SSM Config for ssm-user
