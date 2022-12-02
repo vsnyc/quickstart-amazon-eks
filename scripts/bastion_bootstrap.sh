@@ -419,7 +419,7 @@ install_kubernetes_client_tools() {
       KUBECTL_VERSION="1.24.7/2022-10-31"
     ;;
     *)
-      echo "[ERROR] Unsupported kubectl Kubernetes cluster version"
+      echo "[ERROR] Unsupported kubectl Kubernetes cluster version: '${K8S_VERSION}'"
       exit 1
     ;;
   esac
