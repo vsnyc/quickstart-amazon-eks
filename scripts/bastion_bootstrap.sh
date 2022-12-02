@@ -415,12 +415,8 @@ install_kubernetes_client_tools() {
   mkdir -p /root/bin
   ln -s /usr/local/bin/kubectl /root/bin/
   ln -s /usr/local/bin/kubectl /opt/aws/bin
-    cat > /etc/profile.d/kubectl.sh <<EOF
-#!/bin/bash
-source <(/usr/local/bin/kubectl completion bash)
-EOF
-
-  chmod +x /etc/profile.d/kubectl.sh
+  # https://kubernetes.io/docs/tasks/tools/included/optional-kubectl-configs-bash-linux/#enable-kubectl-autocompletion
+  /usr/local/bin/kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl > /dev/null
 
   retry_command 20 curl --retry 5 -o helm.tar.gz "https://get.helm.sh/helm-v3.10.2-linux-${ARCHITECTURE}.tar.gz"
 
