@@ -5,6 +5,7 @@
 
 set -xe
 
+# Required for reading in the custom EKS environment variables
 source /root/.bashrc
 
 # Configuration
