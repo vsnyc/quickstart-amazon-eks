@@ -310,8 +310,8 @@ Resources:
         NumBastionHosts: 1
         OSImageOverride: !Ref BastionAMIID
         VPCID: !Ref VPCID
-        PublicSubnet1ID: !Ref PublicSubnet1ID
-        PublicSubnet2ID: !If [2AZDeployment, !Ref PublicSubnet2ID, !Ref AWS::NoValue]
+        PublicSubnet1ID: !If [EnableBastionWithEIP, !Ref PublicSubnet1ID, !Ref PrivateSubnet1ID]
+        PublicSubnet2ID: !If [2AZDeployment, !If [EnableBastionWithEIP, !Ref PublicSubnet2ID, !Ref PrivateSubnet2ID], !Ref AWS::NoValue]
         KeyPairName: !Ref KeyPairName
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-linux-bastion/
