@@ -87,8 +87,16 @@ setup_environment_variables() {
 }
 
 verify_dependencies() {
-  if [[ "a$(which aws)" == "a" ]]; then
-    pip install awscli
+  local awscli_version=$(aws --version 2>&1 | cut -d "/" -f2-)
+  if [[ "${awscli_version}" =~ ^1\..+Python\/2\. ]]; then
+    if [[ "${release}" == "AMZN" ]]; then
+      yum remove -y awscli
+    fi
+
+    echo "Installing AWS CLI..."
+    wget -nv -O "./awscliv2.zip" "https://awscli.amazonaws.com/awscli-exe-linux-$HARDWARE.zip"
+    unzip -q ./awscliv2.zip
+    ./aws/install
   fi
   echo "${FUNCNAME[0]} Ended"
 }
@@ -450,6 +458,7 @@ EOF
 
 # Call checkos to ensure platform is Linux
 checkos
+release=$(osrelease)
 
 # Verify dependencies are installed.
 verify_dependencies
@@ -541,7 +550,6 @@ if [[ ${X11_FORWARDING} == "false" ]]; then
   echo "X11Forwarding no" >> /etc/ssh/sshd_config
 fi
 
-release=$(osrelease)
 if [[ "${release}" == "Operating System Not Found" ]]; then
   echo "[ERROR] Unsupported Linux Bastion OS"
   exit 1
