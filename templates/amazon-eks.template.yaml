@@ -303,15 +303,15 @@ Resources:
       Parameters:
         BastionHostName: EKSBastion
         BastionBanner: !Sub
-          - s3://${S3Bucket}/${QSS3KeyPrefix}scripts/bastion_banner_message.txt
+          - s3://${S3Bucket}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/scripts/banner_message.txt
           - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
         EnableBanner: true
         BastionTenancy: default
         NumBastionHosts: 1
         OSImageOverride: !Ref BastionAMIID
         VPCID: !Ref VPCID
-        PublicSubnet1ID: !Ref PublicSubnet1ID
-        PublicSubnet2ID: !If [2AZDeployment, !Ref PublicSubnet2ID, !Ref AWS::NoValue]
+        PublicSubnet1ID: !If [EnableBastionWithEIP, !Ref PublicSubnet1ID, !Ref PrivateSubnet1ID]
+        PublicSubnet2ID: !If [2AZDeployment, !If [EnableBastionWithEIP, !Ref PublicSubnet2ID, !Ref PrivateSubnet2ID], !Ref AWS::NoValue]
         KeyPairName: !Ref KeyPairName
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-linux-bastion/
@@ -331,15 +331,13 @@ Resources:
         EnableTCPForwarding: ~~/<ConfigSetName>/bastion/BastionEnableTCPForwarding~~
         EnableX11Forwarding: ~~/<ConfigSetName>/bastion/BastionEnableX11Forwarding~~
         EnvironmentVariables: !Sub
-        - >
-          K8S_CLUSTER_NAME=${EKSControlPlane.Outputs.EKSName},
-          K8S_CA_DATA=${EKSControlPlane.Outputs.CAData},
-          K8S_VERSION=${KubernetesVersion},
-          K8S_ENDPOINT=${EKSControlPlane.Outputs.EKSEndpoint}${Joiner}
-          ${BastionVariables}
-        - Joiner: !If [AdditionalVars, ',', '']
-          BastionVariables: ~~/<ConfigSetName>/bastion/BastionVariables~~
-          KubernetesVersion: ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
+          - >
+            K8S_CLUSTER_NAME=${EKSControlPlane.Outputs.EKSName},
+            K8S_VERSION=${KubernetesVersion}${Joiner}
+            ${BastionVariables}
+          - Joiner: !If [AdditionalVars, ',', '']
+            BastionVariables: ~~/<ConfigSetName>/bastion/BastionVariables~~
+            KubernetesVersion: ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
   NodeGroupStack:
     Type: "AWS::CloudFormation::Stack"
     Metadata:
