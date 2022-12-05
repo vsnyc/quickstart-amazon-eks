@@ -374,8 +374,11 @@ setup_kubeconfig() {
   chown -R ${user}:${user_group} /home/${user}/.kube/
 
   # Add SSM Config for ssm-user
+  set +e
   getent passwd ssm-user > /dev/null
-  if [ $? -ne 0 ]; then
+  local ssm_user_exists_result=$?
+  set -e
+  if [ $ssm_user_exists_result -ne 0 ]; then
     /sbin/useradd -d /home/ssm-user -u 1001 -s /bin/bash -m --user-group ssm-user -c "SSM Session Manager Default User"
   fi
 
