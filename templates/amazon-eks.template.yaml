@@ -303,7 +303,7 @@ Resources:
       Parameters:
         BastionHostName: EKSBastion
         BastionBanner: !Sub
-          - s3://${S3Bucket}/${QSS3KeyPrefix}scripts/bastion_banner_message.txt
+          - s3://${S3Bucket}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/scripts/banner_message.txt
           - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
         EnableBanner: true
         BastionTenancy: default
