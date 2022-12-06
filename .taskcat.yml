@@ -42,6 +42,24 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
     regions:
       - me-south-1
+  v1-22:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      KubernetesVersion: '1.22'
+    regions:
+      - us-east-1
+  v1-21:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      KubernetesVersion: '1.21'
+    regions:
+      - us-east-2
+  v1-20:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      KubernetesVersion: '1.20'
+    regions:
+      - us-west-2
   public-endpoint:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
