@@ -64,6 +64,8 @@ Mappings:
       lbrepo: 602401143452.dkr.ecr.eu-west-2.amazonaws.com/amazon/aws-load-balancer-controller
     eu-west-3:
       lbrepo: 602401143452.dkr.ecr.eu-west-3.amazonaws.com/amazon/aws-load-balancer-controller
+    me-central-1:
+      lbrepo: 759879836304.dkr.ecr.me-central-1.amazonaws.com/amazon/aws-load-balancer-controller
     me-south-1:
       lbrepo: 558608220178.dkr.ecr.me-south-1.amazonaws.com/amazon/aws-load-balancer-controller
     sa-east-1:
