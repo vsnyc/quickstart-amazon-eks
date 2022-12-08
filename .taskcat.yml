@@ -103,7 +103,6 @@ tests:
       ProvisionBastionHost: Disabled
     regions:
       - cn-north-1
-      - cn-northwest-1
   govcloud:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
