@@ -226,6 +226,7 @@ tests:
   spot:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
+      NodeGroupType: Unmanaged
       OnDemandPercentage: 0
       OnDemandBastionPercentage: 0
     regions:
