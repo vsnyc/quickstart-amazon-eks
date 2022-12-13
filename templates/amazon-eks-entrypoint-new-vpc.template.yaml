@@ -41,6 +41,7 @@ Metadata:
           default: Amazon EC2 configuration
         Parameters:
           - ProvisionBastionHost
+          - OnDemandBastionPercentage
       - Label:
           default: Amazon EKS configuration
         Parameters:
@@ -58,6 +59,7 @@ Metadata:
           - MaxNumberOfNodes
           - NodeGroupOS
           - NodeGroupType
+          - OnDemandPercentage
           - NodeInstanceFamily
       - Label:
           default: Snyk monitor (AWS Partner security)
@@ -163,6 +165,8 @@ Metadata:
         default: Number of Availability Zones
       ProvisionBastionHost:
         default: Provision bastion host
+      OnDemandBastionPercentage:
+        default: On-demand percentage
       EKSPublicAccessEndpoint:
         default: EKS public access endpoint
       ALBIngressController:
@@ -213,6 +217,8 @@ Metadata:
         default: Test suite
       NodeGroupType:
         default: Node group type
+      OnDemandPercentage:
+        default: On-demand percentage
       NodeInstanceFamily:
         default: Node instance family
       NodeGroupOS:
@@ -939,6 +945,15 @@ Parameters:
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Enabled"
     Description: Skip creating a bastion host by choosing "Disabled."
+  OnDemandBastionPercentage:
+    Type: Number
+    Description: >-
+      Set the percentage of on-demand instances and spot instances. With a
+      default of 100, the percentages are 100% for on-demand instances and 0%
+      for spot instances.
+    MinValue: 0
+    MaxValue: 100
+    Default: 100
   # This parameter name is inaccurate to preserve backward compatibility, and will be changed to ALBIngressController in the next release
   ALBIngressController:
     Type: String
@@ -1059,6 +1074,12 @@ Parameters:
     AllowedValues: [ Managed, Unmanaged ]
     Default: Managed
     Description: Choose "Unmanaged" to create an Auto Scaling group without using the EKS-managed node groups feature.
+  OnDemandPercentage:
+    Type: Number
+    Description: Only applies if the NodeGroupType parameter is set to "Unmanaged." Set the percentage of on-demand instances and spot instances. With a default of 100, the percentages are 100% for on-demand instances and 0% for spot instances.
+    MinValue: 0
+    MaxValue: 100
+    Default: 100
   NodeGroupOS:
     AllowedValues:
       - 'Amazon Linux 2'
@@ -1143,6 +1164,8 @@ Resources:
         NodeVolumeSize: !If [WindowsNodes, 50, !Ref 'AWS::NoValue']
         # As of 08/03/2021 there are no eks optimized ami's for eks 1.21
         # TODO: remove forcing windows clusters to 1.20 once ami's are available https://github.com/aws/containers-roadmap/issues/1461
+        OnDemandPercentage: !Ref OnDemandPercentage
+        OnDemandBastionPercentage: !Ref OnDemandBastionPercentage
   AutoDetectSharedResources:
     Type: AWS::CloudFormation::Stack
     Condition: DetectSharedStacks

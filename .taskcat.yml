@@ -223,3 +223,10 @@ tests:
       RafaySysEmail: override
     regions:
       - ca-central-1
+  spot:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      OnDemandPercentage: 0
+      OnDemandBastionPercentage: 0
+    regions:
+      - us-east-1
