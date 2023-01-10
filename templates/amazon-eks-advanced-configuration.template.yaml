@@ -216,11 +216,17 @@ Parameters:
     Default: Amazon-Linux2-HVM
     Description: Linux distribution of the bastion host.
   BastionBootstrapScript:
-    Default: ""
     Type: String
+    Description: >-
+      (Optional) HTTPS format Amazon S3 object URL for your custom initialization script to run during setup. The
+      bastion host must have permission to download the file from the S3 bucket. If left blank, the default bootstrap
+      script. The source code for the default script can be found here: 
+      https://github.com/aws-quickstart/quickstart-amazon-eks/blob/main/scripts/bastion_bootstrap.sh.
     AllowedPattern: ^https.*|^$
-    ConstraintDescription: URL must begin with https.
-    Description: "(Optional) Custom initialization script to run during setup. If left blank, the default bootstrap script is used. URL must begin with https."
+    ConstraintDescription: >-
+      Must be either a valid Amazon S3 object URL
+      (example: https://bucket/key/file.txt) or empty.
+    Default: ''
   BastionInstanceType:
     Default: "t3.micro"
     Type: String
