@@ -38,7 +38,7 @@ Metadata:
           - PublicSubnet2CIDR
           - PublicSubnet3CIDR
       - Label:
-          default: Amazon EC2 configuration
+          default: Bastion host configuration
         Parameters:
           - ProvisionBastionHost
           - OnDemandBastionPercentage
@@ -167,7 +167,7 @@ Metadata:
       ProvisionBastionHost:
         default: Provision bastion host
       OnDemandBastionPercentage:
-        default: On-demand percentage
+        default: Bastion host on-demand percentage
       EKSPublicAccessEndpoint:
         default: EKS public access endpoint
       ALBIngressController:
@@ -221,7 +221,7 @@ Metadata:
       NodeGroupType:
         default: Node group type
       OnDemandPercentage:
-        default: On-demand percentage
+        default: EKS node on-demand percentage
       NodeInstanceFamily:
         default: Node instance family
       NodeGroupOS:

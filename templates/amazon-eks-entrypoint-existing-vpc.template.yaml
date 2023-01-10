@@ -33,7 +33,7 @@ Metadata:
         Parameters:
           - HttpProxy
       - Label:
-          default: Amazon EC2 configuration
+          default: Bastion host configuration
         Parameters:
           - ProvisionBastionHost
           - OnDemandBastionPercentage
@@ -153,7 +153,7 @@ Metadata:
       ProvisionBastionHost:
         default: Provision bastion host
       OnDemandBastionPercentage:
-        default: On-demand percentage
+        default: Bastion host on-demand percentage
       ALBIngressController:
         default: AWS load balancer controller
       EKSClusterName:
@@ -213,7 +213,7 @@ Metadata:
       NodeGroupType:
         default: Node group type
       OnDemandPercentage:
-        default: On-demand percentage
+        default: EKS node on-demand percentage
       NodeGroupOS:
         default: Node group operating system
       RancherIntegration:
