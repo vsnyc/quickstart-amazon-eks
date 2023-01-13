@@ -56,24 +56,6 @@ Metadata:
           - BastionEnableX11Forwarding
           - BastionVariables
           - OnDemandBastionPercentage
-      # - Label:
-      #     default: HashiCorp Vault (AWS Partner security)
-      #   Parameters:
-      #     - VaultKubernetesNameSpace
-      #     - VaultUILoadBalancerType
-      #     - VaultUIAccessCIDR
-      #     - VaultVersion
-      #     - VaultDeploymentSize
-      #     - VaultNodes
-      # - Label:
-      #     default: HashiCorp Consul (AWS Partner containers)
-      #   Parameters:
-      #     - ConsulKubernetesNameSpace
-      #     - ConsulUILoadBalancerType
-      #     - ConsulUIAccessCIDR
-      #     - ConsulVersion
-      #     - ConsulDeploymentSize
-      #     - ConsulNodes
       - Label:
           default: EFS storage class configuration
         Parameters:
