@@ -90,6 +90,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       PrometheusIntegration: Enabled
       GrafanaIntegration: Enabled
+      KubernetesVersion: '1.21'
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled
@@ -195,6 +196,7 @@ tests:
   windows:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
+      KubernetesVersion: '1.23'
       TestSuite: Enabled
       NodeGroupOS: Windows
       NodeGroupType: 'Unmanaged'
@@ -232,6 +234,7 @@ tests:
   rafaysystems:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
+      KubernetesVersion: '1.22'
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled
       RafaySysIntegration: Enabled
