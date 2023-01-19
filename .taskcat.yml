@@ -203,26 +203,6 @@ tests:
       ALBIngressController: Enabled
     regions:
       - eu-north-1
-  # # Disabled due to interop
-  # vault:
-  #   parameters:
-  #     AvailabilityZones: $[taskcat_genaz_3]
-  #     ALBIngressController: Enabled
-  #     VaultIntegration: Enabled
-  #     VaultUIDomainName: ---overridden---
-  #     VaultUIHostedZoneID: ---overridden---
-  #   regions:
-  #     - eu-north-1
-  # # Disabled due to interop
-  # consul:
-  #   parameters:
-  #     AvailabilityZones: $[taskcat_genaz_3]
-  #     ALBIngressController: Enabled
-  #     ConsulIntegration: Enabled
-  #     ConsulUIDomainName: ---overridden---
-  #     ConsulUIHostedZoneID: ---overridden---
-  #   regions:
-  #     - eu-west-1
   calico:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
