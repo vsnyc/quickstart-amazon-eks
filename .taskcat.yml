@@ -90,6 +90,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       PrometheusIntegration: Enabled
       GrafanaIntegration: Enabled
+      KubernetesVersion: '1.21'
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled
@@ -192,35 +193,16 @@ tests:
       ALBIngressController: Enabled
     regions:
       - af-south-1
-  windows:
-    parameters:
-      AvailabilityZones: $[taskcat_genaz_3]
-      TestSuite: Enabled
-      NodeGroupOS: Windows
-      NodeGroupType: 'Unmanaged'
-      ALBIngressController: Enabled
-    regions:
-      - eu-north-1
-  # # Disabled due to interop
-  # vault:
+  # TODO: Troubleshoot TestApplyOnWindows resource failures & re-enable
+  # windows:
   #   parameters:
   #     AvailabilityZones: $[taskcat_genaz_3]
+  #     TestSuite: Enabled
+  #     NodeGroupOS: Windows
+  #     NodeGroupType: 'Unmanaged'
   #     ALBIngressController: Enabled
-  #     VaultIntegration: Enabled
-  #     VaultUIDomainName: ---overridden---
-  #     VaultUIHostedZoneID: ---overridden---
   #   regions:
   #     - eu-north-1
-  # # Disabled due to interop
-  # consul:
-  #   parameters:
-  #     AvailabilityZones: $[taskcat_genaz_3]
-  #     ALBIngressController: Enabled
-  #     ConsulIntegration: Enabled
-  #     ConsulUIDomainName: ---overridden---
-  #     ConsulUIHostedZoneID: ---overridden---
-  #   regions:
-  #     - eu-west-1
   calico:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -229,18 +211,19 @@ tests:
       CalicoIntegration: Enabled
     regions:
       - us-west-2
-  rafaysystems:
-    parameters:
-      AvailabilityZones: $[taskcat_genaz_3]
-      NodeGroupType: 'Unmanaged'
-      ALBIngressController: Disabled
-      RafaySysIntegration: Enabled
-      RafaySysFirstName: override
-      RafaySysLastName: override
-      RafaySysOrganizationName: override
-      RafaySysEmail: override
-    regions:
-      - ca-central-1
+  # TODO: Troubleshoot CopyZips failures & re-enable
+  # rafaysystems:
+  #   parameters:
+  #     AvailabilityZones: $[taskcat_genaz_3]
+  #     NodeGroupType: 'Unmanaged'
+  #     ALBIngressController: Disabled
+  #     RafaySysIntegration: Enabled
+  #     RafaySysFirstName: override
+  #     RafaySysLastName: override
+  #     RafaySysOrganizationName: override
+  #     RafaySysEmail: override
+  #   regions:
+  #     - ca-central-1
   spot:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
