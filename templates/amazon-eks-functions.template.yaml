@@ -72,8 +72,7 @@ Resources:
     Properties:
       ServiceToken: !Sub ['arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-ResourceReader', {Prefix: !FindInMap [Config, Prefix, Value]}]
       AwsCliCommand: !Sub
-      - |
-        lambda list-layer-versions --layer-name ${Prefix}-Kubectl --query 'max_by(LayerVersions, &Version)'
+      - lambda list-layer-versions --layer-name ${Prefix}-Kubectl --query 'max_by(LayerVersions, &Version)'
       - Prefix: !FindInMap [Config, Prefix, Value]
       IdField: 'LayerVersionArn'
   GetCrhelperLayerArn:
