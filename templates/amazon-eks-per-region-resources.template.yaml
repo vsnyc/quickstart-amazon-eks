@@ -96,7 +96,7 @@ Resources:
       FunctionName: !Sub ['${Prefix}-CopyZips', {Prefix: !FindInMap [Config, Prefix, Value]}]
       Description: Copies objects from a source S3 bucket to a destination
       Handler: index.handler
-      Runtime: python3.7
+      Runtime: python3.8
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CopyZips", {Prefix: !FindInMap [Config, Prefix, Value]}]
       Timeout: 900
       Code:
@@ -215,8 +215,8 @@ Resources:
       LayerName: !Sub ['${Prefix}-Crhelper', {Prefix: !FindInMap [Config, Prefix, Value]}]
       Description: !Sub "crhelper layer - ${RandomStr}"
       CompatibleRuntimes:
-        - python3.6
         - python3.7
+        - python3.8
       Content:
         S3Bucket: !Ref LambdaZipsBucket
         S3Key: !Sub '${QSS3KeyPrefix}functions/packages/crhelperLayer/lambda.zip'
@@ -227,7 +227,7 @@ Resources:
       Handler: lambda_function.lambda_handler
       MemorySize: 128
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CleanupLoadBalancers", {Prefix: !FindInMap [Config, Prefix, Value]}]
-      Runtime: python3.7
+      Runtime: python3.8
       Timeout: 900
       Layers: [!Ref CrhelperLayer]
       Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
@@ -241,7 +241,7 @@ Resources:
       Handler: lambda_function.lambda_handler
       MemorySize: 128
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CleanupLambdas", {Prefix: !FindInMap [Config, Prefix, Value]}]
-      Runtime: python3.7
+      Runtime: python3.8
       Timeout: 900
       Layers: [!Ref CrhelperLayer]
       Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
@@ -256,7 +256,7 @@ Resources:
       MemorySize: 128
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-RegisterType", {Prefix: !FindInMap [Config, Prefix, Value]}]
       Layers: [!Ref CrhelperLayer]
-      Runtime: python3.7
+      Runtime: python3.8
       Timeout: 900
       Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
       Code:
@@ -270,7 +270,7 @@ Resources:
       MemorySize: 128
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-RegisterCustomResource", {Prefix: !FindInMap [Config, Prefix, Value]}]
       Layers: [!Ref CrhelperLayer]
-      Runtime: python3.7
+      Runtime: python3.8
       Timeout: 900
       Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
       Code:
@@ -486,7 +486,7 @@ Resources:
       MemorySize: 128
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CleanupSecurityGroupDependencies", {Prefix: !FindInMap [Config, Prefix, Value]}]
       Layers: [!Ref CrhelperLayer]
-      Runtime: python3.7
+      Runtime: python3.8
       Timeout: 900
       Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
       Code:
@@ -499,7 +499,7 @@ Resources:
       Handler: lambda_function.lambda_handler
       MemorySize: 128
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-DeleteBucketContents", {Prefix: !FindInMap [Config, Prefix, Value]}]
-      Runtime: python3.7
+      Runtime: python3.8
       Timeout: 900
       Layers: [!Ref 'CrhelperLayer']
       Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
@@ -513,7 +513,7 @@ Resources:
       Handler: lambda_function.lambda_handler
       MemorySize: 128
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-GetCallerArn", {Prefix: !FindInMap [Config, Prefix, Value]}]
-      Runtime: python3.7
+      Runtime: python3.8
       Timeout: 900
       Layers: [!Ref 'CrhelperLayer']
       Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
@@ -526,7 +526,7 @@ Resources:
       FunctionName: !Sub ['${Prefix}-NodeSG', {Prefix: !FindInMap [Config, Prefix, Value]}]
       Description: Fetches the Security Group ID for a given EKS Managed Node Group
       Handler: index.handler
-      Runtime: python3.7
+      Runtime: python3.8
       Role:  !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-NodeSG", {Prefix: !FindInMap [Config, Prefix, Value]}]
       Timeout: 900
       Layers: [!Ref 'CrhelperLayer']
@@ -562,7 +562,7 @@ Resources:
       Handler: lambda_function.lambda_handler
       MemorySize: 512
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-FargateProfile", {Prefix: !FindInMap [Config, Prefix, Value]}]
-      Runtime: python3.7
+      Runtime: python3.8
       Timeout: 900
       Layers: [!Ref 'CrhelperLayer']
       Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
@@ -577,7 +577,7 @@ Resources:
       FunctionName: !Sub ['${Prefix}-ResourceReader', {Prefix: !FindInMap [Config, Prefix, Value]}]
       Description: Performs an AWS CLI command and returns the json result. Used to get the state of existing resources.
       Handler: lambda.handler
-      Runtime: python3.7
+      Runtime: python3.8
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-ResourceReader", {Prefix: !FindInMap [Config, Prefix, Value]}]
       Timeout: 900
       Tags: [{Key: RandomStr, Value: !Ref RandomStr}]
@@ -657,7 +657,7 @@ Resources:
               print(json.dumps(macro_response))
               return macro_response
       Handler: index.handler
-      Runtime: python3.7
+      Runtime: python3.8
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-ParameterResolver", {Prefix: !FindInMap [Config, Prefix, Value]}]
       Timeout: 900
   ParameterResolverFunctionPermissions:
@@ -678,7 +678,7 @@ Resources:
       FunctionName: !Sub ['${Prefix}-CloudformationVPCRoleCreation', {Prefix: !FindInMap [Config, Prefix, Value]}]
       Description: Creates the CloudformationVPCRoleCreation if it does not yet exist
       Handler: index.handler
-      Runtime: python3.7
+      Runtime: python3.8
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CloudformationVPCRoleCreation", {Prefix: !FindInMap [Config, Prefix, Value]}]
       Timeout: 900
       Code:

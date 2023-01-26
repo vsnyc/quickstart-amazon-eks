@@ -659,7 +659,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.handler
-      Runtime: python3.7
+      Runtime: python3.8
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CopyZips", {Prefix: !FindInMap [Config, Prefix, Value]}]
       Timeout: 900
       Code:
