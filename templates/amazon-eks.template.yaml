@@ -236,6 +236,19 @@ Mappings:
   Config:
     Prefix: { Value: 'eks-quickstart' }
     ParameterPrefix: { Value: '/quickstart/amazon-eks' }
+  KubernetesVersion:
+  # https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
+  # You must use a kubectl version that is within one minor version
+  # difference of your Amazon EKS cluster control plane. For example, a 1.23
+  # kubectl client works with Kubernetes 1.22, 1.23 and 1.24 clusters.
+    '1.21':
+      KubectlVersion: 1.22.15/2022-10-31
+    '1.22':
+      KubectlVersion: 1.23.13/2022-10-31
+    '1.23':
+      KubectlVersion: 1.24.7/2022-10-31
+    '1.24':
+      KubectlVersion: 1.24.7/2022-10-31
 Conditions:
   EnableProxy: !Not [!Equals [!Ref HttpProxy, ""]]
   DeployTestStack: !Equals [!Ref TestSuite, Enabled]
@@ -295,6 +308,8 @@ Resources:
   BastionStack:
     Condition: EnableBastion
     Type: AWS::CloudFormation::Stack
+    Metadata:
+      cfn-lint: {config: {ignore_checks: [W1011]}}
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion-entrypoint-existing-vpc.template.yaml
@@ -334,11 +349,14 @@ Resources:
         EnvironmentVariables: !Sub
           - >
             K8S_CLUSTER_NAME=${EKSControlPlane.Outputs.EKSName},
-            K8S_VERSION=${KubernetesVersion}${Joiner}
+            KUBECTL_VERSION=${KubectlVersion}${Joiner}
             ${BastionVariables}
           - Joiner: !If [AdditionalVars, ',', '']
             BastionVariables: ~~/<ConfigSetName>/bastion/BastionVariables~~
-            KubernetesVersion: ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
+            KubectlVersion: !FindInMap
+              - KubernetesVersion
+              - ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
+              - KubectlVersion
   NodeGroupStack:
     Type: "AWS::CloudFormation::Stack"
     Metadata:
@@ -871,6 +889,8 @@ Resources:
     DependsOn: NodeGroupStack
     Condition: EnableOIDC
     Type: AWS::CloudFormation::Stack
+    Metadata:
+      cfn-lint: {config: {ignore_checks: [W1011]}}
     Properties:
       TemplateURL: !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/aws-node-daemonset-IRSA.template.yaml'
@@ -879,6 +899,10 @@ Resources:
       Parameters:
         OIDCProvider: !Join [ '', !Split [ 'https://', !GetAtt EKSControlPlane.Outputs.OIDCIssuerURL ] ]
         ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        KubectlVersion: !FindInMap
+          - KubernetesVersion
+          - ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
+          - KubectlVersion
 Outputs:
   BastionIP:
     Value: !If [EnableBastionWithEIP, !GetAtt BastionStack.Outputs.EIP1, '']

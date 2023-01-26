@@ -390,26 +390,6 @@ setup_kubeconfig() {
 install_kubernetes_client_tools() {
   mkdir -p /usr/local/bin/
 
-  # https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
-  # You must use a kubectl version that is within one minor version
-  # difference of your Amazon EKS cluster control plane. For example, a 1.21
-  # kubectl client works with Kubernetes 1.20, 1.21 and 1.22 clusters.
-  case "${K8S_VERSION}" in
-    "1.21")
-      KUBECTL_VERSION="1.22.15/2022-10-31"
-    ;;
-    "1.22")
-      KUBECTL_VERSION="1.23.13/2022-10-31"
-    ;;
-    "1.23" | "1.24")
-      KUBECTL_VERSION="1.24.7/2022-10-31"
-    ;;
-    *)
-      echo "[ERROR] Unsupported kubectl Kubernetes cluster version: '${K8S_VERSION}'"
-      exit 1
-    ;;
-  esac
-
   retry_command 20 curl --retry 5 -o kubectl "https://amazon-eks.s3-us-west-2.amazonaws.com/${KUBECTL_VERSION}/bin/linux/${ARCHITECTURE}/kubectl"
 
   chmod +x ./kubectl
