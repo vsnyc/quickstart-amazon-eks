@@ -886,7 +886,7 @@ Resources:
     DependsOn: NodeGroupStack
     Type: AWS::CloudFormation::Stack
     Metadata:
-      cfn-lint: {config: {ignore_checks: [W1011]}}
+      cfn-lint: { config: { ignore_checks: [W1011] } }
     Properties:
       TemplateURL: !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/aws-node-daemonset-IRSA.template.yaml'
