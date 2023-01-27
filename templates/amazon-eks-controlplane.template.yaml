@@ -192,5 +192,9 @@ Outputs:
     Value: !GetAtt EKS.Endpoint
   OIDCIssuerURL:
     Value: !GetAtt EKS.OIDCIssuerURL
+  OIDCProviderArn:
+    Value: !Ref ClusterOIDCProvider
+  OIDCProviderEndpoint:
+    Value: !Join [ '', !Split [ 'https://', !GetAtt EKS.OIDCIssuerURL ] ]
   EKSName:
     Value: !Ref EKS
