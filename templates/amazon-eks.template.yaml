@@ -951,6 +951,9 @@ Resources:
                   - kms:ReEncryptTo
                 Resource: !Sub arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:key/*
   AmazonEksEbsCsiDriverAddon:
+  # Credit to [Satya Dillikar](https://github.com/satya-dillikar) of VMware for
+  # the EKS add-on implementation idea for the EBS CSI driver.
+  # https://github.com/vmware-tap-on-public-cloud/quickstart-vmware-tanzu-application-platform/pull/15
     Type: AWS::EKS::Addon
     DependsOn: AwsNodeIrsa
     Properties:
