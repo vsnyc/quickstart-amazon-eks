@@ -898,6 +898,65 @@ Resources:
           - KubernetesVersion
           - ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
           - KubectlVersion
+  AmazonEksEbsCsiDriverRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cfn-lint: { config: { ignore_checks: [EIAMPolicyWildcardResource] } }
+    Properties:
+      AssumeRolePolicyDocument: !Sub |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "${EKSControlPlane.Outputs.OIDCProviderArn}"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "${EKSControlPlane.Outputs.OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${EKSControlPlane.Outputs.OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+                }
+              }
+            }
+          ]
+        }
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
+      Policies:
+        - PolicyName: AmazonEbsCsiDeviceEncryption
+          # https://docs.aws.amazon.com/eks/latest/userguide/csi-iam-role.html#Prerequisites
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - kms:CreateGrant
+                  - kms:ListGrants
+                  - kms:RevokeGrant
+                Resource: !Sub arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:key/*
+                Condition: { Bool: { kms:GrantIsForAWSResource: true } }
+              - Effect: Allow
+                Action:
+                  - kms:Decrypt
+                  - kms:DescribeKey
+                  - kms:Encrypt
+                  - kms:GenerateDataKey
+                  - kms:GenerateDataKeyWithoutPlaintext
+                  - kms:GenerateDataKeyPair
+                  - kms:GenerateDataKeyPairWithoutPlaintext
+                  - kms:ReEncryptFrom
+                  - kms:ReEncryptTo
+                Resource: !Sub arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:key/*
+  AmazonEksEbsCsiDriverAddon:
+    Type: AWS::EKS::Addon
+    DependsOn: AwsNodeIrsa
+    Properties:
+      AddonName: aws-ebs-csi-driver
+      ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+      ResolveConflicts: NONE
+      ServiceAccountRoleArn: !GetAtt AmazonEksEbsCsiDriverRole.Arn
 Outputs:
   BastionIP:
     Value: !If [EnableBastionWithEIP, !GetAtt BastionStack.Outputs.EIP1, '']
