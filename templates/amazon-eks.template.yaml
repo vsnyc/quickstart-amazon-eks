@@ -604,6 +604,7 @@ Resources:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
+        - !Ref AmazonEksEbsCsiDriverAddon
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
     Condition: EnablePrometheus
     Type: AWS::CloudFormation::Stack
