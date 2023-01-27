@@ -145,10 +145,9 @@ tests:
       ALBIngressController: Enabled
     regions:
       - us-east-1
-  enable-oidc:
+  bottlerocket:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      IamOidcProvider: Enabled
       EKSPublicAccessEndpoint: Enabled
       NodeGroupOS: Bottlerocket
       NodeInstanceFamily: ARM
