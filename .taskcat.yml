@@ -166,15 +166,16 @@ tests:
       ALBIngressController: Enabled
     regions:
       - eu-west-3
-  new-relic:
-    parameters:
-      AvailabilityZones: $[taskcat_genaz_3]
-      EKSPublicAccessEndpoint: Enabled
-      NewRelicIntegration: Enabled
-      NewRelicLicenseKey: ---overridden---
-      ALBIngressController: Enabled
-    regions:
-      - sa-east-1
+  # TODO: Troubleshoot KubeStateMetricsService resource failures & re-enable
+  # new-relic:
+  #   parameters:
+  #     AvailabilityZones: $[taskcat_genaz_3]
+  #     EKSPublicAccessEndpoint: Enabled
+  #     NewRelicIntegration: Enabled
+  #     NewRelicLicenseKey: ---overridden---
+  #     ALBIngressController: Enabled
+  #   regions:
+  #     - sa-east-1
   rancher:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
