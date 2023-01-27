@@ -90,7 +90,6 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       PrometheusIntegration: Enabled
       GrafanaIntegration: Enabled
-      KubernetesVersion: '1.21'
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled
