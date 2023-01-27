@@ -50,10 +50,6 @@ Parameters:
   EKSEncryptSecretsKmsKeyArn:
     Type: String
     Default: ""
-  IamOidcProvider:
-    Type: String
-    AllowedValues: [ "Enabled", "Disabled" ]
-    Default: "Enabled"
   EKSClusterName:
     Type: String
   #ConfigSetName:
@@ -70,7 +66,6 @@ Conditions:
     - !Equals [ !Ref EKSEncryptSecrets, Enabled ]
   EnableEncryption: !Equals [ !Ref EKSEncryptSecrets, Enabled ]
   LoggingEnabled: !Not [ !Equals [ !Select [ 0, !Ref EKSClusterLoggingTypes ], "" ] ]
-  EnableIamOidcProvider: !Equals [!Ref 'IamOidcProvider', 'Enabled']
 Mappings:
   Config:
     Prefix: { Value: 'eks-quickstart' }
@@ -180,7 +175,6 @@ Resources:
     Properties:
       ServiceToken: !Sub ['arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-GetCallerArn', {Prefix: !FindInMap [Config, Prefix, Value]}]
   ClusterOIDCProvider:
-    Condition: EnableIamOidcProvider
     Type: AWS::IAM::OIDCProvider
     Properties:
       ClientIdList:

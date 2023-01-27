@@ -282,10 +282,6 @@ Conditions:
   EnableWindows: !Equals [!Ref 'NodeGroupOS', 'Windows']
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
   GenerateClusterName: !Equals [!Ref 'EKSClusterName', '']
-  EnableOIDC: !Or
-    - !Equals [!Ref 'ProvisionALBIngressController', 'Enabled']
-    - !Equals [!Ref 'NodeGroupOS', 'Windows']
-    - !Equals [~~/<ConfigSetName>/cluster/IamOidcProvider~~, "Enabled"]
   UseKeyPair: !Not [ !Equals [ !Ref KeyPairName, "" ] ]
 Resources:
   BastionEksPermissions:
@@ -601,7 +597,6 @@ Resources:
         EKSClusterLoggingTypes: ~~/<ConfigSetName>/controlplane/EKSClusterLoggingTypes~~
         EKSEncryptSecrets: ~~/<ConfigSetName>/controlplane/EKSEncryptSecrets~~
         EKSEncryptSecretsKmsKeyArn: ~~/<ConfigSetName>/controlplane/EKSEncryptSecretsKmsKeyArn~~
-        IamOidcProvider: !If [EnableOIDC, 'Enabled', 'Disabled']
         EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
   PrometheusStack:
     Metadata:
@@ -887,7 +882,6 @@ Resources:
       ClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
   AwsNodeIrsa:
     DependsOn: NodeGroupStack
-    Condition: EnableOIDC
     Type: AWS::CloudFormation::Stack
     Metadata:
       cfn-lint: {config: {ignore_checks: [W1011]}}
