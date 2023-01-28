@@ -939,7 +939,6 @@ Parameters:
     MinValue: 0
     MaxValue: 100
     Default: 100
-  # This parameter name is inaccurate to preserve backward compatibility, and will be changed to ALBIngressController in the next release
   ALBIngressController:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
