@@ -575,23 +575,23 @@ Resources:
       Parameters:
         EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
   EfsStack:
+    Type: AWS::CloudFormation::Stack
     Condition: EnableEfs
-    Type: 'AWS::CloudFormation::Stack'
     Metadata:
       DependsOn:
-        - !Ref ControlPlaneSecurityGroupIngress
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
+        - !Ref AmazonEksEfsCsiDriverHelmChart
+        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-efs.template.yaml'
-        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-efs.template.yaml
+        - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         NodeGroupSecurityGroup: !GetAtt NodeGroupStack.Outputs.EKSNodeSecurityGroup
         PrivateSubnet1ID: !Ref PrivateSubnet1ID
-        PrivateSubnet2ID: !If [2AZDeployment, !Ref PrivateSubnet2ID, !Ref "AWS::NoValue" ]
-        PrivateSubnet3ID: !If [3AZDeployment, !Ref PrivateSubnet3ID, !Ref "AWS::NoValue" ]
+        PrivateSubnet2ID: !If [2AZDeployment, !Ref PrivateSubnet2ID, !Ref AWS::NoValue]
+        PrivateSubnet3ID: !If [3AZDeployment, !Ref PrivateSubnet3ID, !Ref AWS::NoValue]
         PerformanceMode: ~~/<ConfigSetName>/efs/EfsPerformanceMode~~
         EfsProvisionedThroughputInMibps: ~~/<ConfigSetName>/efs/EfsProvisionedThroughputInMibps~~
         ThroughputMode: ~~/<ConfigSetName>/efs/EfsThroughputMode~~
