@@ -1255,7 +1255,7 @@ Resources:
         EfsStorageClass: !Ref EfsStorageClass
         ProvisionBastionHost: !Ref ProvisionBastionHost
         EKSPublicAccessEndpoint: !Ref EKSPublicAccessEndpoint
-        ProvisionALBIngressController: !Ref ALBIngressController
+        ProvisionLoadBalancerController: !Ref ALBIngressController
         EKSClusterName: !Ref EKSClusterName
         SnykIntegrationId: !Ref SnykIntegrationId
         SnykIntegration: !Ref SnykIntegration

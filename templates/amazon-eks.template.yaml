@@ -75,8 +75,7 @@ Parameters:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Disabled"
-  # This parameter name is inaccurate to preserve backward compatibility, and will be changed to ProvisionLoadBalancerController in the next release
-  ProvisionALBIngressController:
+  ProvisionLoadBalancerController:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Disabled"
@@ -275,7 +274,7 @@ Conditions:
   AdditionalVars: !Not [!Equals [~~/<ConfigSetName>/bastion/BastionVariables~~, '']]
   EnableClusterAutoScaler: !Equals [!Ref 'ProvisionClusterAutoScaler', 'Enabled']
   EnableMetricsServer: !Equals [!Ref 'ProvisionMetricsServer', 'Enabled']
-  EnableLoadBalancerController: !Equals [!Ref 'ProvisionALBIngressController', 'Enabled']
+  EnableLoadBalancerController: !Equals [!Ref ProvisionLoadBalancerController, Enabled]
   EnableGrafana: !Equals [!Ref 'GrafanaIntegration', 'Enabled']
   EnablePrometheus: !Equals [!Ref 'PrometheusIntegration', 'Enabled']
   EnableEfs: !Equals [!Ref 'EfsStorageClass', 'Enabled']

@@ -1337,7 +1337,7 @@ Resources:
         PrometheusIntegration: !If [EnablePrometheus, 'Enabled', 'Disabled']
         ProvisionBastionHost: !Ref ProvisionBastionHost
         EKSPublicAccessEndpoint: !Ref EKSPublicAccessEndpoint
-        ProvisionALBIngressController: !Ref ALBIngressController
+        ProvisionLoadBalancerController: !Ref ALBIngressController
         FargateLabels: !Ref FargateLabels
         FargateNamespaces: !Ref FargateNamespaces
         EKSClusterName: !Ref EKSClusterName
