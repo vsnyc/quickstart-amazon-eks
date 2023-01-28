@@ -1025,6 +1025,83 @@ Resources:
       ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
       ResolveConflicts: NONE
       ServiceAccountRoleArn: !GetAtt AmazonEksEbsCsiDriverRole.Arn
+  AmazonEksEfsCsiDriverRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cfn-lint: { config: { ignore_checks: [EIAMPolicyWildcardResource] } }
+    Properties:
+      AssumeRolePolicyDocument: !Sub |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "${EKSControlPlane.Outputs.OIDCProviderArn}"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "${EKSControlPlane.Outputs.OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${EKSControlPlane.Outputs.OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:efs-csi-controller-sa"
+                }
+              }
+            }
+          ]
+        }
+      Policies:
+        - PolicyName: AmazonEksEfsCsiDriverPolicy
+          # https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html#efs-create-iam-resources
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - elasticfilesystem:DescribeAccessPoints
+                  - elasticfilesystem:DescribeFileSystems
+                  - elasticfilesystem:DescribeMountTargets
+                  - ec2:DescribeAvailabilityZones
+                Resource: '*'
+              - Effect: Allow
+                Action: elasticfilesystem:CreateAccessPoint
+                Resource: '*'
+                Condition: { StringLike: { aws:RequestTag/efs.csi.aws.com/cluster: 'true' } }
+              - Effect: Allow
+                Action: elasticfilesystem:DeleteAccessPoint
+                Resource: '*'
+                Condition: { StringLike: { aws:ResourceTag/efs.csi.aws.com/cluster: 'true' } }
+  AmazonEksEfsCsiDriverServiceAccount:
+    Type: AWSQS::Kubernetes::Resource
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Retain
+    DependsOn: AwsNodeIrsa
+    Properties:
+      ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+      Namespace: kube-system
+      Manifest: !Sub |
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          labels:
+            app.kubernetes.io/name: aws-efs-csi-driver
+          name: efs-csi-controller-sa
+          namespace: kube-system
+          annotations:
+            eks.amazonaws.com/role-arn: ${AmazonEksEfsCsiDriverRole.Arn}
+  AmazonEksEfsCsiDriverHelmChart:
+    Type: AWSQS::Kubernetes::Helm
+    DependsOn: AmazonEksEfsCsiDriverServiceAccount
+    Properties:
+      ClusterID: !GetAtt EKSControlPlane.Outputs.EKSName
+      Namespace: kube-system
+      Chart: aws-efs-csi-driver/aws-efs-csi-driver
+      Repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver/
+      Values:
+        image.repository: !Sub
+          - ${AmazonContainerImageRegistry}/eks/aws-efs-csi-driver
+          - AmazonContainerImageRegistry: !FindInMap [RegionMap, !Ref AWS::Region, Registry]
+        controller.serviceAccount.create: 'false'
+        controller.serviceAccount.name: efs-csi-controller-sa
 Outputs:
   BastionIP:
     Value: !If [EnableBastionWithEIP, !GetAtt BastionStack.Outputs.EIP1, '']
