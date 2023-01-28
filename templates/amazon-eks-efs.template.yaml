@@ -51,6 +51,8 @@ Conditions:
 Resources:
   EFSFileSystem:
     Type: AWS::EFS::FileSystem
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
     Properties:
       Encrypted: true
       PerformanceMode: !Ref PerformanceMode
