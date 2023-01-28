@@ -4,7 +4,9 @@ Metadata:
   QSLint:
     Exclusions: [W9002, W9003, W9004, W9006]
 Parameters:
-  OIDCIssuerURLWithoutProtocol:
+  OIDCProviderArn:
+    Type: String
+  OIDCProviderEndpoint:
     Type: String
   EksClusterName:
     Type: String
@@ -99,12 +101,12 @@ Resources:
             {
               "Effect": "Allow",
               "Principal": {
-                "Federated": "arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/${OIDCIssuerURLWithoutProtocol}"
+                "Federated": "${OIDCProviderArn}"
               },
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
-                  "${OIDCIssuerURLWithoutProtocol}:sub": "system:serviceaccount:kube-system:aws-load-balancer-controller"
+                  "${OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:aws-load-balancer-controller"
                 }
               }
             }

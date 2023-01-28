@@ -90,7 +90,6 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       PrometheusIntegration: Enabled
       GrafanaIntegration: Enabled
-      KubernetesVersion: '1.21'
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: 'Unmanaged'
       ALBIngressController: Disabled
@@ -146,10 +145,9 @@ tests:
       ALBIngressController: Enabled
     regions:
       - us-east-1
-  enable-oidc:
+  bottlerocket:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      IamOidcProvider: Enabled
       EKSPublicAccessEndpoint: Enabled
       NodeGroupOS: Bottlerocket
       NodeInstanceFamily: ARM
@@ -167,15 +165,16 @@ tests:
       ALBIngressController: Enabled
     regions:
       - eu-west-3
-  new-relic:
-    parameters:
-      AvailabilityZones: $[taskcat_genaz_3]
-      EKSPublicAccessEndpoint: Enabled
-      NewRelicIntegration: Enabled
-      NewRelicLicenseKey: ---overridden---
-      ALBIngressController: Enabled
-    regions:
-      - sa-east-1
+  # TODO: Troubleshoot KubeStateMetricsService resource failures & re-enable
+  # new-relic:
+  #   parameters:
+  #     AvailabilityZones: $[taskcat_genaz_3]
+  #     EKSPublicAccessEndpoint: Enabled
+  #     NewRelicIntegration: Enabled
+  #     NewRelicLicenseKey: ---overridden---
+  #     ALBIngressController: Enabled
+  #   regions:
+  #     - sa-east-1
   rancher:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]

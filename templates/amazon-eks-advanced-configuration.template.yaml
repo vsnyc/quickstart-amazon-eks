@@ -28,7 +28,6 @@ Metadata:
           - EKSClusterLoggingTypes
           - EKSEncryptSecrets
           - EKSEncryptSecretsKmsKeyArn
-          - IamOidcProvider
       - Label:
           default: Default EKS node group configuration
         Parameters:
@@ -77,8 +76,6 @@ Metadata:
         default: Encrypt secrets
       EKSEncryptSecretsKmsKeyArn:
         default: Encrypt secrets KMS key ARN
-      IamOidcProvider:
-        default: Enable IAM OIDC provider
       NodeGroupName:
         default: Name
       NodeVolumeSize:
@@ -180,11 +177,6 @@ Parameters:
     Description: Kubernetes control plane version.
     AllowedValues: ['1.24', '1.23', '1.22', '1.21']
     Default: '1.24'
-  IamOidcProvider:
-    Type: String
-    AllowedValues: [ "Enabled", "Disabled" ]
-    Default: "Enabled"
-    Description: Enables IAM roles for Kubernetes service accounts.
   BastionOS:
     Type: String
     AllowedValues:
@@ -437,12 +429,6 @@ Resources:
       Type: String
       Value: !Sub '{ "Value": "${KubernetesVersion}" }'
       Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/controlplane/KubernetesVersion", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
-  IamOidcProviderParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Type: String
-      Value: !Sub '{ "Value": "${IamOidcProvider}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/cluster/IamOidcProvider", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
   BastionOSParameter:
     Type: AWS::SSM::Parameter
     Properties:

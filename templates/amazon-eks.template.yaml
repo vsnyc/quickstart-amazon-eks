@@ -236,6 +236,19 @@ Mappings:
   Config:
     Prefix: { Value: 'eks-quickstart' }
     ParameterPrefix: { Value: '/quickstart/amazon-eks' }
+  KubernetesVersion:
+  # https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
+  # You must use a kubectl version that is within one minor version
+  # difference of your Amazon EKS cluster control plane. For example, a 1.23
+  # kubectl client works with Kubernetes 1.22, 1.23 and 1.24 clusters.
+    '1.21':
+      KubectlVersion: 1.22.17/2023-01-11
+    '1.22':
+      KubectlVersion: 1.23.15/2023-01-11
+    '1.23':
+      KubectlVersion: 1.24.9/2023-01-11
+    '1.24':
+      KubectlVersion: 1.24.9/2023-01-11
 Conditions:
   EnableProxy: !Not [!Equals [!Ref HttpProxy, ""]]
   DeployTestStack: !Equals [!Ref TestSuite, Enabled]
@@ -269,10 +282,6 @@ Conditions:
   EnableWindows: !Equals [!Ref 'NodeGroupOS', 'Windows']
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
   GenerateClusterName: !Equals [!Ref 'EKSClusterName', '']
-  EnableOIDC: !Or
-    - !Equals [!Ref 'ProvisionALBIngressController', 'Enabled']
-    - !Equals [!Ref 'NodeGroupOS', 'Windows']
-    - !Equals [~~/<ConfigSetName>/cluster/IamOidcProvider~~, "Enabled"]
   UseKeyPair: !Not [ !Equals [ !Ref KeyPairName, "" ] ]
 Resources:
   BastionEksPermissions:
@@ -295,6 +304,8 @@ Resources:
   BastionStack:
     Condition: EnableBastion
     Type: AWS::CloudFormation::Stack
+    Metadata:
+      cfn-lint: {config: {ignore_checks: [W1011]}}
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion-entrypoint-existing-vpc.template.yaml
@@ -334,11 +345,14 @@ Resources:
         EnvironmentVariables: !Sub
           - >
             K8S_CLUSTER_NAME=${EKSControlPlane.Outputs.EKSName},
-            K8S_VERSION=${KubernetesVersion}${Joiner}
+            KUBECTL_VERSION=${KubectlVersion}${Joiner}
             ${BastionVariables}
           - Joiner: !If [AdditionalVars, ',', '']
             BastionVariables: ~~/<ConfigSetName>/bastion/BastionVariables~~
-            KubernetesVersion: ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
+            KubectlVersion: !FindInMap
+              - KubernetesVersion
+              - ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
+              - KubectlVersion
   NodeGroupStack:
     Type: "AWS::CloudFormation::Stack"
     Metadata:
@@ -583,7 +597,6 @@ Resources:
         EKSClusterLoggingTypes: ~~/<ConfigSetName>/controlplane/EKSClusterLoggingTypes~~
         EKSEncryptSecrets: ~~/<ConfigSetName>/controlplane/EKSEncryptSecrets~~
         EKSEncryptSecretsKmsKeyArn: ~~/<ConfigSetName>/controlplane/EKSEncryptSecretsKmsKeyArn~~
-        IamOidcProvider: !If [EnableOIDC, 'Enabled', 'Disabled']
         EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
   PrometheusStack:
     Metadata:
@@ -591,6 +604,7 @@ Resources:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
+        - !Ref AmazonEksEbsCsiDriverAddon
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
     Condition: EnablePrometheus
     Type: AWS::CloudFormation::Stack
@@ -651,7 +665,8 @@ Resources:
         - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
-        OIDCIssuerURLWithoutProtocol:  !Join [ '', !Split [ 'https://', !GetAtt EKSControlPlane.Outputs.OIDCIssuerURL ] ]
+        OIDCProviderArn: !GetAtt EKSControlPlane.Outputs.OIDCProviderArn
+        OIDCProviderEndpoint: !GetAtt EKSControlPlane.Outputs.OIDCProviderEndpoint
         EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         VpcId: !Ref VPCID
   GenerateNameFunction:
@@ -659,7 +674,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.handler
-      Runtime: python3.7
+      Runtime: python3.8
       Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CopyZips", {Prefix: !FindInMap [Config, Prefix, Value]}]
       Timeout: 900
       Code:
@@ -801,7 +816,7 @@ Resources:
         ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         ClusterKubeServerEndpoint: !GetAtt EKSControlPlane.Outputs.EKSEndpoint
         ClusterCACert: !GetAtt EKSControlPlane.Outputs.CAData
-        OIDCProvider: !Join [ '', !Split [ 'https://', !GetAtt EKSControlPlane.Outputs.OIDCIssuerURL ] ]
+        OIDCProvider: !GetAtt EKSControlPlane.Outputs.OIDCProviderEndpoint
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         QSS3BucketRegion: !Ref QSS3BucketRegion
@@ -869,16 +884,83 @@ Resources:
       ClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
   AwsNodeIrsa:
     DependsOn: NodeGroupStack
-    Condition: EnableOIDC
     Type: AWS::CloudFormation::Stack
+    Metadata:
+      cfn-lint: { config: { ignore_checks: [W1011] } }
     Properties:
       TemplateURL: !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/aws-node-daemonset-IRSA.template.yaml'
         - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
-        OIDCProvider: !Join [ '', !Split [ 'https://', !GetAtt EKSControlPlane.Outputs.OIDCIssuerURL ] ]
+        OIDCProvider: !GetAtt EKSControlPlane.Outputs.OIDCProviderEndpoint
         ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        KubectlVersion: !FindInMap
+          - KubernetesVersion
+          - ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
+          - KubectlVersion
+  AmazonEksEbsCsiDriverRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cfn-lint: { config: { ignore_checks: [EIAMPolicyWildcardResource] } }
+    Properties:
+      AssumeRolePolicyDocument: !Sub |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "${EKSControlPlane.Outputs.OIDCProviderArn}"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "${EKSControlPlane.Outputs.OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${EKSControlPlane.Outputs.OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+                }
+              }
+            }
+          ]
+        }
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
+      Policies:
+        - PolicyName: AmazonEbsCsiDeviceEncryption
+          # https://docs.aws.amazon.com/eks/latest/userguide/csi-iam-role.html#Prerequisites
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - kms:CreateGrant
+                  - kms:ListGrants
+                  - kms:RevokeGrant
+                Resource: !Sub arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:key/*
+                Condition: { Bool: { kms:GrantIsForAWSResource: true } }
+              - Effect: Allow
+                Action:
+                  - kms:Decrypt
+                  - kms:DescribeKey
+                  - kms:Encrypt
+                  - kms:GenerateDataKey
+                  - kms:GenerateDataKeyWithoutPlaintext
+                  - kms:GenerateDataKeyPair
+                  - kms:GenerateDataKeyPairWithoutPlaintext
+                  - kms:ReEncryptFrom
+                  - kms:ReEncryptTo
+                Resource: !Sub arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:key/*
+  AmazonEksEbsCsiDriverAddon:
+  # Credit to [Satya Dillikar](https://github.com/satya-dillikar) of VMware for
+  # the EKS add-on implementation idea for the EBS CSI driver.
+  # https://github.com/vmware-tap-on-public-cloud/quickstart-vmware-tanzu-application-platform/pull/15
+    Type: AWS::EKS::Addon
+    DependsOn: AwsNodeIrsa
+    Properties:
+      AddonName: aws-ebs-csi-driver
+      ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+      ResolveConflicts: NONE
+      ServiceAccountRoleArn: !GetAtt AmazonEksEbsCsiDriverRole.Arn
 Outputs:
   BastionIP:
     Value: !If [EnableBastionWithEIP, !GetAtt BastionStack.Outputs.EIP1, '']
