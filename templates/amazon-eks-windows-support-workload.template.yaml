@@ -89,13 +89,13 @@ Resources:
         }
       Path: /
       Policies:
-      - PolicyName: QSBucketAccess
-        PolicyDocument:
-          Version: 2012-10-17
-          Statement:
-            - Effect: Allow
-              Action: s3:GetObject
-              Resource: !Sub "arn:${AWS::Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*"
+        - PolicyName: QSBucketAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: s3:GetObject
+                Resource: !Sub arn:${AWS::Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*
   # This Job is used to setup the Windows VPC Webhook and Resource Controller
   JobResource:
     Type: Custom::KubeManifest
