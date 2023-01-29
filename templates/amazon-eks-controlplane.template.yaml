@@ -178,6 +178,7 @@ Resources:
       ClientIdList:
         - sts.amazonaws.com
       ThumbprintList:
+      # https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html
         - 9e99a48a9960b14926bb7f3b02e22da2b0ab7280
       Url: !GetAtt EKS.OIDCIssuerURL
 
