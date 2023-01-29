@@ -4,9 +4,6 @@ Metadata:
   QSLint:
     Exclusions: [W9002, W9003, W9004, W9006]
 Parameters:
-  AmazonContainerImageRegistry:
-    Type: String
-    AllowedPattern: ^\d{12}\.dkr\.ecr\.\S+\.amazonaws\.com(\.cn)?$
   OIDCProviderArn:
     Type: String
   OIDCProviderEndpoint:
@@ -224,7 +221,6 @@ Resources:
         resources.limits.memory: !Ref ControllerMemoryLimit
         replicaCount: !Ref ControllerReplicaCount
         hostNetwork: !If [ HostNetworkEnabled, "true", "false" ]
-        image.repository: !Sub ${AmazonContainerImageRegistry}/amazon/aws-load-balancer-controller
         vpcId: !Ref VpcId
       ValueYaml: !Sub |
         serviceAccount:
