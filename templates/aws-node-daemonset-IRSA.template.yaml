@@ -13,6 +13,7 @@ Parameters:
 Resources:
   RBACRole:
     Type: AWSQS::Kubernetes::Resource
+    UpdateReplacePolicy: Delete
     DeletionPolicy: Retain
     Properties:
       ClusterName: !Ref ClusterName
@@ -37,6 +38,7 @@ Resources:
               - get
   ServiceAccount:
     Type: AWSQS::Kubernetes::Resource
+    UpdateReplacePolicy: Delete
     DeletionPolicy: Retain
     Properties:
       ClusterName: !Ref ClusterName
@@ -51,6 +53,7 @@ Resources:
   ServiceClusterRoleBinding:
     Type: AWSQS::Kubernetes::Resource
     DependsOn: [ServiceAccount, RBACRole]
+    UpdateReplacePolicy: Delete
     DeletionPolicy: Retain
     Properties:
       ClusterName: !Ref ClusterName
@@ -94,6 +97,7 @@ Resources:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKS_CNI_Policy
   JobResource:
     Type: AWSQS::Kubernetes::Resource
+    UpdateReplacePolicy: Delete
     DeletionPolicy: Retain
     DependsOn: ServiceClusterRoleBinding
     Properties:
