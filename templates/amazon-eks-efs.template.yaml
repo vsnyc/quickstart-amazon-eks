@@ -1,7 +1,7 @@
 # Credit to [David Schott](https://github.com/schottsfired) from CloudBees for creating the original version of this
 # template https://github.com/aws-quickstart/quickstart-cloudbees-core/blob/master/templates/cloudbees-core-efs.template.yaml
 AWSTemplateFormatVersion: 2010-09-09
-Description: Deploys an EFS file system and efs-provisioner (qs-1pipqrqhi)
+Description: Deploys an EFS file system and StorageClass (qs-1pipqrqhi).
 Metadata:
   QSLint:
     Exclusions: [W9002, W9003, W9004, W9006]
