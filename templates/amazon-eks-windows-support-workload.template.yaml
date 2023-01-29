@@ -117,7 +117,7 @@ Resources:
               - name: windows-prep-container
                 image: amazonlinux:2
                 command: ["/bin/bash","-c"]
-                args: 
+                args:
                   - !Sub >
                     sleep 10;
                     yum install -y awscli;
