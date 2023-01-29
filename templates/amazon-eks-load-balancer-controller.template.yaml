@@ -3,8 +3,7 @@ Description: >-
   Deploys the aws load balancer controller to an existing kubernetes cluster
   (qs-1qnl6p00n).
 Metadata:
-  QSLint:
-    Exclusions: [W9002, W9003, W9004, W9006]
+  cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
 Parameters:
   OIDCProviderArn:
     Type: String
