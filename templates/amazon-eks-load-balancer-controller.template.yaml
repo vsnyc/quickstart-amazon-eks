@@ -1,5 +1,7 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: "Deploys the aws load balancer controller to an existing kubernetes cluster (qs-1qnl6p00n)"
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Deploys the aws load balancer controller to an existing kubernetes cluster
+  (qs-1qnl6p00n).
 Metadata:
   QSLint:
     Exclusions: [W9002, W9003, W9004, W9006]
@@ -14,19 +16,19 @@ Parameters:
     Type: String
   ControllerCPULimit:
     Type: String
-    Default: "100m"
+    Default: 100m
   ControllerMemoryLimit:
     Type: String
-    Default: "80Mi"
+    Default: 80Mi
   ControllerReplicaCount:
     Type: Number
     Default: 1
   ControllerHostNetwork:
     Type: String
-    AllowedValues: [ Enabled, Disabled ]
+    AllowedValues: [Enabled, Disabled]
     Default: Disabled
 Conditions:
-  HostNetworkEnabled: !Equals [ !Ref ControllerHostNetwork, Enabled ]
+  HostNetworkEnabled: !Equals [!Ref ControllerHostNetwork, Enabled]
 Resources:
   LoadBalancerControllerIAMRole:
     Type: AWS::IAM::Role
@@ -35,7 +37,9 @@ Resources:
         config:
           ignore_checks: [EIAMPolicyWildcardResource]
           ignore_reasons:
-            EIAMPolicyWildcardResource: "resources are created dynamically by the k8s cloud controller, and aren't known at the time of policy creation"
+            EIAMPolicyWildcardResource: >-
+              Resources are created dynamically by the k8s cloud controller,
+              and aren't known at the time of policy creation.
     Properties:
       AssumeRolePolicyDocument: !Sub |
         {
@@ -59,7 +63,7 @@ Resources:
       - PolicyName: load-balancer-controller-policy
         # https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/main/docs/install/iam_policy.json
         PolicyDocument:
-          Version: '2012-10-17'
+          Version: 2012-10-17
           Statement:
             - Effect: Allow
               Action:
@@ -70,152 +74,152 @@ Resources:
                   iam:AWSServiceName: elasticloadbalancing.amazonaws.com
             - Effect: Allow
               Action:
-                - 'ec2:DescribeAccountAttributes'
-                - 'ec2:DescribeAddresses'
-                - 'ec2:DescribeAvailabilityZones'
-                - 'ec2:DescribeInternetGateways'
-                - 'ec2:DescribeVpcs'
+                - ec2:DescribeAccountAttributes
+                - ec2:DescribeAddresses
+                - ec2:DescribeAvailabilityZones
+                - ec2:DescribeInternetGateways
+                - ec2:DescribeVpcs
                 - ec2:DescribeVpcPeeringConnections
-                - 'ec2:DescribeSubnets'
-                - 'ec2:DescribeSecurityGroups'
-                - 'ec2:DescribeInstances'
-                - 'ec2:DescribeNetworkInterfaces'
-                - 'ec2:DescribeTags'
-                - 'ec2:GetCoipPoolUsage'
-                - 'ec2:DescribeCoipPools'
-                - 'elasticloadbalancing:DescribeLoadBalancers'
-                - 'elasticloadbalancing:DescribeLoadBalancerAttributes'
-                - 'elasticloadbalancing:DescribeListeners'
-                - 'elasticloadbalancing:DescribeListenerCertificates'
-                - 'elasticloadbalancing:DescribeSSLPolicies'
-                - 'elasticloadbalancing:DescribeRules'
-                - 'elasticloadbalancing:DescribeTargetGroups'
-                - 'elasticloadbalancing:DescribeTargetGroupAttributes'
-                - 'elasticloadbalancing:DescribeTargetHealth'
-                - 'elasticloadbalancing:DescribeTags'
+                - ec2:DescribeSubnets
+                - ec2:DescribeSecurityGroups
+                - ec2:DescribeInstances
+                - ec2:DescribeNetworkInterfaces
+                - ec2:DescribeTags
+                - ec2:GetCoipPoolUsage
+                - ec2:DescribeCoipPools
+                - elasticloadbalancing:DescribeLoadBalancers
+                - elasticloadbalancing:DescribeLoadBalancerAttributes
+                - elasticloadbalancing:DescribeListeners
+                - elasticloadbalancing:DescribeListenerCertificates
+                - elasticloadbalancing:DescribeSSLPolicies
+                - elasticloadbalancing:DescribeRules
+                - elasticloadbalancing:DescribeTargetGroups
+                - elasticloadbalancing:DescribeTargetGroupAttributes
+                - elasticloadbalancing:DescribeTargetHealth
+                - elasticloadbalancing:DescribeTags
               Resource: '*'
             - Effect: Allow
               Action:
-                - 'cognito-idp:DescribeUserPoolClient'
-                - 'acm:ListCertificates'
-                - 'acm:DescribeCertificate'
-                - 'iam:ListServerCertificates'
-                - 'iam:GetServerCertificate'
-                - 'waf-regional:GetWebACL'
-                - 'waf-regional:GetWebACLForResource'
-                - 'waf-regional:AssociateWebACL'
-                - 'waf-regional:DisassociateWebACL'
-                - 'wafv2:GetWebACL'
-                - 'wafv2:GetWebACLForResource'
-                - 'wafv2:AssociateWebACL'
-                - 'wafv2:DisassociateWebACL'
-                - 'shield:GetSubscriptionState'
-                - 'shield:DescribeProtection'
-                - 'shield:CreateProtection'
-                - 'shield:DeleteProtection'
+                - cognito-idp:DescribeUserPoolClient
+                - acm:ListCertificates
+                - acm:DescribeCertificate
+                - iam:ListServerCertificates
+                - iam:GetServerCertificate
+                - waf-regional:GetWebACL
+                - waf-regional:GetWebACLForResource
+                - waf-regional:AssociateWebACL
+                - waf-regional:DisassociateWebACL
+                - wafv2:GetWebACL
+                - wafv2:GetWebACLForResource
+                - wafv2:AssociateWebACL
+                - wafv2:DisassociateWebACL
+                - shield:GetSubscriptionState
+                - shield:DescribeProtection
+                - shield:CreateProtection
+                - shield:DeleteProtection
               Resource: '*'
             - Effect: Allow
               Action:
-                - 'ec2:AuthorizeSecurityGroupIngress'
-                - 'ec2:RevokeSecurityGroupIngress'
+                - ec2:AuthorizeSecurityGroupIngress
+                - ec2:RevokeSecurityGroupIngress
               Resource: '*'
             - Effect: Allow
               Action:
-                - 'ec2:CreateSecurityGroup'
+                - ec2:CreateSecurityGroup
               Resource: '*'
             - Effect: Allow
               Action:
-                - 'ec2:CreateTags'
-              Resource: !Sub 'arn:${AWS::Partition}:ec2:*:*:security-group/*'
+                - ec2:CreateTags
+              Resource: !Sub arn:${AWS::Partition}:ec2:*:*:security-group/*
               Condition:
                 StringEquals:
-                  'ec2:CreateAction': CreateSecurityGroup
+                  ec2:CreateAction: CreateSecurityGroup
                 'Null':
-                  'aws:RequestTag/elbv2.k8s.aws/cluster': 'false'
+                  aws:RequestTag/elbv2.k8s.aws/cluster: 'false'
             - Effect: Allow
               Action:
-                - 'ec2:CreateTags'
-                - 'ec2:DeleteTags'
-              Resource: !Sub 'arn:${AWS::Partition}:ec2:*:*:security-group/*'
+                - ec2:CreateTags
+                - ec2:DeleteTags
+              Resource: !Sub arn:${AWS::Partition}:ec2:*:*:security-group/*
               Condition:
                 'Null':
-                  'aws:RequestTag/elbv2.k8s.aws/cluster': 'true'
-                  'aws:ResourceTag/elbv2.k8s.aws/cluster': 'false'
+                  aws:RequestTag/elbv2.k8s.aws/cluster: 'true'
+                  aws:ResourceTag/elbv2.k8s.aws/cluster: 'false'
             - Effect: Allow
               Action:
-                - 'ec2:AuthorizeSecurityGroupIngress'
-                - 'ec2:RevokeSecurityGroupIngress'
-                - 'ec2:DeleteSecurityGroup'
+                - ec2:AuthorizeSecurityGroupIngress
+                - ec2:RevokeSecurityGroupIngress
+                - ec2:DeleteSecurityGroup
               Resource: '*'
               Condition:
                 'Null':
-                  'aws:ResourceTag/elbv2.k8s.aws/cluster': 'false'
+                  aws:ResourceTag/elbv2.k8s.aws/cluster: 'false'
             - Effect: Allow
               Action:
-                - 'elasticloadbalancing:CreateLoadBalancer'
-                - 'elasticloadbalancing:CreateTargetGroup'
+                - elasticloadbalancing:CreateLoadBalancer
+                - elasticloadbalancing:CreateTargetGroup
               Resource: '*'
               Condition:
                 'Null':
-                  'aws:RequestTag/elbv2.k8s.aws/cluster': 'false'
+                  aws:RequestTag/elbv2.k8s.aws/cluster: 'false'
             - Effect: Allow
               Action:
-                - 'elasticloadbalancing:CreateListener'
-                - 'elasticloadbalancing:DeleteListener'
-                - 'elasticloadbalancing:CreateRule'
-                - 'elasticloadbalancing:DeleteRule'
+                - elasticloadbalancing:CreateListener
+                - elasticloadbalancing:DeleteListener
+                - elasticloadbalancing:CreateRule
+                - elasticloadbalancing:DeleteRule
               Resource: '*'
             - Effect: Allow
               Action:
-                - 'elasticloadbalancing:AddTags'
-                - 'elasticloadbalancing:RemoveTags'
+                - elasticloadbalancing:AddTags
+                - elasticloadbalancing:RemoveTags
               Resource:
-                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:targetgroup/*/*'
-                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*'
-                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*'
+                - !Sub arn:${AWS::Partition}:elasticloadbalancing:*:*:targetgroup/*/*
+                - !Sub arn:${AWS::Partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*
+                - !Sub arn:${AWS::Partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*
               Condition:
                 'Null':
-                  'aws:RequestTag/elbv2.k8s.aws/cluster': 'true'
-                  'aws:ResourceTag/elbv2.k8s.aws/cluster': 'false'
+                  aws:RequestTag/elbv2.k8s.aws/cluster: 'true'
+                  aws:ResourceTag/elbv2.k8s.aws/cluster: 'false'
             - Effect: Allow
               Action:
-                - 'elasticloadbalancing:AddTags'
-                - 'elasticloadbalancing:RemoveTags'
+                - elasticloadbalancing:AddTags
+                - elasticloadbalancing:RemoveTags
               Resource:
-                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:listener/net/*/*/*'
-                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:listener/app/*/*/*'
-                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:listener-rule/net/*/*/*'
-                - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:listener-rule/app/*/*/*'
+                - !Sub arn:${AWS::Partition}:elasticloadbalancing:*:*:listener/net/*/*/*
+                - !Sub arn:${AWS::Partition}:elasticloadbalancing:*:*:listener/app/*/*/*
+                - !Sub arn:${AWS::Partition}:elasticloadbalancing:*:*:listener-rule/net/*/*/*
+                - !Sub arn:${AWS::Partition}:elasticloadbalancing:*:*:listener-rule/app/*/*/*
             - Effect: Allow
               Action:
-                - 'elasticloadbalancing:ModifyLoadBalancerAttributes'
-                - 'elasticloadbalancing:SetIpAddressType'
-                - 'elasticloadbalancing:SetSecurityGroups'
-                - 'elasticloadbalancing:SetSubnets'
-                - 'elasticloadbalancing:DeleteLoadBalancer'
-                - 'elasticloadbalancing:ModifyTargetGroup'
-                - 'elasticloadbalancing:ModifyTargetGroupAttributes'
-                - 'elasticloadbalancing:DeleteTargetGroup'
+                - elasticloadbalancing:ModifyLoadBalancerAttributes
+                - elasticloadbalancing:SetIpAddressType
+                - elasticloadbalancing:SetSecurityGroups
+                - elasticloadbalancing:SetSubnets
+                - elasticloadbalancing:DeleteLoadBalancer
+                - elasticloadbalancing:ModifyTargetGroup
+                - elasticloadbalancing:ModifyTargetGroupAttributes
+                - elasticloadbalancing:DeleteTargetGroup
               Resource: '*'
               Condition:
                 'Null':
-                  'aws:ResourceTag/elbv2.k8s.aws/cluster': 'false'
+                  aws:ResourceTag/elbv2.k8s.aws/cluster: 'false'
             - Effect: Allow
               Action:
-                - 'elasticloadbalancing:RegisterTargets'
-                - 'elasticloadbalancing:DeregisterTargets'
-              Resource: !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:*:targetgroup/*/*'
+                - elasticloadbalancing:RegisterTargets
+                - elasticloadbalancing:DeregisterTargets
+              Resource: !Sub arn:${AWS::Partition}:elasticloadbalancing:*:*:targetgroup/*/*
             - Effect: Allow
               Action:
-                - 'elasticloadbalancing:SetWebAcl'
-                - 'elasticloadbalancing:ModifyListener'
-                - 'elasticloadbalancing:AddListenerCertificates'
-                - 'elasticloadbalancing:RemoveListenerCertificates'
-                - 'elasticloadbalancing:ModifyRule'
+                - elasticloadbalancing:SetWebAcl
+                - elasticloadbalancing:ModifyListener
+                - elasticloadbalancing:AddListenerCertificates
+                - elasticloadbalancing:RemoveListenerCertificates
+                - elasticloadbalancing:ModifyRule
               Resource: '*'
   LoadBalancerControllerHelmChart:
   # https://artifacthub.io/packages/helm/aws/aws-load-balancer-controller
-    Type: "AWSQS::Kubernetes::Helm"
+    Type: AWSQS::Kubernetes::Helm
     Properties:
       ClusterID: !Ref EksClusterName
       Namespace: kube-system
@@ -224,11 +228,11 @@ Resources:
       Chart: eks/aws-load-balancer-controller
       Values:
         clusterName: !Ref EksClusterName
-        region: !Sub '${AWS::Region}'
+        region: !Ref AWS::Region
         resources.limits.cpu: !Ref ControllerCPULimit
         resources.limits.memory: !Ref ControllerMemoryLimit
         replicaCount: !Ref ControllerReplicaCount
-        hostNetwork: !If [ HostNetworkEnabled, "true", "false" ]
+        hostNetwork: !If [HostNetworkEnabled, 'true', 'false']
         vpcId: !Ref VpcId
       ValueYaml: !Sub |
         serviceAccount:
