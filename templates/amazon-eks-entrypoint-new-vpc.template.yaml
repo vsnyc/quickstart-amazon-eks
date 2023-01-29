@@ -1174,8 +1174,8 @@ Conditions:
   EnablePrometheus: !Equals [!Ref PrometheusIntegration, Enabled]
   EnableGrafana: !Equals [!Ref GrafanaIntegration, Enabled]
   DetectSharedStacks: !And
-  - !Equals [!Ref PerAccountSharedResources, 'AutoDetect']
-  - !Equals [!Ref PerRegionSharedResources, 'AutoDetect']
+    - !Equals [!Ref PerAccountSharedResources, AutoDetect]
+    - !Equals [!Ref PerRegionSharedResources, AutoDetect]
   CreateAdvancedConfigWithDefaults: !Equals [!Ref ConfigSetName, '']
   CreatePerAccountSharedResources: !Equals [!Ref PerAccountSharedResources, 'Yes']
   CreatePerRegionSharedResources: !Equals [!Ref PerRegionSharedResources, 'Yes']
