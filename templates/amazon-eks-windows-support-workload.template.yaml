@@ -3,8 +3,7 @@ Description: >-
   Deploy a workload to the cluster to prepare the cluster for running Windows
   workloads (qs-1r15gqig4).
 Metadata:
-  QSLint:
-    Exclusions: [W9002, W9003, W9004, W9006]
+  cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
 Parameters:
   ClusterName:
     Type: String
