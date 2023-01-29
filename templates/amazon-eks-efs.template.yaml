@@ -12,13 +12,13 @@ Parameters:
     Type: AWS::EC2::Subnet::Id
   PrivateSubnet2ID:
     Type: String
-    Default: ""
+    Default: ''
   PrivateSubnet3ID:
     Type: String
-    Default: ""
+    Default: ''
   PerformanceMode:
     Type: String
-    AllowedValues: [ generalPurpose, maxIO ]
+    AllowedValues: [generalPurpose, maxIO]
     Default: generalPurpose
   EfsProvisionedThroughputInMibps:
     Type: Number
@@ -27,35 +27,40 @@ Parameters:
     Default: 0
   ThroughputMode:
     Type: String
-    AllowedValues: [ bursting, provisioned ]
+    AllowedValues: [bursting, provisioned]
     Default: bursting
   ClusterName:
     Type: String
+  DirectoryPermissions:
+    Type: String
+    AllowedPattern: ^7[0-7]{2}$
+    Default: 700
 Rules:
   ProvisionedThroughput:
-    RuleCondition: !Equals [ !Ref ThroughputMode, provisioned ]
+    RuleCondition: !Equals [!Ref ThroughputMode, provisioned]
     Assertions:
-      - Assert: !Not [ !Equals [ '0', !Ref EfsProvisionedThroughputInMibps ] ]
-        AssertDescription: "EfsProvisionedThroughputInMibps must be greater than 0 when ThroughputMode is provisioned"
+      - Assert: !Not [!Equals ['0', !Ref EfsProvisionedThroughputInMibps]]
+        AssertDescription: EfsProvisionedThroughputInMibps must be greater than 0 when ThroughputMode is provisioned
   BurstingThroughput:
-    RuleCondition: !Equals [ !Ref ThroughputMode, bursting ]
+    RuleCondition: !Equals [!Ref ThroughputMode, bursting]
     Assertions:
-      - Assert:  !Equals [ '0', !Ref EfsProvisionedThroughputInMibps ]
-        AssertDescription: "EfsProvisionedThroughputInMibps must be 0 when ThroughputMode is bursting"
+      - Assert:  !Equals ['0', !Ref EfsProvisionedThroughputInMibps]
+        AssertDescription: EfsProvisionedThroughputInMibps must be 0 when ThroughputMode is bursting
 Conditions:
-  IsProvisioned:
-    !Equals [ !Ref ThroughputMode, provisioned ]
-  3AZDeployment: !Not [!Equals [!Ref PrivateSubnet3ID, ""]]
+  IsProvisioned: !Equals [!Ref ThroughputMode, provisioned]
+  3AZDeployment: !Not [!Equals [!Ref PrivateSubnet3ID, '']]
   2AZDeployment: !Or
-    - !Not [!Equals [!Ref PrivateSubnet2ID, ""]]
-    - !Not [!Equals [!Ref PrivateSubnet3ID, ""]]
+    - !Not [!Equals [!Ref PrivateSubnet2ID, '']]
+    - !Not [!Equals [!Ref PrivateSubnet3ID, '']]
 Resources:
   EFSFileSystem:
     Type: AWS::EFS::FileSystem
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Delete
     Properties:
       Encrypted: true
       PerformanceMode: !Ref PerformanceMode
-      ProvisionedThroughputInMibps: !If [ IsProvisioned, !Ref EfsProvisionedThroughputInMibps, !Ref 'AWS::NoValue' ]
+      ProvisionedThroughputInMibps: !If [IsProvisioned, !Ref EfsProvisionedThroughputInMibps, !Ref AWS::NoValue]
       ThroughputMode: !Ref ThroughputMode
       FileSystemTags:
         - Key: Name
@@ -64,30 +69,39 @@ Resources:
     Type: AWS::EFS::MountTarget
     Properties:
       FileSystemId: !Ref EFSFileSystem
-      SecurityGroups: [ !Ref NodeGroupSecurityGroup ]
+      SecurityGroups: [!Ref NodeGroupSecurityGroup]
       SubnetId: !Ref PrivateSubnet1ID
   MountTargetPrivateSubnet2:
-    Condition: 2AZDeployment
     Type: AWS::EFS::MountTarget
+    Condition: 2AZDeployment
     Properties:
       FileSystemId: !Ref EFSFileSystem
-      SecurityGroups: [ !Ref NodeGroupSecurityGroup ]
+      SecurityGroups: [!Ref NodeGroupSecurityGroup]
       SubnetId: !Ref PrivateSubnet2ID
   MountTargetPrivateSubnet3:
-    Condition: 3AZDeployment
     Type: AWS::EFS::MountTarget
+    Condition: 3AZDeployment
     Properties:
       FileSystemId: !Ref EFSFileSystem
-      SecurityGroups: [ !Ref NodeGroupSecurityGroup ]
+      SecurityGroups: [!Ref NodeGroupSecurityGroup]
       SubnetId: !Ref PrivateSubnet3ID
-  EFSProvisioner:
-    Type: 'AWSQS::Kubernetes::Helm'
+  EfsStorageClass:
+    Type: AWSQS::Kubernetes::Resource
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Retain
     Properties:
-      ClusterID: !Ref ClusterName
-      Namespace: efs-provisioner
-      Chart: stable/efs-provisioner
-      Repository: 'https://charts.helm.sh/stable'
-      Values:
-        efsProvisioner.efsFileSystemId: !Ref EFSFileSystem
-        efsProvisioner.awsRegion: !Ref 'AWS::Region'
-        efsProvisioner.provisionerName: aws-quickstart/aws-efs
+      ClusterName: !Ref ClusterName
+      Namespace: kube-system
+      Manifest: !Sub |
+        apiVersion: storage.k8s.io/v1
+        kind: StorageClass
+        metadata:
+          name: efs-sc
+        provisioner: efs.csi.aws.com
+        parameters:
+          provisioningMode: efs-ap
+          fileSystemId: ${EFSFileSystem}
+          directoryPerms: "${DirectoryPermissions}"
+          # gidRangeStart: "2000" # optional
+          # gidRangeEnd: "2147483647" # optional
+          basePath: "/${ClusterName}" # optional

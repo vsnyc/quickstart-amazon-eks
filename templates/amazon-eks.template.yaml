@@ -75,8 +75,7 @@ Parameters:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Disabled"
-  # This parameter name is inaccurate to preserve backward compatibility, and will be changed to ProvisionLoadBalancerController in the next release
-  ProvisionALBIngressController:
+  ProvisionLoadBalancerController:
     Type: String
     AllowedValues: [ "Enabled", "Disabled" ]
     Default: "Disabled"
@@ -249,6 +248,70 @@ Mappings:
       KubectlVersion: 1.24.9/2023-01-11
     '1.24':
       KubectlVersion: 1.24.9/2023-01-11
+  RegionMap:
+  # https://docs.aws.amazon.com/eks/latest/userguide/add-ons-images.html
+    af-south-1:
+      Registry: 877085696533.dkr.ecr.af-south-1.amazonaws.com
+    ap-east-1:
+      Registry: 800184023465.dkr.ecr.ap-east-1.amazonaws.com
+    ap-northeast-1:
+      Registry: 602401143452.dkr.ecr.ap-northeast-1.amazonaws.com
+    ap-northeast-2:
+      Registry: 602401143452.dkr.ecr.ap-northeast-2.amazonaws.com
+    ap-northeast-3:
+      Registry: 602401143452.dkr.ecr.ap-northeast-3.amazonaws.com
+    ap-south-1:
+      Registry: 602401143452.dkr.ecr.ap-south-1.amazonaws.com
+    # ap-south-2:
+    #   Registry:
+    ap-southeast-1:
+      Registry: 602401143452.dkr.ecr.ap-southeast-1.amazonaws.com
+    ap-southeast-2:
+      Registry: 602401143452.dkr.ecr.ap-southeast-2.amazonaws.com
+    ap-southeast-3:
+      Registry: 296578399912.dkr.ecr.ap-southeast-3.amazonaws.com
+    # ap-southeast-4:
+    #   Registry:
+    ca-central-1:
+      Registry: 602401143452.dkr.ecr.ca-central-1.amazonaws.com
+    cn-north-1:
+      Registry: 918309763551.dkr.ecr.cn-north-1.amazonaws.com.cn
+    cn-northwest-1:
+      Registry: 961992271922.dkr.ecr.cn-northwest-1.amazonaws.com.cn
+    eu-central-1:
+      Registry: 602401143452.dkr.ecr.eu-central-1.amazonaws.com
+    # eu-central-2:
+    #   Registry:
+    eu-north-1:
+      Registry: 602401143452.dkr.ecr.eu-north-1.amazonaws.com
+    eu-south-1:
+      Registry: 590381155156.dkr.ecr.eu-south-1.amazonaws.com
+    # eu-south-2:
+    #   Registry:
+    eu-west-1:
+      Registry: 602401143452.dkr.ecr.eu-west-1.amazonaws.com
+    eu-west-2:
+      Registry: 602401143452.dkr.ecr.eu-west-2.amazonaws.com
+    eu-west-3:
+      Registry: 602401143452.dkr.ecr.eu-west-3.amazonaws.com
+    me-central-1:
+      Registry: 759879836304.dkr.ecr.me-central-1.amazonaws.com
+    me-south-1:
+      Registry: 558608220178.dkr.ecr.me-south-1.amazonaws.com
+    sa-east-1:
+      Registry: 602401143452.dkr.ecr.sa-east-1.amazonaws.com
+    us-east-1:
+      Registry: 602401143452.dkr.ecr.us-east-1.amazonaws.com
+    us-east-2:
+      Registry: 602401143452.dkr.ecr.us-east-2.amazonaws.com
+    us-gov-east-1:
+      Registry: 151742754352.dkr.ecr.us-gov-east-1.amazonaws.com
+    us-gov-west-1:
+      Registry: 013241004608.dkr.ecr.us-gov-west-1.amazonaws.com
+    us-west-1:
+      Registry: 602401143452.dkr.ecr.us-west-1.amazonaws.com
+    us-west-2:
+      Registry: 602401143452.dkr.ecr.us-west-2.amazonaws.com
 Conditions:
   EnableProxy: !Not [!Equals [!Ref HttpProxy, ""]]
   DeployTestStack: !Equals [!Ref TestSuite, Enabled]
@@ -275,7 +338,7 @@ Conditions:
   AdditionalVars: !Not [!Equals [~~/<ConfigSetName>/bastion/BastionVariables~~, '']]
   EnableClusterAutoScaler: !Equals [!Ref 'ProvisionClusterAutoScaler', 'Enabled']
   EnableMetricsServer: !Equals [!Ref 'ProvisionMetricsServer', 'Enabled']
-  EnableLoadBalancerController: !Equals [!Ref 'ProvisionALBIngressController', 'Enabled']
+  EnableLoadBalancerController: !Equals [!Ref ProvisionLoadBalancerController, Enabled]
   EnableGrafana: !Equals [!Ref 'GrafanaIntegration', 'Enabled']
   EnablePrometheus: !Equals [!Ref 'PrometheusIntegration', 'Enabled']
   EnableEfs: !Equals [!Ref 'EfsStorageClass', 'Enabled']
@@ -512,23 +575,23 @@ Resources:
       Parameters:
         EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
   EfsStack:
+    Type: AWS::CloudFormation::Stack
     Condition: EnableEfs
-    Type: 'AWS::CloudFormation::Stack'
     Metadata:
       DependsOn:
-        - !Ref ControlPlaneSecurityGroupIngress
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
+        - !Ref AmazonEksEfsCsiDriverHelmChart
+        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-efs.template.yaml'
-        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-efs.template.yaml
+        - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         NodeGroupSecurityGroup: !GetAtt NodeGroupStack.Outputs.EKSNodeSecurityGroup
         PrivateSubnet1ID: !Ref PrivateSubnet1ID
-        PrivateSubnet2ID: !If [2AZDeployment, !Ref PrivateSubnet2ID, !Ref "AWS::NoValue" ]
-        PrivateSubnet3ID: !If [3AZDeployment, !Ref PrivateSubnet3ID, !Ref "AWS::NoValue" ]
+        PrivateSubnet2ID: !If [2AZDeployment, !Ref PrivateSubnet2ID, !Ref AWS::NoValue]
+        PrivateSubnet3ID: !If [3AZDeployment, !Ref PrivateSubnet3ID, !Ref AWS::NoValue]
         PerformanceMode: ~~/<ConfigSetName>/efs/EfsPerformanceMode~~
         EfsProvisionedThroughputInMibps: ~~/<ConfigSetName>/efs/EfsProvisionedThroughputInMibps~~
         ThroughputMode: ~~/<ConfigSetName>/efs/EfsThroughputMode~~
@@ -665,6 +728,7 @@ Resources:
         - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
+        AmazonContainerImageRegistry: !FindInMap [RegionMap, !Ref AWS::Region, Registry]
         OIDCProviderArn: !GetAtt EKSControlPlane.Outputs.OIDCProviderArn
         OIDCProviderEndpoint: !GetAtt EKSControlPlane.Outputs.OIDCProviderEndpoint
         EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
@@ -961,6 +1025,83 @@ Resources:
       ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
       ResolveConflicts: NONE
       ServiceAccountRoleArn: !GetAtt AmazonEksEbsCsiDriverRole.Arn
+  AmazonEksEfsCsiDriverRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      cfn-lint: { config: { ignore_checks: [EIAMPolicyWildcardResource] } }
+    Properties:
+      AssumeRolePolicyDocument: !Sub |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "${EKSControlPlane.Outputs.OIDCProviderArn}"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "${EKSControlPlane.Outputs.OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${EKSControlPlane.Outputs.OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:efs-csi-controller-sa"
+                }
+              }
+            }
+          ]
+        }
+      Policies:
+        - PolicyName: AmazonEksEfsCsiDriverPolicy
+          # https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html#efs-create-iam-resources
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - elasticfilesystem:DescribeAccessPoints
+                  - elasticfilesystem:DescribeFileSystems
+                  - elasticfilesystem:DescribeMountTargets
+                  - ec2:DescribeAvailabilityZones
+                Resource: '*'
+              - Effect: Allow
+                Action: elasticfilesystem:CreateAccessPoint
+                Resource: '*'
+                Condition: { StringLike: { aws:RequestTag/efs.csi.aws.com/cluster: 'true' } }
+              - Effect: Allow
+                Action: elasticfilesystem:DeleteAccessPoint
+                Resource: '*'
+                Condition: { StringLike: { aws:ResourceTag/efs.csi.aws.com/cluster: 'true' } }
+  AmazonEksEfsCsiDriverServiceAccount:
+    Type: AWSQS::Kubernetes::Resource
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Retain
+    DependsOn: AwsNodeIrsa
+    Properties:
+      ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+      Namespace: kube-system
+      Manifest: !Sub |
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          labels:
+            app.kubernetes.io/name: aws-efs-csi-driver
+          name: efs-csi-controller-sa
+          namespace: kube-system
+          annotations:
+            eks.amazonaws.com/role-arn: ${AmazonEksEfsCsiDriverRole.Arn}
+  AmazonEksEfsCsiDriverHelmChart:
+    Type: AWSQS::Kubernetes::Helm
+    DependsOn: AmazonEksEfsCsiDriverServiceAccount
+    Properties:
+      ClusterID: !GetAtt EKSControlPlane.Outputs.EKSName
+      Namespace: kube-system
+      Chart: aws-efs-csi-driver/aws-efs-csi-driver
+      Repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver/
+      Values:
+        image.repository: !Sub
+          - ${AmazonContainerImageRegistry}/eks/aws-efs-csi-driver
+          - AmazonContainerImageRegistry: !FindInMap [RegionMap, !Ref AWS::Region, Registry]
+        controller.serviceAccount.create: 'false'
+        controller.serviceAccount.name: efs-csi-controller-sa
 Outputs:
   BastionIP:
     Value: !If [EnableBastionWithEIP, !GetAtt BastionStack.Outputs.EIP1, '']
