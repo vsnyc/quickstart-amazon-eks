@@ -719,13 +719,13 @@ Resources:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
+        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Condition: EnableLoadBalancerController
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-load-balancer-controller.template.yaml'
-        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-load-balancer-controller.template.yaml
+        - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         OIDCProviderArn: !GetAtt EKSControlPlane.Outputs.OIDCProviderArn
