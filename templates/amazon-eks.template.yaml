@@ -1084,7 +1084,6 @@ Resources:
           labels:
             app.kubernetes.io/name: aws-efs-csi-driver
           name: efs-csi-controller-sa
-          namespace: kube-system
           annotations:
             eks.amazonaws.com/role-arn: ${AmazonEksEfsCsiDriverRole.Arn}
   AmazonEksEfsCsiDriverHelmChart:
