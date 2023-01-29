@@ -1141,7 +1141,6 @@ Conditions:
   CreateAdvancedConfigWithDefaults: !Equals [!Ref ConfigSetName, '']
   CreatePerAccountSharedResources: !Equals [!Ref PerAccountSharedResources, 'Yes']
   CreatePerRegionSharedResources: !Equals [!Ref PerRegionSharedResources, 'Yes']
-  # OnlySsmAccess: !Equals [!Ref RemoteAccessCIDR, disabled-onlyssmaccess]
   WindowsNodes: !Equals [!Ref NodeGroupOS, 'Windows']
   EnablePrometheus: !Equals [!Ref PrometheusIntegration, Enabled]
   EnableGrafana: !Equals [!Ref GrafanaIntegration, Enabled]

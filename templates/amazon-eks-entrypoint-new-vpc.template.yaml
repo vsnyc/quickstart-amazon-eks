@@ -1183,7 +1183,6 @@ Conditions:
   2AZDeployment: !Or
     - !Equals [!Ref NumberOfAZs, "2"]
     - !Equals [!Ref NumberOfAZs, "3"]
-  # OnlySsmAccess: !Equals [!Ref RemoteAccessCIDR, disabled-onlyssmaccess]
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
   WindowsNodes: !Equals [!Ref NodeGroupOS, 'Windows']
 Mappings:
@@ -1203,8 +1202,6 @@ Resources:
         ConfigSetName: !Ref AWS::StackName
         KubernetesVersion: !Ref KubernetesVersion
         NodeVolumeSize: !If [WindowsNodes, 50, !Ref 'AWS::NoValue']
-        # As of 08/03/2021 there are no eks optimized ami's for eks 1.21
-        # TODO: remove forcing windows clusters to 1.20 once ami's are available https://github.com/aws/containers-roadmap/issues/1461
         OnDemandPercentage: !Ref OnDemandPercentage
         OnDemandBastionPercentage: !Ref OnDemandBastionPercentage
   AutoDetectSharedResources:
