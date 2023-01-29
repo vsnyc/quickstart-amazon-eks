@@ -118,7 +118,7 @@ Resources:
               - name: aws-node-enable-irsa
                 image: amazonlinux:2
                 command: ["/bin/bash","-c"]
-                args: 
+                args:
                   - >
                     sleep 10;
                     if [ `uname -m` = 'x86_64' ]; then ARCH="amd64"; else ARCH="arm64"; fi;
