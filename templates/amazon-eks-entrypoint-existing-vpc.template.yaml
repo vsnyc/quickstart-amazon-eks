@@ -16,13 +16,6 @@ Metadata:
       - Label:
           default: Basic configuration
         Parameters:
-          - VPCID
-          - PrivateSubnet1ID
-          - PrivateSubnet2ID
-          - PrivateSubnet3ID
-          - PublicSubnet1ID
-          - PublicSubnet2ID
-          - PublicSubnet3ID
           - RemoteAccessCIDR
           - KeyPairName
           - ConfigSetName
@@ -31,6 +24,13 @@ Metadata:
       - Label:
           default: Network configuration
         Parameters:
+          - VPCID
+          - PrivateSubnet1ID
+          - PrivateSubnet2ID
+          - PrivateSubnet3ID
+          - PublicSubnet1ID
+          - PublicSubnet2ID
+          - PublicSubnet3ID
           - HttpProxy
       - Label:
           default: Bastion host configuration
