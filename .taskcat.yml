@@ -77,7 +77,7 @@ tests:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       ClusterAutoScaler: Enabled
-      NodeGroupType: 'Unmanaged'
+      NodeGroupType: Unmanaged
       ALBIngressController: Disabled
     regions:
       - eu-central-1
@@ -95,16 +95,16 @@ tests:
       PrometheusIntegration: Enabled
       GrafanaIntegration: Enabled
       EKSPublicAccessEndpoint: Enabled
-      NodeGroupType: 'Unmanaged'
+      NodeGroupType: Unmanaged
       ALBIngressController: Disabled
     regions:
       - ap-southeast-2
   2az:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
-      NumberOfAZs: "2"
+      NumberOfAZs: 2
       EKSPublicAccessEndpoint: Enabled
-      NodeGroupType: 'Unmanaged'
+      NodeGroupType: Unmanaged
       ProvisionBastionHost: Disabled
     regions:
       - cn-north-1
@@ -117,10 +117,10 @@ tests:
   no-logging:
     parameters:
       AvailabilityZones: $[taskcat_genaz_2]
-      NumberOfAZs: "2"
-      EKSClusterLoggingTypes: ""
+      NumberOfAZs: 2
+      EKSClusterLoggingTypes: ''
       EKSPublicAccessEndpoint: Enabled
-      NodeGroupType: 'Unmanaged'
+      NodeGroupType: Unmanaged
       ALBIngressController: Disabled
     regions:
       - eu-west-2
@@ -128,14 +128,14 @@ tests:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
-      NodeGroupType: 'Unmanaged'
+      NodeGroupType: Unmanaged
       ALBIngressController: Disabled
     regions:
       - us-west-2
   load-balancer-controller:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      NodeGroupType: 'Unmanaged'
+      NodeGroupType: Unmanaged
     regions:
       - us-east-2
   fargate:
@@ -143,9 +143,9 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       ClusterAutoScaler: Enabled
       FargateNamespaces: kube-system
-      FargateLabels: 'app.kubernetes.io/name=aws-cluster-autoscaler'
+      FargateLabels: app.kubernetes.io/name=aws-cluster-autoscaler
       EKSPublicAccessEndpoint: Enabled
-      NodeGroupType: 'Unmanaged'
+      NodeGroupType: Unmanaged
       ALBIngressController: Enabled
     regions:
       - us-east-1
@@ -156,7 +156,7 @@ tests:
       NodeGroupOS: Bottlerocket
       NodeInstanceFamily: ARM
       NodeInstanceType: c6g.medium
-      NodeGroupType: 'Unmanaged'
+      NodeGroupType: Unmanaged
       ALBIngressController: Enabled
     regions:
       - eu-west-1
@@ -202,14 +202,14 @@ tests:
   #     AvailabilityZones: $[taskcat_genaz_3]
   #     TestSuite: Enabled
   #     NodeGroupOS: Windows
-  #     NodeGroupType: 'Unmanaged'
+  #     NodeGroupType: Unmanaged
   #     ALBIngressController: Enabled
   #   regions:
   #     - eu-north-1
   calico:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      NodeGroupType: 'Unmanaged'
+      NodeGroupType: Unmanaged
       ALBIngressController: Disabled
       CalicoIntegration: Enabled
     regions:
@@ -218,7 +218,7 @@ tests:
   # rafaysystems:
   #   parameters:
   #     AvailabilityZones: $[taskcat_genaz_3]
-  #     NodeGroupType: 'Unmanaged'
+  #     NodeGroupType: Unmanaged
   #     ALBIngressController: Disabled
   #     RafaySysIntegration: Enabled
   #     RafaySysFirstName: override
