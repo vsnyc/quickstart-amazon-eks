@@ -1026,6 +1026,20 @@ Resources:
       ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
       ResolveConflicts: NONE
       ServiceAccountRoleArn: !GetAtt AmazonEksEbsCsiDriverRole.Arn
+  EbsStorageClass:
+    Type: AWSQS::Kubernetes::Resource
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Retain
+    Properties:
+      ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+      Namespace: default
+      Manifest: |
+        apiVersion: storage.k8s.io/v1
+        kind: StorageClass
+        metadata:
+          name: ebs-sc
+        provisioner: ebs.csi.aws.com
+        volumeBindingMode: WaitForFirstConsumer
   AmazonEksEfsCsiDriverRole:
     Type: AWS::IAM::Role
     Metadata:
