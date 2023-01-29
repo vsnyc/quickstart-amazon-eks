@@ -106,7 +106,6 @@ Metadata:
           - EfsStorageClass
           - PrometheusIntegration
           - GrafanaIntegration
-          - MonitoringStack
       - Label:
           default: AWS Quick Start configuration
         Parameters:
@@ -200,8 +199,6 @@ Metadata:
         default: Per-account shared resources
       PerRegionSharedResources:
         default: Per-Region shared resources
-      MonitoringStack:
-        default: Monitoring stack
       MaxNumberOfNodes:
         default: Maximum number of nodes
       FargateNamespaces:
@@ -1040,11 +1037,6 @@ Parameters:
     AllowedValues: ['AutoDetect', 'Yes', 'No']
     Default: 'AutoDetect'
     Description: Choose "No" if you already deployed another EKS Quick Start stack in your Region.
-  MonitoringStack:
-    Type: String
-    AllowedValues: [ "Prometheus + Grafana", "None" ]
-    Default: "None"
-    Description: 'Enable monitoring stack with "Prometheus+Grafana." Warning: this is a legacy parameter and will be dropped from the next version of this Quick Start. Please use the "Grafana integration" and "Prometheus integration" parameters instead.'
   GrafanaIntegration:
     Type: String
     AllowedValues: [ Enabled, Disabled ]
@@ -1151,12 +1143,8 @@ Conditions:
   CreatePerRegionSharedResources: !Equals [!Ref PerRegionSharedResources, 'Yes']
   # OnlySsmAccess: !Equals [!Ref RemoteAccessCIDR, disabled-onlyssmaccess]
   WindowsNodes: !Equals [!Ref NodeGroupOS, 'Windows']
-  EnablePrometheus: !Or
-    - !Equals [!Ref PrometheusIntegration, "Enabled"]
-    - !Equals [!Ref MonitoringStack, "Prometheus + Grafana"]
-  EnableGrafana: !Or
-    - !Equals [!Ref GrafanaIntegration, "Enabled"]
-    - !Equals [!Ref MonitoringStack, "Prometheus + Grafana"]
+  EnablePrometheus: !Equals [!Ref PrometheusIntegration, Enabled]
+  EnableGrafana: !Equals [!Ref GrafanaIntegration, Enabled]
 Resources:
   AutoDetectSharedResources:
     Type: AWS::CloudFormation::Stack

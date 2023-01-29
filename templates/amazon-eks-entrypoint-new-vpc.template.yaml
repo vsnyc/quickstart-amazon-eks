@@ -111,7 +111,6 @@ Metadata:
           - EfsStorageClass
           - PrometheusIntegration
           - GrafanaIntegration
-          - MonitoringStack
       - Label:
           default: AWS Quick Start configuration
         Parameters:
@@ -160,8 +159,6 @@ Metadata:
         default: Cluster autoscaler
       EfsStorageClass:
         default: EFS storage class
-      MonitoringStack:
-        default: Monitoring stack
       NumberOfAZs:
         default: Number of Availability Zones
       ProvisionBastionHost:
@@ -961,11 +958,6 @@ Parameters:
     AllowedValues: [ Enabled, Disabled ]
     Default: Disabled
     Description: 'Choose "Enabled" to enable EFS storage class.'
-  MonitoringStack:
-    Type: String
-    AllowedValues: [ "Prometheus + Grafana", "None" ]
-    Default: "None"
-    Description: 'Enable monitoring stack with "Prometheus+Grafana." Warning: this is a legacy parameter and will be dropped from the next version of this Quick Start. Please use the "Grafana integration" and "Prometheus integration" parameters instead.'
   GrafanaIntegration:
     Type: String
     AllowedValues: [ Enabled, Disabled ]
@@ -1179,12 +1171,8 @@ Parameters:
     Default: ""
     NoEcho: true
 Conditions:
-  EnablePrometheus: !Or
-    - !Equals [!Ref PrometheusIntegration, "Enabled"]
-    - !Equals [!Ref MonitoringStack, "Prometheus + Grafana"]
-  EnableGrafana: !Or
-    - !Equals [!Ref GrafanaIntegration, "Enabled"]
-    - !Equals [!Ref MonitoringStack, "Prometheus + Grafana"]
+  EnablePrometheus: !Equals [!Ref PrometheusIntegration, Enabled]
+  EnableGrafana: !Equals [!Ref GrafanaIntegration, Enabled]
   DetectSharedStacks: !And
   - !Equals [!Ref PerAccountSharedResources, 'AutoDetect']
   - !Equals [!Ref PerRegionSharedResources, 'AutoDetect']
