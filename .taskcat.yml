@@ -36,7 +36,6 @@ project:
     - cn-northwest-1
   template: templates/amazon-eks-entrypoint-new-vpc.template.yaml
   parameters:
-    RemoteAccessCIDR: disabled-onlyssmaccess
     QSS3BucketName: $[taskcat_autobucket]
     QSS3BucketRegion: $[taskcat_current_region]
   lambda_source_path: functions/source
