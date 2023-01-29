@@ -46,7 +46,6 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
     regions:
       - me-south-1
-      - us-east-1
   v1-23:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
