@@ -86,6 +86,7 @@ Resources:
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
+                  "${OIDCProvider}:aud": "sts.amazonaws.com",
                   "${OIDCProvider}:sub": "system:serviceaccount:kube-system:aws-node"
                 }
               }
