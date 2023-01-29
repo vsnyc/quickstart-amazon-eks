@@ -72,26 +72,21 @@ Resources:
     Metadata:
       cfn-lint:
         config:
-          ignore_checks: [EIAMPolicyActionWildcard, EKMSKeyEnableKeyRotation]
+          ignore_checks: [EIAMPolicyActionWildcard, EIAMPolicyWildcardResource, EKMSKeyEnableKeyRotation]
           ignore_reasons:
             EKMSKeyEnableKeyRotation: 'Need to experiment further with the effects of rotating keys and EKS secrets'
             EIAMPolicyWildcardResource: 'this is the default kms policy as per https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default'
     Properties:
-      KeyPolicy: {
-        "Version": "2012-10-17",
-        "Id": "key-default-1",
-        "Statement": [
-          {
-            "Sid": "Enable IAM User Permissions",
-            "Effect": "Allow",
-            "Principal": {
-              "AWS": !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:root"
-            },
-            "Action": "kms:*",
-            "Resource": "*"
-          }
-        ]
-      }
+      KeyPolicy:
+        Version: 2012-10-17
+        Id: key-default-1
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: '*'
   EKS:
     Type: "AWSQS::EKS::Cluster"
     DependsOn: CleanupLoadBalancers
