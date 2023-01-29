@@ -16,8 +16,8 @@ Parameters:
   OIDCProviderEndpoint:
     Type: String
   QSS3BucketName:
-    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     Type: String
+    AllowedPattern: ^[0-9a-z]+([0-9a-z-]*[0-9a-z])*$
   QSS3KeyPrefix:
     AllowedPattern: ^[0-9a-zA-Z-/.]*$
     Type: String
