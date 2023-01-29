@@ -53,6 +53,7 @@ Resources:
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
+                  "${OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
                   "${OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:aws-load-balancer-controller"
                 }
               }
