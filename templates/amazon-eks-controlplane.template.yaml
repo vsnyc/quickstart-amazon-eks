@@ -1,5 +1,5 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: "Deploys the EKS control plane (qs-1p7nknofn)"
+AWSTemplateFormatVersion: 2010-09-09
+Description: Deploys the EKS control plane (qs-1p7nknofn).
 Metadata:
   QSLint:
     Exclusions: [W9002, W9003, W9004, W9006]
@@ -55,20 +55,20 @@ Conditions:
   AddRole: !Not [ !Equals [ !Ref AdditionalEKSAdminRoleArn, "" ] ]
   CustomeNodeRoleProvided: !Not [ !Equals [ !Ref CustomNodeRole, "" ] ]
   BastionRole: !Not [ !Equals [ !Ref BastionRole, "" ] ]
-  EnablePrivateEndpoint: !Equals [ !Ref EKSPrivateAccessEndpoint, "Enabled" ]
-  EnablePublicEndpoint: !Equals [ !Ref EKSPublicAccessEndpoint, "Enabled" ]
+  EnablePrivateEndpoint: !Equals [!Ref EKSPrivateAccessEndpoint, Enabled]
+  EnablePublicEndpoint: !Equals [!Ref EKSPublicAccessEndpoint, Enabled]
   CreateKey: !And
-    - !Equals [ !Ref EKSEncryptSecretsKmsKeyArn, "" ]
-    - !Equals [ !Ref EKSEncryptSecrets, Enabled ]
-  EnableEncryption: !Equals [ !Ref EKSEncryptSecrets, Enabled ]
-  LoggingEnabled: !Not [ !Equals [ !Select [ 0, !Ref EKSClusterLoggingTypes ], "" ] ]
+    - !Equals [!Ref EKSEncryptSecretsKmsKeyArn, '']
+    - !Equals [!Ref EKSEncryptSecrets, Enabled]
+  EnableEncryption: !Equals [!Ref EKSEncryptSecrets, Enabled]
+  LoggingEnabled: !Not [!Equals [!Select [0, !Ref EKSClusterLoggingTypes], '']]
 Mappings:
   Config:
-    Prefix: { Value: 'eks-quickstart' }
+    Prefix: { Value: eks-quickstart }
 Resources:
   KMSKey:
     Condition: CreateKey
-    Type: "AWS::KMS::Key"
+    Type: AWS::KMS::Key
     Metadata:
       cfn-lint:
         config:
@@ -88,7 +88,7 @@ Resources:
             Action: kms:*
             Resource: '*'
   EKS:
-    Type: "AWSQS::EKS::Cluster"
+    Type: AWSQS::EKS::Cluster
     DependsOn: CleanupLoadBalancers
     Properties:
       Name: !Ref EKSClusterName
@@ -98,7 +98,7 @@ Resources:
         PublicAccessCidrs: !Ref EKSPublicAccessCIDRs
         EndpointPrivateAccess: !If [ EnablePrivateEndpoint, true, false ]
         EndpointPublicAccess: !If [ EnablePublicEndpoint, true, false ]
-      EnabledClusterLoggingTypes: !If [ LoggingEnabled, !Ref EKSClusterLoggingTypes, !Ref "AWS::NoValue" ]
+      EnabledClusterLoggingTypes: !If [LoggingEnabled, !Ref EKSClusterLoggingTypes, !Ref AWS::NoValue]
       EncryptionConfig: !If
         - EnableEncryption
         - - Resources: [ secrets ]
@@ -110,52 +110,52 @@ Resources:
       KubernetesApiAccess:
         Roles:
           - Arn: !Sub
-              - 'arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${NodeRole}'
+              - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${NodeRole}
               - NodeRole: !If
                   - CustomeNodeRoleProvided
                   - !Ref CustomNodeRole
                   - !Sub [ '${Prefix}-UnmanagedNodeInstance', { Prefix: !FindInMap [ Config, Prefix, Value ] } ]
-            Username: 'system:node:{{EC2PrivateDNSName}}'
-            Groups: [ 'system:bootstrappers', 'system:nodes', 'eks:kube-proxy-windows' ]
+            Username: system:node:{{EC2PrivateDNSName}}
+            Groups: [system:bootstrappers, system:nodes, eks:kube-proxy-windows]
           - Arn: !Ref FunctionRoleArn
             Username: !Ref FunctionRoleArn
-            Groups: [ 'system:masters' ]
-          - Arn: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-helm"
-            Username: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-helm"
-            Groups: [ 'system:masters' ]
-          - Arn: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-get"
-            Username: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-get"
-            Groups: [ 'system:masters' ]
-          - Arn: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-resource"
-            Username: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-resource"
-            Groups: [ 'system:masters' ]
+            Groups: [system:masters]
+          - Arn: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-helm
+            Username: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-helm
+            Groups: [system:masters]
+          - Arn: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-get
+            Username: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-get
+            Groups: [system:masters]
+          - Arn: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-resource
+            Username: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/awsqs-kubernetes-resource
+            Groups: [system:masters]
           # We don't know whether GetCallerArn returned a user arn or a role arn, so we just add it to both
           - Arn: !GetAtt CallerArn.Arn
             Username: !GetAtt CallerArn.Arn
-            Groups: [ 'system:masters' ]
+            Groups: [system:masters]
           - !If
             - BastionRole
-            - Arn: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${BastionRole}"
-              Username: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${BastionRole}"
-              Groups: [ 'system:masters' ]
-            - !Ref 'AWS::NoValue'
+            - Arn: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${BastionRole}
+              Username: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${BastionRole}
+              Groups: [system:masters]
+            - !Ref AWS::NoValue
           - !If
             - AddRole
             - Arn: !Ref AdditionalEKSAdminRoleArn
               Username: !Ref AdditionalEKSAdminRoleArn
-              Groups: [ 'system:masters' ]
-            - !Ref 'AWS::NoValue'
+              Groups: [system:masters]
+            - !Ref AWS::NoValue
         Users:
           # We don't know whether GetCallerArn returned a user arn or a role arn, so we just add it to both
           - Arn: !GetAtt CallerArn.Arn
             Username: !GetAtt CallerArn.Arn
-            Groups: [ 'system:masters' ]
+            Groups: [system:masters]
           - !If
             - AddUser
             - Arn: !Ref AdditionalEKSAdminUserArn
               Username: !Ref AdditionalEKSAdminUserArn
-              Groups: [ 'system:masters' ]
-            - !Ref 'AWS::NoValue'
+              Groups: [system:masters]
+            - !Ref AWS::NoValue
   CleanupLoadBalancers:
     Type: Custom::CleanupLoadBalancers
     Properties:
