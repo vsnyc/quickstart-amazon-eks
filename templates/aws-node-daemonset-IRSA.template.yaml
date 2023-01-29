@@ -6,7 +6,9 @@ Metadata:
 Parameters:
   ClusterName:
     Type: String
-  OIDCProvider:
+  OIDCProviderArn:
+    Type: String
+  OIDCProviderEndpoint:
     Type: String
   KubectlVersion:
     Type: String
@@ -81,13 +83,13 @@ Resources:
             {
               "Effect": "Allow",
               "Principal": {
-                "Federated": "arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/${OIDCProvider}"
+                "Federated": "${OIDCProviderArn}"
               },
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
-                  "${OIDCProvider}:aud": "sts.amazonaws.com",
-                  "${OIDCProvider}:sub": "system:serviceaccount:kube-system:aws-node"
+                  "${OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:aws-node"
                 }
               }
             }

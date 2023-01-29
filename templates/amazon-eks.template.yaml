@@ -879,7 +879,8 @@ Resources:
         ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         ClusterKubeServerEndpoint: !GetAtt EKSControlPlane.Outputs.EKSEndpoint
         ClusterCACert: !GetAtt EKSControlPlane.Outputs.CAData
-        OIDCProvider: !GetAtt EKSControlPlane.Outputs.OIDCProviderEndpoint
+        OIDCProviderArn: !GetAtt EKSControlPlane.Outputs.OIDCProviderArn
+        OIDCProviderEndpoint: !GetAtt EKSControlPlane.Outputs.OIDCProviderEndpoint
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         QSS3BucketRegion: !Ref QSS3BucketRegion
@@ -956,7 +957,8 @@ Resources:
         - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
-        OIDCProvider: !GetAtt EKSControlPlane.Outputs.OIDCProviderEndpoint
+        OIDCProviderArn: !GetAtt EKSControlPlane.Outputs.OIDCProviderArn
+        OIDCProviderEndpoint: !GetAtt EKSControlPlane.Outputs.OIDCProviderEndpoint
         ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         KubectlVersion: !FindInMap
           - KubernetesVersion

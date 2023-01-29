@@ -10,7 +10,9 @@ Parameters:
     Type: String
   ClusterCACert:
     Type: String
-  OIDCProvider:
+  OIDCProviderArn:
+    Type: String
+  OIDCProviderEndpoint:
     Type: String
   QSS3BucketName:
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
@@ -66,27 +68,24 @@ Resources:
   S3Role:
     Type: AWS::IAM::Role
     Properties:
-      AssumeRolePolicyDocument: !Sub
-      - |
+      AssumeRolePolicyDocument: !Sub |
         {
           "Version": "2012-10-17",
           "Statement": [
             {
               "Effect": "Allow",
               "Principal": {
-                "Federated": "arn:aws:iam::${AWS::AccountId}:oidc-provider/${OIDCProvider}"
+                "Federated": "${OIDCProviderArn}"
               },
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
-                  "${OIDCProvider}:sub": "system:serviceaccount:${NameSpace}:${ResourceName}"
+                  "${OIDCProviderEndpoint}:sub": "system:serviceaccount:default:internal-kubectl"
                 }
               }
             }
           ]
         }
-      - NameSpace: default
-        ResourceName: internal-kubectl
       Path: "/"
       Policies:
       - PolicyName: QSBucketAccess
