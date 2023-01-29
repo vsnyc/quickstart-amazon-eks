@@ -118,27 +118,27 @@ Resources:
               nodeSelector:
                 kubernetes.io/os: linux
               containers:
-              - name: aws-node-enable-irsa
-                image: amazonlinux:2
-                command: ["/bin/bash","-c"]
-                args:
-                  - >
-                    sleep 10;
-                    if [ `uname -m` = 'x86_64' ]; then ARCH="amd64"; else ARCH="arm64"; fi;
-                    curl --retry 5 -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/${KubectlVersion}/bin/linux/$ARCH/kubectl;
-                    chmod +x ./kubectl;
-                    ./kubectl -n kube-system patch sa aws-node -p '{"metadata": {"annotations": {"eks.amazonaws.com/role-arn": "${AWSNodeIAMRole.Arn}" }}}';
-                    ./kubectl -n kube-system patch daemonset aws-node -p '{"spec": {"template": {"metadata": {"annotations": {"irsa": "enabled"}}}}}';
-                    RETRIES=0 ;
-                    while true ; do
-                      DESIRED=$(./kubectl get daemonset aws-node -n kube-system -o jsonpath={.status.desiredNumberScheduled}|| exit 1);
-                      UPDATED=$(./kubectl get daemonset aws-node -n kube-system -o jsonpath={.status.updatedNumberScheduled}|| exit 1);
-                      READY=$(./kubectl get daemonset aws-node -n kube-system -o jsonpath={.status.numberReady}|| exit 1);
-                      if [[ "$DESIRED" == "$UPDATED" && "$DESIRED" == "$READY" ]]; then break ; fi ;
-                      echo "Desired: $DESIRED Updated: $UPDATED Ready: $READY" ;
-                      ((RETRIES=RETRIES+1));
-                      if [ $RETRIES -gt 40 ]; then echo "Timed out waiting for pods to become ready"; exit 1; fi;
-                      sleep 15;
-                    done
+                - name: aws-node-enable-irsa
+                  image: amazonlinux:2
+                  command: ["/bin/bash","-c"]
+                  args:
+                    - >
+                      sleep 10;
+                      if [ `uname -m` = 'x86_64' ]; then ARCH="amd64"; else ARCH="arm64"; fi;
+                      curl --retry 5 -o kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/${KubectlVersion}/bin/linux/$ARCH/kubectl;
+                      chmod +x ./kubectl;
+                      ./kubectl -n kube-system patch sa aws-node -p '{"metadata": {"annotations": {"eks.amazonaws.com/role-arn": "${AWSNodeIAMRole.Arn}" }}}';
+                      ./kubectl -n kube-system patch daemonset aws-node -p '{"spec": {"template": {"metadata": {"annotations": {"irsa": "enabled"}}}}}';
+                      RETRIES=0 ;
+                      while true ; do
+                        DESIRED=$(./kubectl get daemonset aws-node -n kube-system -o jsonpath={.status.desiredNumberScheduled}|| exit 1);
+                        UPDATED=$(./kubectl get daemonset aws-node -n kube-system -o jsonpath={.status.updatedNumberScheduled}|| exit 1);
+                        READY=$(./kubectl get daemonset aws-node -n kube-system -o jsonpath={.status.numberReady}|| exit 1);
+                        if [[ "$DESIRED" == "$UPDATED" && "$DESIRED" == "$READY" ]]; then break ; fi ;
+                        echo "Desired: $DESIRED Updated: $UPDATED Ready: $READY" ;
+                        ((RETRIES=RETRIES+1));
+                        if [ $RETRIES -gt 40 ]; then echo "Timed out waiting for pods to become ready"; exit 1; fi;
+                        sleep 15;
+                      done
               restartPolicy: OnFailure
           backoffLimit: 4
