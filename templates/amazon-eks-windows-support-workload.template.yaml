@@ -1,5 +1,7 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: "deploy a workload to the cluster to prepare the cluster for running Windows workloads (qs-1r15gqig4)"
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Deploy a workload to the cluster to prepare the cluster for running Windows
+  workloads (qs-1r15gqig4).
 Metadata:
   QSLint:
     Exclusions: [W9002, W9003, W9004, W9006]
@@ -26,11 +28,11 @@ Resources:
   # This resource creates a Service Account that has no permissions associated with it.
   # It will be used to authorize our pod to run 'kubectl' commands
   ServiceAccount:
-    Type: "Custom::KubeManifest"
+    Type: Custom::KubeManifest
     Version: '1.0'
     Properties:
       # The lambda function that executes the manifest against the cluster. This is created in one of the parent stacks
-      ServiceToken: !Sub "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}"
+      ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}
       ClusterName: !Ref ClusterName
       # Kubernetes manifest
       Manifest:
@@ -43,11 +45,11 @@ Resources:
             eks.amazonaws.com/role-arn: !GetAtt S3Role.Arn
   # Creates role binding to give our service account admin access
   ServiceClusterRoleBinding:
-    Type: "Custom::KubeManifest"
+    Type: Custom::KubeManifest
     Version: '1.0'
     Properties:
       # The lambda function that executes the manifest against the cluster. This is created in one of the parent stacks
-      ServiceToken: !Sub "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}"
+      ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}
       ClusterName: !Ref ClusterName
       # Kubernetes manifest
       Manifest:
@@ -86,7 +88,7 @@ Resources:
             }
           ]
         }
-      Path: "/"
+      Path: /
       Policies:
       - PolicyName: QSBucketAccess
         PolicyDocument:
@@ -97,11 +99,11 @@ Resources:
               Resource: !Sub "arn:${AWS::Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*"
   # This Job is used to setup the Windows VPC Webhook and Resource Controller
   JobResource:
-    Type: "Custom::KubeManifest"
+    Type: Custom::KubeManifest
     Version: '1.0'
     Properties:
       # The lambda function that executes the manifest against the cluster. This is created in one of the parent stacks
-      ServiceToken: !Sub "arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}"
+      ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}
       ClusterName: !Ref ClusterName
       # Kubernetes manifest
       Manifest:
@@ -116,7 +118,7 @@ Resources:
               containers:
               - name: windows-prep-container
                 image: amazonlinux:2
-                command: ["/bin/bash","-c"]
+                command: [/bin/bash, -c]
                 args:
                   - !Sub >
                     sleep 10;
@@ -134,6 +136,6 @@ Resources:
                   - name: K8S_CLUSTER_NAME
                     value: !Ref ClusterName
                   - name: S3_SCRIPT_URL
-                    value: !Sub 's3://${QSS3BucketName}/${QSS3KeyPrefix}scripts/windows-setup.sh'
+                    value: !Sub s3://${QSS3BucketName}/${QSS3KeyPrefix}scripts/windows-setup.sh
               restartPolicy: OnFailure
           backoffLimit: 4
