@@ -19,8 +19,8 @@ Parameters:
     Type: String
     AllowedPattern: ^[0-9a-z]+([0-9a-z-]*[0-9a-z])*$
   QSS3KeyPrefix:
-    AllowedPattern: ^[0-9a-zA-Z-/.]*$
     Type: String
+    AllowedPattern: ^[0-9a-zA-Z-/.]*$
   QSS3BucketRegion:
     Type: String
 Resources:
