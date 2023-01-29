@@ -3,8 +3,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Deploys an EFS file system and StorageClass (qs-1pipqrqhi).
 Metadata:
-  QSLint:
-    Exclusions: [W9002, W9003, W9004, W9006]
+  cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
 Parameters:
   NodeGroupSecurityGroup:
     Type: AWS::EC2::SecurityGroup::Id
