@@ -8,7 +8,7 @@ Metadata:
 Parameters:
   KeyPairName:
     Type: String
-    Default: ""
+    Default: ''
   QSS3BucketName:
     Type: String
     AllowedPattern: ^[0-9a-z]+([0-9a-z-]*[0-9a-z])*$
@@ -35,10 +35,10 @@ Parameters:
     Default: Disabled
   AdditionalEKSAdminUserArn:
     Type: String
-    Default: ""
+    Default: ''
   AdditionalEKSAdminRoleArn:
     Type: String
-    Default: ""
+    Default: ''
   NodeInstanceType:
     Default: t3.medium
     Type: String
@@ -52,21 +52,21 @@ Parameters:
     Type: AWS::EC2::VPC::Id
   PublicSubnet1ID:
     Type: String
-    Default: ""
+    Default: ''
   PublicSubnet2ID:
     Type: String
-    Default: ""
+    Default: ''
   PublicSubnet3ID:
     Type: String
-    Default: ""
+    Default: ''
   PrivateSubnet1ID:
-    Type: "AWS::EC2::Subnet::Id"
+    Type: AWS::EC2::Subnet::Id
   PrivateSubnet2ID:
     Type: String
-    Default: ""
+    Default: ''
   PrivateSubnet3ID:
     Type: String
-    Default: ""
+    Default: ''
   ProvisionClusterAutoScaler:
     Type: String
     AllowedValues: [Enabled, Disabled]
@@ -93,34 +93,33 @@ Parameters:
     Default: Enabled
   BastionAMIID:
     Type: String
-    Default: ""
+    Default: ''
   EfsStorageClass:
     Type: String
     AllowedValues: [Enabled, Disabled]
     Default: Disabled
   HttpProxy:
     Type: String
-    Default: ""
+    Default: ''
   FargateNamespaces:
     Type: String
-    Default: ""
+    Default: ''
   FargateLabels:
     Type: String
-    Default: ""
+    Default: ''
   EKSClusterName:
     Type: String
-    Default: ""
-    Description: "(Optional) Name for the EKS cluster. If left blank one will be auto-generated."
+    Default: ''
   SnykIntegrationId:
     Type: String
-    Default: ""
+    Default: ''
   SnykIntegration:
     Type: String
     AllowedValues: [Enabled, Disabled]
     Default: Disabled
   NewRelicLicenseKey:
     Type: String
-    Default: ""
+    Default: ''
     NoEcho: true
   NewRelicIntegration:
     Type: String
@@ -130,49 +129,38 @@ Parameters:
     Type: String
     AllowedValues: [Enabled, Disabled]
     Default: Disabled
-    Description: "For more information see https://www.projectcalico.org/ ."
   RafaySysIntegration:
     Type: String
-    AllowedValues: [ Enabled, Disabled ]
+    AllowedValues: [Enabled, Disabled]
     Default: Disabled
-    Description: "For more information see https://aws-quickstart.github.io/quickstart-eks-rafay-systems/ ."
   RafaySysProject:
     Type: String
-    Description: TODO
     Default: defaultproject
   RafaySysBootstrapBucket:
     Type: String
-    Description: "(Optional) S3 bucket to place the the rafay bootstrap yaml file. If left blank the EKS Quick Start bucket will be used."
-    Default: ""
+    Default: ''
   RafaySysBootstrapKey:
     Type: String
-    Description: "(Optional) S3 key to place the the rafay bootstrap yaml file. If left blank the key will be rafay/<CLUSTER_NAME>/cluster-bootstrap.yaml."
-    Default: ""
+    Default: ''
   RafaySysApiKey:
     Type: String
-    Description: Required if using an existing Rafay account.
-    Default: ""
+    Default: ''
   RafaySysApiSecret:
     Type: String
-    Description: Required if using an existing Rafay account.
-    Default: ""
+    Default: ''
     NoEcho: true
   RafaySysFirstName:
     Type: String
-    Description: Required if registering a new Rafay account.
-    Default: ""
+    Default: ''
   RafaySysLastName:
     Type: String
-    Description: Required if registering a new Rafay account.
-    Default: ""
+    Default: ''
   RafaySysOrganizationName:
     Type: String
-    Description: Required if registering a new Rafay account.
-    Default: ""
+    Default: ''
   RafaySysEmail:
     Type: String
-    Description: Required if registering a new Rafay account.
-    Default: ""
+    Default: ''
   ConfigSetName:
     Type: String
   TestSuite:
@@ -180,61 +168,50 @@ Parameters:
     AllowedValues: [Enabled, Disabled]
     Default: Disabled
   NodeInstanceFamily:
-    AllowedValues: ['Standard', 'ARM', 'GPU']
+    AllowedValues: [Standard, ARM, GPU]
     Type: String
-    Description: Choose "ARM" to use an ARM based AMI, choose "GPU" to use an AMI that supports GPU and Inferentia based instance types. Ignored if "Custom launch template" is provided.
   NodeGroupOS:
-    AllowedValues:
-      - 'Amazon Linux 2'
-      - 'Bottlerocket'
-      - 'Windows'
-    Default: 'Amazon Linux 2'
-    Description: The Linux distribution for the AMI to be used for the node instances. Ignored if "Custom launch template" is provided.
     Type: String
+    AllowedValues:
+      - Amazon Linux 2
+      - Bottlerocket
+      - Windows
+    Default: Amazon Linux 2
   NodeGroupType:
     Type: String
-    AllowedValues: [ Managed, Unmanaged ]
+    AllowedValues: [Managed, Unmanaged]
     Default: Managed
-    Description: Choose "Unmanaged" to create an auto-scaling group without using the EKS managed node groups feature.
   RancherIntegration:
     Type: String
     AllowedValues: [Enabled, Disabled]
     Default: Disabled
-    Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-rancher/."
   RancherDomainName:
-    Description: DNS domain name that users can use to access the Rancher console.
     Type: String
     Default: rancher.aws.private
   MuleSoftRtfIntegration:
     Type: String
     AllowedValues: [Enabled, Disabled]
     Default: Disabled
-    Description: "For more information, see https://github.com/aws-quickstart/quickstart-eks-rancher/."
   RTFFabricName:
-    Description: Runtime Fabric name.
     Type: String
-    Default: ""
+    Default: ''
   OrgID:
-    Description: Organization ID of your Anypoint.
     Type: String
-    Default: ""
+    Default: ''
   UserName:
-    Description: Anypoint platform username.
     Type: String
-    Default: ""
+    Default: ''
   Password:
-    Description: Anypoint platform password.
     Type: String
     NoEcho: true
-    Default: ""
+    Default: ''
   MuleLicenseKeyinbase64:
-    Description: MuleSoft license key in base64 format.
     Type: String
-    Default: ""
+    Default: ''
 Mappings:
   Config:
-    Prefix: { Value: 'eks-quickstart' }
-    ParameterPrefix: { Value: '/quickstart/amazon-eks' }
+    Prefix: { Value: eks-quickstart }
+    ParameterPrefix: { Value: /quickstart/amazon-eks }
   KubernetesVersion:
   # https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
   # You must use a kubectl version that is within one minor version
@@ -313,24 +290,24 @@ Mappings:
     us-west-2:
       Registry: 602401143452.dkr.ecr.us-west-2.amazonaws.com
 Conditions:
-  EnableProxy: !Not [!Equals [!Ref HttpProxy, ""]]
+  EnableProxy: !Not [!Equals [!Ref HttpProxy, '']]
   DeployTestStack: !Equals [!Ref TestSuite, Enabled]
-  EnableSnyk: !Equals [ !Ref SnykIntegration, Enabled]
-  EnableNewRelic: !Equals [ !Ref NewRelicIntegration, Enabled]
-  EnableCalico: !Equals [ !Ref CalicoIntegration, Enabled]
-  EnableRafaySys: !Equals [ !Ref RafaySysIntegration, Enabled ]
-  EnableFargate: !Not [!Equals [ !Ref FargateNamespaces, ""]]
+  EnableSnyk: !Equals [!Ref SnykIntegration, Enabled]
+  EnableNewRelic: !Equals [!Ref NewRelicIntegration, Enabled]
+  EnableCalico: !Equals [!Ref CalicoIntegration, Enabled]
+  EnableRafaySys: !Equals [!Ref RafaySysIntegration, Enabled]
+  EnableFargate: !Not [!Equals [!Ref FargateNamespaces, '']]
   EnableRancher: !Equals [!Ref RancherIntegration, Enabled]
   EnableMuleSoftRtf: !Equals [!Ref MuleSoftRtfIntegration, Enabled]
-  3AZDeployment: !Not [!Equals [!Ref PrivateSubnet3ID, ""]]
+  3AZDeployment: !Not [!Equals [!Ref PrivateSubnet3ID, '']]
   2AZDeployment: !Or
-    - !Not [!Equals [!Ref PrivateSubnet2ID, ""]]
-    - !Not [!Equals [!Ref PrivateSubnet3ID, ""]]
-  EnablePublicSubnets: !Not [!Equals [!Ref PublicSubnet1ID, ""]]
+    - !Not [!Equals [!Ref PrivateSubnet2ID, '']]
+    - !Not [!Equals [!Ref PrivateSubnet3ID, '']]
+  EnablePublicSubnets: !Not [!Equals [!Ref PublicSubnet1ID, '']]
   DefaultBastionBootstrap: !Equals [~~/<ConfigSetName>/bastion/BastionBootstrapScript~~, '']
   EnableBastion: !And
     - !Equals [!Ref ProvisionBastionHost, Enabled]
-    - !Not [!Equals [!Ref PublicSubnet1ID, ""]]
+    - !Not [!Equals [!Ref PublicSubnet1ID, '']]
   EnableBastionWithEIP: !And
     - !Condition EnableBastion
     - !Not [!Equals [!Ref RemoteAccessCIDR, disabled-onlyssmaccess]]
@@ -345,7 +322,7 @@ Conditions:
   EnableWindows: !Equals [!Ref NodeGroupOS, Windows]
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, aws-quickstart]
   GenerateClusterName: !Equals [!Ref EKSClusterName, '']
-  UseKeyPair: !Not [ !Equals [ !Ref KeyPairName, "" ] ]
+  UseKeyPair: !Not [!Equals [!Ref KeyPairName, '']]
 Resources:
   BastionEksPermissions:
     Condition: EnableBastion
@@ -368,7 +345,7 @@ Resources:
     Condition: EnableBastion
     Type: AWS::CloudFormation::Stack
     Metadata:
-      cfn-lint: {config: {ignore_checks: [W1011]}}
+      cfn-lint: { config: { ignore_checks: [W1011] } }
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion-entrypoint-existing-vpc.template.yaml
@@ -507,7 +484,9 @@ Resources:
   CloudFormationKubernetesVPCRoleExists:
     Type: Custom::CliQuery
     Properties:
-      ServiceToken: !Sub ['arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-ResourceReader', {Prefix: !FindInMap [Config, Prefix, Value]}]
+      ServiceToken: !Sub
+        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-ResourceReader
+        - Prefix: !FindInMap [Config, Prefix, Value]
       AwsCliCommand: >
         iam list-roles --query 'Roles[?RoleName==`CloudFormation-Kubernetes-VPC`].RoleName | {RoleName: [0]}'
       IdField: RoleName
@@ -538,10 +517,10 @@ Resources:
         VPCID: !Ref VPCID
         EKSSubnetIds: !If
           - 3AZDeployment
-          - !Join [",", [ !Ref PrivateSubnet1ID, !Ref PrivateSubnet2ID, !Ref PrivateSubnet3ID ]]
+          - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID},${PrivateSubnet3ID}
           - !If
             - 2AZDeployment
-            - !Join [",", [ !Ref PrivateSubnet1ID, !Ref PrivateSubnet2ID ]]
+            - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID}
             - !Ref PrivateSubnet1ID
         EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
         HttpProxy: !Ref HttpProxy
@@ -562,12 +541,12 @@ Resources:
         EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         KubernetesVersion: ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
   MetricsServerStack:
+    Type: AWS::CloudFormation::Stack
     Condition: EnableMetricsServer
     Metadata:
       DependsOn:
        - !Ref ControlPlaneSecurityGroupIngress
-       - !If [EnableFargate, !Ref FargateNamespaces, !Ref 'AWS::NoValue']
-    Type: AWS::CloudFormation::Stack
+       - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-metrics-server.template.yaml
@@ -600,12 +579,16 @@ Resources:
     Type: Custom::LambdaCleanup
     DependsOn: CleanupControlPlaneSecurityGroupDependencies
     Properties:
-      ServiceToken: !Sub ['arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-CleanupLambdas', {Prefix: !FindInMap [Config, Prefix, Value]}]
+      ServiceToken: !Sub
+        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-CleanupLambdas
+        - Prefix: !FindInMap [Config, Prefix, Value]
       SecurityGroupId: !GetAtt ControlPlaneSecurityGroup.GroupId
   CleanupControlPlaneSecurityGroupDependencies:
     Type: Custom::LambdaSGCleanup
     Properties:
-      ServiceToken: !Sub ['arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-CleanupSecurityGroupDependencies', {Prefix: !FindInMap [Config, Prefix, Value]}]
+      ServiceToken: !Sub
+        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-CleanupSecurityGroupDependencies
+        - Prefix: !FindInMap [Config, Prefix, Value]
       Region: !Ref AWS::Region
       SecurityGroups:
         - !GetAtt ControlPlaneSecurityGroup.GroupId
@@ -649,7 +632,9 @@ Resources:
               - 2AZDeployment
               - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID}
               - !Ref PrivateSubnet1ID
-        RoleArn: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-ControlPlane", {Prefix: !FindInMap [Config, Prefix, Value]}]
+        RoleArn: !Sub
+          - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-ControlPlane
+          - Prefix: !FindInMap [Config, Prefix, Value]
         AdditionalEKSAdminUserArn: !Ref AdditionalEKSAdminUserArn
         AdditionalEKSAdminRoleArn: !Ref AdditionalEKSAdminRoleArn
         KubernetesVersion: ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
@@ -663,6 +648,7 @@ Resources:
         EKSEncryptSecretsKmsKeyArn: ~~/<ConfigSetName>/controlplane/EKSEncryptSecretsKmsKeyArn~~
         EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
   PrometheusStack:
+    Type: AWS::CloudFormation::Stack
     Metadata:
       cfn-lint: { config: { ignore_checks: [ W9901 ] } }
       DependsOn:
@@ -671,7 +657,6 @@ Resources:
         - !Ref AmazonEksEbsCsiDriverAddon
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Condition: EnablePrometheus
-    Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-prometheus/templates/eks-prometheus.template.yaml
@@ -705,15 +690,17 @@ Resources:
            S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
-        FargateExecutionRoleArn: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-FargateExecution", {Prefix: !FindInMap [Config, Prefix, Value]}]
+        FargateExecutionRoleArn: !Sub
+          - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-FargateExecution
+          - Prefix: !FindInMap [Config, Prefix, Value]
         Namespaces: !Ref FargateNamespaces
         Labels: !Ref FargateLabels
         Subnets: !If
           - 3AZDeployment
-          - !Join [",", [ !Ref PrivateSubnet1ID, !Ref PrivateSubnet2ID, !Ref PrivateSubnet3ID ]]
+          - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID},${PrivateSubnet3ID}
           - !If
             - 2AZDeployment
-            - !Join [",", [ !Ref PrivateSubnet1ID, !Ref PrivateSubnet2ID ]]
+            - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID}
             - !Ref PrivateSubnet1ID
   LoadBalancerStack:
     Metadata:
@@ -739,7 +726,9 @@ Resources:
     Properties:
       Handler: index.handler
       Runtime: python3.8
-      Role: !Sub ["arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CopyZips", {Prefix: !FindInMap [Config, Prefix, Value]}]
+      Role: !Sub
+        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CopyZips
+        - Prefix: !FindInMap [Config, Prefix, Value]
       Timeout: 900
       Code:
         ZipFile: |
@@ -788,11 +777,11 @@ Resources:
         - s3://${S3Bucket}/${QSS3KeyPrefix}scripts/test-manifest.yaml
         - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
   NewRelicStack:
-    DependsOn: FunctionStack
     Condition: EnableNewRelic
     Type: AWS::CloudFormation::Stack
     Metadata:
       DependsOn:
+        - !Ref FunctionStack
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
@@ -823,11 +812,11 @@ Resources:
         SnykIntegrationId: !Ref SnykIntegrationId
         Namespace: snyk-monitor
   CalicoStack:
-    DependsOn: FunctionStack
     Condition: EnableCalico
     Type: AWS::CloudFormation::Stack
     Metadata:
       DependsOn:
+        - !Ref FunctionStack
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
@@ -835,18 +824,18 @@ Resources:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-tigera-calico/templates/eks-calico-entrypoint.template.yaml
         - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
-          S3Bucket: !If [ UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName ]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-eks-tigera-calico/
         QSS3BucketRegion: !Ref QSS3BucketRegion
   RafaySysStack:
-    DependsOn: FunctionStack
     Condition: EnableRafaySys
     Type: AWS::CloudFormation::Stack
     Metadata:
       DependsOn:
+        - !Ref FunctionStack
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
@@ -887,11 +876,11 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         QSS3BucketRegion: !Ref QSS3BucketRegion
   RancherStack:
-    DependsOn: FunctionStack
     Condition: EnableRancher
     Type: AWS::CloudFormation::Stack
     Metadata:
       DependsOn:
+        - !Ref FunctionStack
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
@@ -910,11 +899,11 @@ Resources:
         QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-eks-rancher/
         QSS3BucketRegion: !Ref QSS3BucketRegion
   MuleSoftRtfStack:
-    DependsOn: FunctionStack
     Condition: EnableMuleSoftRtf
     Type: AWS::CloudFormation::Stack
     Metadata:
       DependsOn:
+        - !Ref FunctionStack
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
