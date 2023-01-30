@@ -670,6 +670,7 @@ Resources:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
+        - !Ref AmazonEksEbsCsiDriverAddon
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -782,6 +783,7 @@ Resources:
         - !Ref FunctionStack
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
+        - !Ref AmazonEksEbsCsiDriverAddon
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -799,6 +801,7 @@ Resources:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
+        - !Ref AmazonEksEbsCsiDriverAddon
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -817,6 +820,7 @@ Resources:
         - !Ref FunctionStack
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
+        - !Ref AmazonEksEbsCsiDriverAddon
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
