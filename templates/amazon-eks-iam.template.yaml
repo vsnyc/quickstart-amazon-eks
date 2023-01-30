@@ -3,8 +3,7 @@ Description: >-
   Deploys IAM roles and policies required for the AWS EKS Quick Start
   (qs-1p7nknohl).
 Metadata:
-  QSLint:
-    Exclusions: [W9002, W9003, W9004, W9006]
+  cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
 Parameters:
   QSS3BucketName:
     Type: String

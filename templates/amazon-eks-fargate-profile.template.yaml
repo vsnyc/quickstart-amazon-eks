@@ -1,8 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Creates a Fargate profile (qs-1qo22qnnb).
 Metadata:
-  QSLint:
-    Exclusions: [W9002, W9003, W9004, W9006]
+  cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
 Parameters:
   ClusterName:
     Type: String
