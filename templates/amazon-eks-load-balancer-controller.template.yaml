@@ -234,12 +234,10 @@ Resources:
         replicaCount: !Ref ControllerReplicaCount
         hostNetwork: !If [HostNetworkEnabled, 'true', 'false']
         vpcId: !Ref VpcId
-      ValueYaml: !Sub |
-        serviceAccount:
-          annotations:
-            eks.amazonaws.com/role-arn: ${LoadBalancerControllerIAMRole.Arn}
-        nodeSelector:
-          kubernetes.io/os: linux
+        serviceAccount.annotations.eks\.amazonaws\.com/role-arn: !GetAtt LoadBalancerControllerIAMRole.Arn
+        nodeSelector.kubernetes\.io/os: linux
+      # NOTE: Leaving this commented as a reminder that this feature exists
+      # ValueYaml: !Sub |
 Outputs:
   LoadBalancerControllerHelmChart:
     Value: !Ref LoadBalancerControllerHelmChart
