@@ -1025,6 +1025,7 @@ Resources:
       ServiceAccountRoleArn: !GetAtt AmazonEksEbsCsiDriverRole.Arn
   EbsStorageClass:
     Type: AWSQS::Kubernetes::Resource
+    DependsOn: AmazonEksEbsCsiDriverAddon
     UpdateReplacePolicy: Delete
     DeletionPolicy: Retain
     Properties:
