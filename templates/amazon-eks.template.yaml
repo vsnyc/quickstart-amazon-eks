@@ -396,7 +396,6 @@ Resources:
   NodeGroupStack:
     Type: AWS::CloudFormation::Stack
     Metadata:
-      cfn-lint: { config: { ignore_checks: [ W9901 ] } }
       DependsOn:
         - !If [EnableWindows, !Ref WindowsSupportNodeGroupStack, !Ref AWS::NoValue]
         - !Ref EKSControlPlane
@@ -438,8 +437,6 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Condition: EnableWindows
     DependsOn: EKSControlPlane
-    Metadata:
-      cfn-lint: {config: {ignore_checks: [E9902, W9901]}}
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-amazon-eks-nodegroup/templates/amazon-eks-nodegroup.template.yaml
@@ -650,7 +647,6 @@ Resources:
   PrometheusStack:
     Type: AWS::CloudFormation::Stack
     Metadata:
-      cfn-lint: { config: { ignore_checks: [ W9901 ] } }
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
@@ -666,7 +662,6 @@ Resources:
         KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
   GrafanaStack:
     Metadata:
-      cfn-lint: { config: { ignore_checks: [ W9901 ] } }
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
