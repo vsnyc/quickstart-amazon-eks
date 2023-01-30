@@ -609,7 +609,10 @@ Resources:
       ToPort: 443
   EKSControlPlane:
     Type: AWS::CloudFormation::Stack
-    DependsOn: [CleanupControlPlaneSecurityGroupDependencies, ControlPlaneSecurityGroupIngress, FunctionStack]
+    DependsOn:
+      - CleanupControlPlaneSecurityGroupDependencies
+      - ControlPlaneSecurityGroupIngress
+      - FunctionStack
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-controlplane.template.yaml
