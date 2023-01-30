@@ -5,8 +5,7 @@ Transform: [QuickStartParameterResolver]
 # below into the values of the resolved SSM parameter via the ParameterResolver
 # macro resource in the amazon-eks-per-region-resources.template.yaml template.
 Metadata:
-  QSLint:
-    Exclusions: [W9002, W9003, W9004, W9006]
+  cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
   ConfigSetName: !Ref ConfigSetName
 Parameters:
   KeyPairName:
