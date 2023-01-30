@@ -22,7 +22,8 @@ Parameters:
 Conditions:
   EnableBastionRole: !Equals [!Ref CreateBastionRole, Enabled]
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, aws-quickstart]
-  CreateCloudFormationKubernetesVPCRole: !Not [!Equals [!Ref CloudFormationKubernetesVPCRoleExists, 'CloudFormation-Kubernetes-VPC']]
+  CreateCloudFormationKubernetesVPCRole: !Not
+    - !Equals [!Ref CloudFormationKubernetesVPCRoleExists, CloudFormation-Kubernetes-VPC]
 Mappings:
   Config:
     Prefix: { Value: eks-quickstart }
@@ -34,7 +35,9 @@ Resources:
         config:
           ignore_checks: [EIAMPolicyWildcardResource]
           ignore_reasons:
-            EIAMPolicyWildcardResource: resources are created after stack is created by k8s/helm/eks resource types, and as such are unkown at role cretion time
+            EIAMPolicyWildcardResource: >-
+              Resources are created after stack is created by k8s/helm/eks
+              resource types, and as such are unkown at role cretion time.
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
@@ -119,7 +122,9 @@ Resources:
         config:
           ignore_checks: [EIAMPolicyWildcardResource]
           ignore_reasons:
-            EIAMPolicyWildcardResource: "resource does not exist at time of policy creation, so it's address is unkown"
+            EIAMPolicyWildcardResource: >-
+              Resource does not exist at time of policy creation, so it's
+              address is unkown.
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
@@ -163,8 +168,10 @@ Resources:
     Type: Custom::CreateCloudFormationKubernetesVPCRole
     Condition: CreateCloudFormationKubernetesVPCRole
     Properties:
-      ServiceToken: !Sub ['arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-CloudformationVPCRoleCreation', {Prefix: !FindInMap [Config, Prefix, Value]}]
-      Partition: !Sub '${AWS::Partition}'
+      ServiceToken: !Sub
+        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-CloudformationVPCRoleCreation
+        - Prefix: !FindInMap [Config, Prefix, Value]
+      Partition: !Ref AWS::Partition
 Outputs:
   KubernetesAdminRoleArn:
     Value: !GetAtt KubernetesAdminRole.Arn
