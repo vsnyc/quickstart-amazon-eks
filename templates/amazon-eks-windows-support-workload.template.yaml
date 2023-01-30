@@ -81,6 +81,7 @@ Resources:
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
+                  "${OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
                   "${OIDCProviderEndpoint}:sub": "system:serviceaccount:default:internal-kubectl"
                 }
               }
