@@ -327,8 +327,8 @@ Conditions:
   UseKeyPair: !Not [!Equals [!Ref KeyPairName, '']]
 Resources:
   BastionEksPermissions:
-    Condition: EnableBastion
     Type: AWS::IAM::Policy
+    Condition: EnableBastion
     Properties:
       PolicyName: AllowEKSClusterOperations
       PolicyDocument:
@@ -344,8 +344,8 @@ Resources:
       Roles:
         - !GetAtt IamStack.Outputs.BastionRole
   BastionStack:
-    Condition: EnableBastion
     Type: AWS::CloudFormation::Stack
+    Condition: EnableBastion
     Metadata:
       cfn-lint: { config: { ignore_checks: [W1011] } }
     Properties:
@@ -461,8 +461,8 @@ Resources:
         EC2MetadataPutResponseHopLimit: ~~/<ConfigSetName>/default-nodegroup/EC2MetadataPutResponseHopLimit~~
         EC2MetadataHttpTokens: ~~/<ConfigSetName>/default-nodegroup/EC2MetadataHttpTokens~~
   BastionSShToNodes:
-    Condition: EnableBastion
     Type: AWS::EC2::SecurityGroupIngress
+    Condition: EnableBastion
     Properties:
       Description: Allow SSH from Bastion server to Nodes
       GroupId: !GetAtt NodeGroupStack.Outputs.EKSNodeSecurityGroup
@@ -471,8 +471,8 @@ Resources:
       ToPort: 22
       FromPort: 22
   BastionToAPIServerAccess:
-    Condition: EnableBastion
     Type: AWS::EC2::SecurityGroupIngress
+    Condition: EnableBastion
     Properties:
       Description: Allow Bastion server to communicate with the cluster API Server
       GroupId: !Ref ControlPlaneSecurityGroup
@@ -524,12 +524,12 @@ Resources:
         EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
         HttpProxy: !Ref HttpProxy
   ClusterAutoScalerStack:
+    Type: AWS::CloudFormation::Stack
     Condition: EnableClusterAutoScaler
     Metadata:
       DependsOn:
        - !Ref ControlPlaneSecurityGroupIngress
        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
-    Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-cluster-autoscaler.template.yaml
@@ -648,13 +648,13 @@ Resources:
         EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
   PrometheusStack:
     Type: AWS::CloudFormation::Stack
+    Condition: EnablePrometheus
     Metadata:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !Ref AmazonEksEbsCsiDriverAddon
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
-    Condition: EnablePrometheus
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-prometheus/templates/eks-prometheus.template.yaml
@@ -664,13 +664,13 @@ Resources:
         KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         Namespace: !FindInMap [Config, Namespace, Prometheus]
   GrafanaStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: EnableGrafana
     Metadata:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
-    Condition: EnableGrafana
-    Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-grafana/templates/eks-grafana.template.yaml
@@ -679,8 +679,8 @@ Resources:
       Parameters:
         KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
   FargateStack:
-    Condition: EnableFargate
     Type: AWS::CloudFormation::Stack
+    Condition: EnableFargate
     Properties:
       TemplateURL: !Sub
          - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-fargate-profile.template.yaml
@@ -701,13 +701,13 @@ Resources:
             - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID}
             - !Ref PrivateSubnet1ID
   LoadBalancerStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: EnableLoadBalancerController
     Metadata:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
-    Condition: EnableLoadBalancerController
-    Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-load-balancer-controller.template.yaml
@@ -719,8 +719,8 @@ Resources:
         EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         VpcId: !Ref VPCID
   GenerateNameFunction:
-    Condition: GenerateClusterName
     Type: AWS::Lambda::Function
+    Condition: GenerateClusterName
     Properties:
       Handler: index.handler
       Runtime: python3.8
@@ -750,13 +750,13 @@ Resources:
               finally:
                   cfnresponse.send(event, context, status, {}, pid)
   GenerateName:
-    Condition: GenerateClusterName
     Type: Custom::GenerateName
+    Condition: GenerateClusterName
     Properties:
       ServiceToken: !GetAtt GenerateNameFunction.Arn
   TestSuiteStack:
-    Condition: DeployTestStack
     Type: AWS::CloudFormation::Stack
+    Condition: DeployTestStack
     Metadata:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
@@ -775,8 +775,8 @@ Resources:
         - s3://${S3Bucket}/${QSS3KeyPrefix}scripts/test-manifest.yaml
         - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
   NewRelicStack:
-    Condition: EnableNewRelic
     Type: AWS::CloudFormation::Stack
+    Condition: EnableNewRelic
     Metadata:
       DependsOn:
         - !Ref FunctionStack
@@ -792,9 +792,9 @@ Resources:
         KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         NewRelicLicenseKey: !Ref NewRelicLicenseKey
   SnykStack:
+    Type: AWS::CloudFormation::Stack
     DependsOn: FunctionStack
     Condition: EnableSnyk
-    Type: AWS::CloudFormation::Stack
     Metadata:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
@@ -810,8 +810,8 @@ Resources:
         SnykIntegrationId: !Ref SnykIntegrationId
         Namespace: snyk-monitor
   CalicoStack:
-    Condition: EnableCalico
     Type: AWS::CloudFormation::Stack
+    Condition: EnableCalico
     Metadata:
       DependsOn:
         - !Ref FunctionStack
@@ -829,8 +829,8 @@ Resources:
         QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-eks-tigera-calico/
         QSS3BucketRegion: !Ref QSS3BucketRegion
   RafaySysStack:
-    Condition: EnableRafaySys
     Type: AWS::CloudFormation::Stack
+    Condition: EnableRafaySys
     Metadata:
       DependsOn:
         - !Ref FunctionStack
@@ -856,9 +856,9 @@ Resources:
         OrganizationName: !Ref RafaySysOrganizationName
         Email: !Ref RafaySysEmail
   WindowsSupportStack:
+    Type: AWS::CloudFormation::Stack
     DependsOn: WindowsSupportNodeGroupStack
     Condition: EnableWindows
-    Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-windows-support-workload.template.yaml
@@ -874,8 +874,8 @@ Resources:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         QSS3BucketRegion: !Ref QSS3BucketRegion
   RancherStack:
-    Condition: EnableRancher
     Type: AWS::CloudFormation::Stack
+    Condition: EnableRancher
     Metadata:
       DependsOn:
         - !Ref FunctionStack
@@ -897,8 +897,8 @@ Resources:
         QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-eks-rancher/
         QSS3BucketRegion: !Ref QSS3BucketRegion
   MuleSoftRtfStack:
-    Condition: EnableMuleSoftRtf
     Type: AWS::CloudFormation::Stack
+    Condition: EnableMuleSoftRtf
     Metadata:
       DependsOn:
         - !Ref FunctionStack
@@ -924,9 +924,9 @@ Resources:
         QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-eks-mulesoft-runtime-fabric/
         QSS3BucketRegion: !Ref QSS3BucketRegion
   ConfigureProxy:
+    Type: Custom::EnableProxy
     Condition: EnableProxy
     DependsOn: EKSControlPlane
-    Type: Custom::EnableProxy
     Properties:
       ServiceToken: !Sub
         - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}
@@ -935,8 +935,8 @@ Resources:
       VpcId: !Ref VPCID
       ClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
   AwsNodeIrsa:
-    DependsOn: NodeGroupStack
     Type: AWS::CloudFormation::Stack
+    DependsOn: NodeGroupStack
     Metadata:
       cfn-lint: { config: { ignore_checks: [W1011] } }
     Properties:
