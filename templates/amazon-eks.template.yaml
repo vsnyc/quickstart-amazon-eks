@@ -212,6 +212,8 @@ Mappings:
   Config:
     Prefix: { Value: eks-quickstart }
     ParameterPrefix: { Value: /quickstart/amazon-eks }
+    Namespace:
+      Prometheus: prometheus
   KubernetesVersion:
   # https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
   # You must use a kubectl version that is within one minor version
@@ -660,6 +662,7 @@ Resources:
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         KubeClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        Namespace: !FindInMap [Config, Namespace, Prometheus]
   GrafanaStack:
     Metadata:
       DependsOn:
