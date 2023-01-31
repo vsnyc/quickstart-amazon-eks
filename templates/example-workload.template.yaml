@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "deploy an example workload into an existing kubernetes cluster"
 Metadata:
-  cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006, E9007, E9008] } }
+  cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006, E9008] } }
 Parameters:
   KubeClusterName:
     Type: String
@@ -28,8 +28,7 @@ Resources:
   # The following elements are available to be used in other cloudformation resources using !GetAtt:
   # Name, Namespace, ResourceVersion, SelfLink, Uid
   KubeManifestExample:
-    Type: "AWSQS::Kubernetes::Resource"
-    Metadata: { cfn-lint: { config: { ignore_checks: [E3002] } } }
+    Type: AWSQS::Kubernetes::Resource
     Properties:
       ClusterName: !Ref KubeClusterName
       Namespace: kube-system
@@ -49,8 +48,7 @@ Resources:
   # are the resource type + an index for the case where a chart creates more than 1 of a Kind (eg. ConfigMap0 fetches
   # the 1st ConfigMap created)
   HelmExample:
-    Type: "AWSQS::Kubernetes::Helm"
-    Metadata: { cfn-lint: { config: { ignore_checks: [E3012] } } }
+    Type: AWSQS::Kubernetes::Helm
     Properties:
       ClusterID: !Ref KubeClusterName
       # If the chart is not in the stable repo then supply a repo url
