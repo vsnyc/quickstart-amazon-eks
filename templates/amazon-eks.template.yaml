@@ -530,8 +530,8 @@ Resources:
     Condition: EnableClusterAutoScaler
     Metadata:
       DependsOn:
-       - !Ref ControlPlaneSecurityGroupIngress
-       - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !Ref ControlPlaneSecurityGroupIngress
+        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-cluster-autoscaler.template.yaml
@@ -546,8 +546,8 @@ Resources:
     Condition: EnableMetricsServer
     Metadata:
       DependsOn:
-       - !Ref ControlPlaneSecurityGroupIngress
-       - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !Ref ControlPlaneSecurityGroupIngress
+        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-metrics-server.template.yaml
@@ -623,19 +623,19 @@ Resources:
         SubnetIds: !If
           - EnablePublicSubnets
           - !If
-            - 3AZDeployment
-            - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID},${PrivateSubnet3ID},${PublicSubnet1ID},${PublicSubnet2ID},${PublicSubnet3ID}
-            - !If
-              - 2AZDeployment
-              - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID},${PublicSubnet1ID},${PublicSubnet2ID}
-              - !Sub ${PrivateSubnet1ID},${PublicSubnet1ID}
+              - 3AZDeployment
+              - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID},${PrivateSubnet3ID},${PublicSubnet1ID},${PublicSubnet2ID},${PublicSubnet3ID}
+              - !If
+                  - 2AZDeployment
+                  - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID},${PublicSubnet1ID},${PublicSubnet2ID}
+                  - !Sub ${PrivateSubnet1ID},${PublicSubnet1ID}
           - !If
-            - 3AZDeployment
-            - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID},${PrivateSubnet3ID}
-            - !If
-              - 2AZDeployment
-              - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID}
-              - !Ref PrivateSubnet1ID
+              - 3AZDeployment
+              - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID},${PrivateSubnet3ID}
+              - !If
+                  - 2AZDeployment
+                  - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID}
+                  - !Ref PrivateSubnet1ID
         RoleArn: !Sub
           - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-ControlPlane
           - Prefix: !FindInMap [Config, Prefix, Value]
@@ -703,9 +703,9 @@ Resources:
           - 3AZDeployment
           - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID},${PrivateSubnet3ID}
           - !If
-            - 2AZDeployment
-            - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID}
-            - !Ref PrivateSubnet1ID
+              - 2AZDeployment
+              - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID}
+              - !Ref PrivateSubnet1ID
   LoadBalancerStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableLoadBalancerController
