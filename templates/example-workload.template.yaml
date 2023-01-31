@@ -1,5 +1,5 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: "deploy an example workload into an existing kubernetes cluster"
+AWSTemplateFormatVersion: 2010-09-09
+Description: Deploy an example workload into an existing kubernetes cluster.
 Metadata:
   cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006, E9008] } }
 Parameters:
@@ -12,10 +12,10 @@ Resources:
   #
   # The "URL" property is an exact representation of a regular kubernetes resource manifest, available by link
   KubeManifestURLExample:
-    Type: "AWSQS::Kubernetes::Resource"
+    Type: AWSQS::Kubernetes::Resource
     Properties:
       ClusterName: !Ref KubeClusterName
-      Namespace: "my-ns"
+      Namespace: my-ns
       # Kubernetes manifest URL
       Url: https://k8s.io/examples/controllers/nginx-deployment.yaml
   # This resource creates a ConfigMap in the target cluster. It retrieves and decrypts a kms encrypted
