@@ -713,6 +713,7 @@ Resources:
       DependsOn:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
+        - !Ref AwsNodeIrsa
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
