@@ -657,3 +657,7 @@ Resources:
       Name: !Sub
         - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/EC2MetadataHttpTokens
         - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
+Outputs:
+  ConfigSetName:
+    Description: Config set name
+    Value: !Ref ConfigSetName
