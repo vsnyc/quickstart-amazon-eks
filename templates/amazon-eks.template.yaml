@@ -867,7 +867,7 @@ Resources:
         Email: !Ref RafaySysEmail
   WindowsSupportStack:
     Type: AWS::CloudFormation::Stack
-    DependsOn: WindowsSupportNodeGroupStack
+    DependsOn: [WindowsSupportNodeGroupStack, AwsNodeIrsa]
     Condition: EnableWindows
     Properties:
       TemplateURL: !Sub
