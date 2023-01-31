@@ -1,5 +1,6 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: Configure advanced options for the Amazon EKS Quick Start. (qs-1r0q2rlel)
+AWSTemplateFormatVersion: 2010-09-09
+Description:
+  Configure advanced options for the Amazon EKS Quick Start (qs-1r0q2rlel).
 Metadata:
   cfn-lint:
     config:
@@ -8,7 +9,7 @@ Metadata:
         W9002: Workload template
         W9003: Workload template
   QuickStartDocumentation:
-    EntrypointName: "Configure advanced options"
+    EntrypointName: Configure advanced options
     Order: Index d
   ConfigSetName: !Ref ConfigSetName
   SentenceCaseExclude:
@@ -127,56 +128,70 @@ Metadata:
 Parameters:
   ConfigSetName:
     Type: String
-    Description: "(Optional) Name used to map advanced parameters to an EKS cluster. In order to apply the defined parameters,
-    the name must match the name used when launching the main EKS Quick Start."
+    Description: >-
+      Name used to map advanced parameters to an EKS cluster. In order to apply
+      the defined parameters, the name must match the name used when launching
+      the main EKS Quick Start.
   EKSPrivateAccessEndpoint:
     Type: String
+    Description: >-
+      Configure access to the Kubernetes API server endpoint from within your
+      VPC. If this is set to "Disabled," "EKS public access endpoint" must be
+      set to "Enabled."
     AllowedValues: [Enabled, Disabled]
     Default: Enabled
-    Description: Configure access to the Kubernetes API server endpoint from within your VPC. If this is set to "Disabled,"
-      "EKS public access endpoint" must be set to "Enabled."
   EKSClusterLoggingTypes:
     Type: List<String>
-    Default: "api, audit, authenticator, controllerManager, scheduler"
-    AllowedPattern: "^(api|audit|authenticator|controllerManager|scheduler|, )*$"
-    ConstraintDescription: Valid logging types are api, audit, authenticator, controllerManager, scheduler.
-    Description: EKS cluster control plane logs to be exported to Amazon CloudWatch Logs.
+    Description: >-
+      EKS cluster control plane logs to be exported to Amazon CloudWatch Logs.
+    AllowedPattern: ^(api|audit|authenticator|controllerManager|scheduler|, )*$
+    ConstraintDescription: >-
+      Valid logging types are api, audit, authenticator, controllerManager,
+      scheduler.
+    Default: api, audit, authenticator, controllerManager, scheduler
   EKSEncryptSecrets:
     Type: String
+    Description: Envelope encryption of Kubernetes secrets using KMS.
     AllowedValues: [Enabled, Disabled]
     Default: Enabled
-    Description: Envelope encryption of Kubernetes secrets using KMS.
   EKSEncryptSecretsKmsKeyArn:
     Type: String
-    Default: ""
-    Description: "(Optional) KMS key to use for envelope encryption of Kubernetes secrets. If this parameter is omitted,
-      a key is created for the cluster. The CMK must be symmetric, created in the same Region as the cluster, and
-      if the CMK was created in a different account, the user must have access to the CMK."
+    Description: >-
+      (Optional) KMS key to use for envelope encryption of Kubernetes secrets.
+      If this parameter is omitted, a key is created for the cluster. The CMK
+      must be symmetric, created in the same Region as the cluster, and if the
+      CMK was created in a different account, the user must have access to the
+      CMK.
+    Default: ''
   EKSPublicAccessCIDRs:
-    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
-    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
-    Description: These values are used only
-      if the EKSPublicAccessEndpoint parameter is set to "Enabled." These are the public CIDR IP ranges permitted to access the Kubernetes API. They cannot contain private IP ranges.
     Type: List<String>
+    Description: >-
+      These values are used only if the EKSPublicAccessEndpoint parameter is
+      set to "Enabled." These are the public CIDR IP ranges permitted to access
+      the Kubernetes API. They cannot contain private IP ranges.
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x.
     Default: 0.0.0.0/0
   NodeGroupName:
-    Default: Default
+    Type: String
     Description: Name of the EKS node group.
-    Type: String
+    Default: Default
   NodeVolumeSize:
-    Default: 20
-    Description: "Size of the node's root EBS volumes."
     Type: String
+    Description: Size of the node's root EBS volumes.
+    Default: 20
   CustomAmiId:
     Type: String
-    Default: ""
-    Description: "(Optional) If an AMI ID is specified, it is used instead of the AMI from your OS/Region."
+    Description: >-
+      (Optional) If an AMI ID is specified, it is used instead of the AMI from
+      your OS/Region.
+    Default: ''
   KubernetesVersion:
   # https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar
     Type: String
     Description: Kubernetes control plane version.
-    AllowedValues: ['1.24', '1.23', '1.22', '1.21']
-    Default: '1.24'
+    AllowedValues: [1.24, 1.23, 1.22, 1.21]
+    Default: 1.24
   BastionOS:
     Type: String
     AllowedValues:
@@ -192,9 +207,11 @@ Parameters:
   BastionBootstrapScript:
     Type: String
     Description: >-
-      (Optional) HTTPS format Amazon S3 object URL for your custom initialization script to run during setup. The
-      bastion host must have permission to download the file from the S3 bucket. If left blank, the default bootstrap
-      script. The source code for the default script can be found here: 
+      (Optional) HTTPS format Amazon S3 object URL for your custom
+      initialization script to run during setup. The bastion host must have
+      permission to download the file from the S3 bucket. If left blank, the
+      default bootstrap script. The source code for the default script can be
+      found here:
       https://github.com/aws-quickstart/quickstart-amazon-eks/blob/main/scripts/bastion_bootstrap.sh.
     AllowedPattern: ^https.*|^$
     ConstraintDescription: >-
@@ -202,7 +219,7 @@ Parameters:
       (example: https://bucket/key/file.txt) or empty.
     Default: ''
   BastionInstanceType:
-    Default: "t3.micro"
+    Default: t3.micro
     Type: String
     Description: Instance type for the bastion host.
   BastionRootVolumeSize:
@@ -211,44 +228,61 @@ Parameters:
     Description: Size in GB for the root EBS volume.
   BastionIAMRoleName:
     Type: String
-    Default: ""
-    Description: "(Optional) An existing IAM role name to attach to the bastion host. If left blank, a new role is created."
+    Description: >-
+      (Optional) An existing IAM role name to attach to the bastion host. If
+      left blank, a new role is created.
+    Default: ''
   BastionEnableTCPForwarding:
     Type: String
-    Default: "false"
-    AllowedValues: [ "true", "false" ]
-    Description: Choose "true" to enable TCP forwarding.
+    Description: Choose 'true' to enable TCP forwarding.
+    AllowedValues: ['true', 'false']
+    Default: 'false'
   BastionEnableX11Forwarding:
     Type: String
-    Default: "false"
-    AllowedValues: [ "true", "false" ]
-    Description: Choose "true" to enable X11 forwarding.
+    Description: Choose 'true' to enable X11 forwarding.
+    AllowedValues: ['true', 'false']
+    Default: 'false'
   BastionVariables:
     Type: String
-    Default: ""
-    Description: "(Optional) Comma-separated list of environment variables for bootstrapping. The variables must be in the format KEY=VALUE. VALUE cannot contain commas."
+    Description: >-
+      (Optional) Comma-separated list of environment variables for
+      bootstrapping. The variables must be in the format KEY=VALUE. VALUE
+      cannot contain commas.
+    Default: ''
   EfsPerformanceMode:
     Type: String
-    AllowedValues: [ generalPurpose, maxIO ]
+    AllowedValues: [generalPurpose, maxIO]
+    Description: >-
+      Only applies if the EfsStorageClass parameter is set to "Enabled." Choose
+      "maxIO" mode to provide greater IOPS with an increased latency.
     Default: generalPurpose
-    Description: Only applies if the EfsStorageClass parameter is set to "Enabled." Choose "maxIO" mode to provide greater IOPS with an increased latency.
   EfsThroughputMode:
     Type: String
-    AllowedValues: [ bursting, provisioned ]
+    Description: >-
+      Only applies if the EfsStorageClass parameter is set to "Enabled." For
+      throughput that is not dependent on the amount of data stored in the file
+      system, choose "provisioned."
+    AllowedValues: [bursting, provisioned]
     Default: bursting
-    Description: Only applies if the EfsStorageClass parameter is set to "Enabled." For throughput that is not dependent on the amount of data stored in the file system, choose "provisioned."
   EfsProvisionedThroughputInMibps:
     Type: Number
+    Description: >-
+      Only applies if the EfsStorageClass parameter is set to "Enabled." If
+      "EFS throughput mode" is set, the "provisioned" value must be in the
+      0-1024 range. If it's set to "bursting," this must be set to 0.
     MinValue: 0
     MaxValue: 1024
     Default: 0
-    Description: Only applies if the EfsStorageClass parameter is set to "Enabled." If "EFS throughput mode" is set, the "provisioned" value must be in the 0–1024 range. If it's set to "bursting," this must be set to 0.
   OnDemandPercentage:
     Type: Number
+    Description: >-
+      Only applies if the NodeGroupType parameter is set to "Unmanaged." Set
+      the percentage of on-demand instances and spot instances. With a default
+      of 100, the percentages are 100% for on-demand instances and 0% for spot
+      instances.
     MinValue: 0
     MaxValue: 100
     Default: 100
-    Description: Only applies if the NodeGroupType parameter is set to "Unmanaged." Set the percentage of on-demand instances and spot instances. With a default of 100, the percentages are 100% for on-demand instances and 0% for spot instances.
   OnDemandBastionPercentage:
     Type: Number
     Description: >-
@@ -259,269 +293,365 @@ Parameters:
     MaxValue: 100
     Default: 100
   NodeInstanceType2:
-    Default: ""
-    Description: (Optional) Only applies if the NodeGroupType parameter is set to "Unmanaged." This is the second type of EC2 instance for the nodes.
     Type: String
+    Description: >-
+      (Optional) Only applies if the NodeGroupType parameter is set to
+      "Unmanaged". This is the second type of EC2 instance for the nodes.
+    Default: ''
   NodeInstanceType3:
-    Default: ""
-    Description: (Optional) Only applies if the NodeGroupType parameter is set to "Unmanaged." This is the third type of EC2 instance for the nodes.
     Type: String
+    Description: >-
+      (Optional) Only applies if the NodeGroupType parameter is set to
+      "Unmanaged". This is the third type of EC2 instance for the nodes.
+    Default: ''
   NodeInstanceType4:
-    Default: ""
-    Description: (Optional) Only applies if the NodeGroupType parameter is set to "Unmanaged." This is the fourth type of EC2 instance for the nodes.
     Type: String
+    Description: >-
+      (Optional) Only applies if the NodeGroupType parameter is set to
+      "Unmanaged". This is the fourth type of EC2 instance for the nodes.
+    Default: ''
   LaunchTemplateId:
-    Default: ""
     Type: String
-    Description: (Optional) ID of an existing launch template to use when creating the node group.
+    Description: >-
+      (Optional) ID of an existing launch template to use when creating the
+      node group.
+    Default: ''
   LaunchTemplateVersion:
-    Default: ""
     Type: String
-    Description: Must be specified if the LaunchTemplateId parameter is provided. It cannot be "$Latest" or "$Default." This value sets the launch template version for the node group.
+    Description: >-
+      Must be specified if the LaunchTemplateId parameter is provided. It
+      cannot be "$Latest" or "$Default". This value sets the launch template
+      version for the node group.
+    AllowedPattern: (?!^\$Latest$|^\$Default$)
+    Default: ''
   Labels:
-    Default: ""
+    Default: ''
     Type: String
-    Description: (Optional) Comma-separated list of key-value pairs that represent node labels to assign to the node group. Ignore this if "Custom launch template" is provided.
+    Description: >-
+      (Optional) Comma-separated list of key-value pairs that represent node
+      labels to assign to the node group. Ignore this if "Custom launch
+      template" is provided.
   Taints:
-    Default: ""
     Type: String
-    Description: (Optional) Comma-separated list of key-value pairs that represent node taints to assign to the node group. Ignore this if "Custom launch template" is provided.
+    Description: >-
+      (Optional) Comma-separated list of key-value pairs that represent node
+      taints to assign to the node group. Ignore this if "Custom launch
+      template" is provided.
+    Default: ''
   NodeSecurityGroupId:
-    Default: ""
     Type: String
-    Description: (Optional) Provide the ID of a security group to use for this node group. If this is not specified, one is created.
+    Description: >-
+      (Optional) Provide the ID of a security group to use for this node group.
+      If this is not specified, one is created.
+    Default: ''
   WindowsNodeEdition:
     Type: String
+    Description: The edition of Windows AMI to use for Windows Nodegroups.
     AllowedValues: [Core, Full]
     Default: Core
-    Description: 'The edition of Windows AMI to use for Windows Nodegroups.'
   WindowsNodeVersion:
     Type: String
-    AllowedValues: ['2019']
-    Default: '2019'
-    Description: 'The version of windows to use for Windows Nodegroups.'
+    Description: The version of windows to use for Windows Nodegroups.
+    AllowedValues: [2022]
+    Default: 2022
   EC2MetadataPutResponseHopLimit:
     Type: String
-    Default: "1"
-    Description: The desired HTTP PUT response hop limit for instance metadata requests from nodes. The larger the number, the further instance metadata requests can travel.
+    Description: >-
+      The desired HTTP PUT response hop limit for instance metadata requests
+      from nodes. The larger the number, the further instance metadata requests
+      can travel
+      (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ModifyInstanceMetadataOptions.html#API_ModifyInstanceMetadataOptions_RequestParameters).
+    AllowedPattern: ^([1-9]|[1-5][0-9]|6[0-4])$
+    Default: 1
   EC2MetadataHttpTokens:
     Type: String
+    Description: >-
+      If set to "optional" pods will be able to use the node's IAM instance
+      profile. If set to "required" amd "EC2MetadataPutResponseHopLimit" is set
+      to 1, pods will not be able to access the nodes IAM role. If set to
+      "required" amd "EC2MetadataPutResponseHopLimit" is set greater than 1
+      pods must send a signed token header with any instance metadata retrieval
+      requests. NOTE: This will default to "required" in the next major
+      release.
     AllowedValues: [optional, required]
     Default: optional
-    Description: >
-      If set to "optional" pods will be able to use the node's IAM instance profile.
-      If set to "required" amd "EC2MetadataPutResponseHopLimit" is set to 1, pods will not be able to access the nodes IAM role.
-      If set to "required" amd "EC2MetadataPutResponseHopLimit" is set greater than 1 pods must send a signed token header with any instance metadata retrieval requests.
-      NOTE: This will default to "required" in the next major release.
 Mappings:
   Config:
-    ParameterPrefix: { Value: '/quickstart/amazon-eks' }
+    ParameterPrefix: { Value: /quickstart/amazon-eks }
 Resources:
   EKSPrivateAccessEndpointParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${EKSPrivateAccessEndpoint}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/controlplane/EKSPrivateAccessEndpoint", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/controlplane/EKSPrivateAccessEndpoint
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EKSClusterLoggingTypesParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub
       - '{ "Value": "${JoinedEKSClusterLoggingTypes}" }'
-      - JoinedEKSClusterLoggingTypes: !Join [",", !Ref EKSClusterLoggingTypes]
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/controlplane/EKSClusterLoggingTypes", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      - JoinedEKSClusterLoggingTypes: !Join [',', !Ref EKSClusterLoggingTypes]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/controlplane/EKSClusterLoggingTypes
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EKSEncryptSecretsParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${EKSEncryptSecrets}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/controlplane/EKSEncryptSecrets", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/controlplane/EKSEncryptSecrets
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EKSEncryptSecretsKmsKeyArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${EKSEncryptSecretsKmsKeyArn}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/controlplane/EKSEncryptSecretsKmsKeyArn", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/controlplane/EKSEncryptSecretsKmsKeyArn
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EKSPublicAccessCIDRsParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub
         - '{ "Value": "${JoinedEKSPublicAccessCIDRs}" }'
-        - JoinedEKSPublicAccessCIDRs: !Join [",", !Ref EKSPublicAccessCIDRs]
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/controlplane/EKSPublicAccessCIDRs", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+        - JoinedEKSPublicAccessCIDRs: !Join [',', !Ref EKSPublicAccessCIDRs]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/controlplane/EKSPublicAccessCIDRs
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   NodeGroupNameParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${NodeGroupName}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeGroupName", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeGroupName
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   NodeVolumeSizeParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${NodeVolumeSize}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeVolumeSize", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeVolumeSize
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   CustomAmiIdParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${CustomAmiId}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/CustomAmiId", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/CustomAmiId
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   NodeSecurityGroupIdParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${NodeSecurityGroupId}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeSecurityGroupId", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeSecurityGroupId
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   TaintsParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${Taints}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/Taints", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/Taints
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   LabelsParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${Labels}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/Labels", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/Labels
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   LaunchTemplateVersionParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${LaunchTemplateVersion}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/LaunchTemplateVersion", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/LaunchTemplateVersion
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   LaunchTemplateIdParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${LaunchTemplateId}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/LaunchTemplateId", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/LaunchTemplateId
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   NodeInstanceType2Parameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${NodeInstanceType2}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeInstanceType2", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeInstanceType2
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   NodeInstanceType3Parameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${NodeInstanceType3}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeInstanceType3", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeInstanceType3
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   NodeInstanceType4Parameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${NodeInstanceType4}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeInstanceType4", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeInstanceType4
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   OnDemandPercentageParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${OnDemandPercentage}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/OnDemandPercentage", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/OnDemandPercentage
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   KubernetesVersionParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${KubernetesVersion}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/controlplane/KubernetesVersion", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/controlplane/KubernetesVersion
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionOSParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${BastionOS}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/bastion/BastionOS", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionOS
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionBootstrapScriptParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${BastionBootstrapScript}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/bastion/BastionBootstrapScript", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionBootstrapScript
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionInstanceTypeParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${BastionInstanceType}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/bastion/BastionInstanceType", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionInstanceType
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionRootVolumeSizeParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${BastionRootVolumeSize}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/bastion/BastionRootVolumeSize", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionRootVolumeSize
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionIAMRoleNameParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${BastionIAMRoleName}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/bastion/BastionIAMRoleName", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionIAMRoleName
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionEnableX11ForwardingParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${BastionEnableX11Forwarding}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/bastion/BastionEnableX11Forwarding", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionEnableX11Forwarding
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionEnableTCPForwardingParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${BastionEnableTCPForwarding}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/bastion/BastionEnableTCPForwarding", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionEnableTCPForwarding
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionVariablesParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${BastionVariables}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/bastion/BastionVariables", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionVariables
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   OnDemandBastionPercentageParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${OnDemandBastionPercentage}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/bastion/OnDemandPercentage", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/bastion/OnDemandPercentage
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EfsPerformanceModeParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${EfsPerformanceMode}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/efs/EfsPerformanceMode", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/efs/EfsPerformanceMode
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EfsThroughputModeParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${EfsThroughputMode}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/efs/EfsThroughputMode", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/efs/EfsThroughputMode
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EfsProvisionedThroughputInMibpsParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${EfsProvisionedThroughputInMibps}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/efs/EfsProvisionedThroughputInMibps", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/efs/EfsProvisionedThroughputInMibps
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   WindowsNodeEditionParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${WindowsNodeEdition}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/windows-nodegroup/WindowsNodeEdition", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/windows-nodegroup/WindowsNodeEdition
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   WindowsNodeVersionParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${WindowsNodeVersion}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/windows-nodegroup/WindowsNodeVersion", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/windows-nodegroup/WindowsNodeVersion
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EC2MetadataPutResponseHopLimitParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${EC2MetadataPutResponseHopLimit}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/EC2MetadataPutResponseHopLimit", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/EC2MetadataPutResponseHopLimit
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EC2MetadataHttpTokensParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
       Value: !Sub '{ "Value": "${EC2MetadataHttpTokens}" }'
-      Name: !Sub ["${ParameterPrefix}/${ConfigSetName}/default-nodegroup/EC2MetadataHttpTokens", {ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]}]
+      Name: !Sub
+        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/EC2MetadataHttpTokens
+        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
