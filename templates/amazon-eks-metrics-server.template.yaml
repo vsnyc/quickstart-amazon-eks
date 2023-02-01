@@ -16,7 +16,7 @@ Resources:
     Properties:
       ClusterName: !Ref EksClusterName
       Namespace: kube-system
-      Url: https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.4.1/components.yaml
+      Url: https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 Outputs:
   MetricsServer:
     Value: !Ref MetricsServer
