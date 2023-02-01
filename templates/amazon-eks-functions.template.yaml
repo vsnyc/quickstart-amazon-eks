@@ -2,8 +2,7 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   Deploys Lambda functions required for the AWS EKS Quick Start (qs-1p7nknoh4).
 Metadata:
-  QSLint:
-    Exclusions: [W9002, W9003, W9004, W9006]
+  cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
 Parameters:
   QSS3BucketName:
     Type: String
