@@ -131,12 +131,6 @@ tests:
       ALBIngressController: Disabled
     regions:
       - us-west-2
-  load-balancer-controller:
-    parameters:
-      AvailabilityZones: $[taskcat_genaz_3]
-      NodeGroupType: Unmanaged
-    regions:
-      - us-east-2
   fargate:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
