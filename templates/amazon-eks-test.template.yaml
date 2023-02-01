@@ -1,5 +1,5 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: Test suite for EKS Quick Start. (qs-1r0qgtna3)
+AWSTemplateFormatVersion: 2010-09-09
+Description: Test suite for EKS Quick Start (qs-1r0qgtna3).
 Metadata:
   QSLint:
     Exclusions: [W9002, W9003, W9004, W9006]
@@ -11,23 +11,23 @@ Parameters:
   ManifestUrl:
     Type: String
 Conditions:
-  EnableWindows: !Equals [!Ref TestWindows, 'Enabled']
+  EnableWindows: !Equals [!Ref TestWindows, Enabled]
 Resources:
   TestKubeGet:
-    Type: "AWSQS::Kubernetes::Get"
+    Type: AWSQS::Kubernetes::Get
     Properties:
       ClusterName: !Ref ClusterName
       Namespace: kube-system
       Name: cm/aws-auth
       JsonPath: '{.data.mapRoles}'
   TestKubeApplyFromS3:
-    Type: "AWSQS::Kubernetes::Resource"
+    Type: AWSQS::Kubernetes::Resource
     Properties:
       ClusterName: !Ref ClusterName
       Namespace: default
       Url: !Ref ManifestUrl
   TestKubeApply:
-    Type: "AWSQS::Kubernetes::Resource"
+    Type: AWSQS::Kubernetes::Resource
     Properties:
       ClusterName: !Ref ClusterName
       Namespace: default
@@ -49,7 +49,7 @@ Resources:
               restartPolicy: OnFailure
           backoffLimit: 4
   TestApplyOnWindows:
-    Type: "AWSQS::Kubernetes::Resource"
+    Type: AWSQS::Kubernetes::Resource
     Condition: EnableWindows
     Properties:
       ClusterName: !Ref ClusterName
