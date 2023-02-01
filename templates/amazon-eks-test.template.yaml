@@ -1,8 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Test suite for EKS Quick Start (qs-1r0qgtna3).
 Metadata:
-  QSLint:
-    Exclusions: [W9002, W9003, W9004, W9006]
+  cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
 Parameters:
   ClusterName:
     Type: String
