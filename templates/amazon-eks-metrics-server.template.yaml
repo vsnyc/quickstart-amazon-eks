@@ -9,6 +9,7 @@ Parameters:
     Type: String
 Resources:
   MetricsServer:
+  # https://github.com/kubernetes-sigs/metrics-server/
     Type: AWSQS::Kubernetes::Resource
     UpdateReplacePolicy: Delete
     DeletionPolicy: Retain
