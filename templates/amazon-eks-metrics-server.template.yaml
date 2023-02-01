@@ -10,6 +10,8 @@ Parameters:
 Resources:
   MetricsServer:
     Type: AWSQS::Kubernetes::Resource
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Retain
     Properties:
       ClusterName: !Ref EksClusterName
       Namespace: kube-system
