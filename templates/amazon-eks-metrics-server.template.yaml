@@ -1,14 +1,16 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Deploys the metrics-server into an existing kubernetes cluster
+  (qs-qwertyuiop).
 Metadata:
   QSLint:
     Exclusions: [W9002, W9003, W9004, W9006]
-Description: "Deploys the metrics-server into an existing kubernetes cluster (qs-qwertyuiop)"
 Parameters:
   EksClusterName:
     Type: String
 Resources:
   MetricsServer:
-    Type: "AWSQS::Kubernetes::Resource"
+    Type: AWSQS::Kubernetes::Resource
     Metadata: { cfn-lint: { config: { ignore_checks: [ E3012 ] } } }
     Properties:
       ClusterName: !Ref EksClusterName
