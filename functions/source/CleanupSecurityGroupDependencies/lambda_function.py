@@ -71,18 +71,21 @@ def delete_dependencies(sg_id):
 
 
 @helper.delete
-def delete_handler(event, _):
-    ec2 = boto3.client('ec2')
+def delete_handler(event, context):
     for sg_id in event["ResourceProperties"]["SecurityGroups"]:
-        retries = 5
-        while True:
-            if delete_dependencies(sg_id, ec2):
+        interval = 15  # seconds
+
+        while context.get_remaining_time_in_millis() > (interval * 1000):
+            if delete_dependencies(sg_id):
                 break
+
             if retries == 0:
-                logger.error(f"failed to delete {sg_id} dependencies after 5 retries")
+                logger.error(f"failed to delete {sg_id} dependencies")
                 break
+
             retries -= 1
-            sleep(15)
+
+            sleep(interval)
 
 
 def lambda_handler(event, context):
