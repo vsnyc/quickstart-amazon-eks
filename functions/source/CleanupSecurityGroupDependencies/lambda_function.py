@@ -5,55 +5,68 @@
 #  This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, express or implied.
 #  See the License for the specific language governing permissions and limitations under the License.
 
-import logging
 import boto3
-from time import sleep
+import logging
 from crhelper import CfnResource
+from time import sleep
 
 logger = logging.getLogger(__name__)
-helper = CfnResource(json_logging=True, log_level='DEBUG')
+ec2 = boto3.client("ec2")
+helper = CfnResource(json_logging=True, log_level="DEBUG")
 
 
 def get_attachment_id_for_eni(eni):
     try:
-        return eni['Attachment']['AttachmentId']
+        return eni["Attachment"]["AttachmentId"]
     except KeyError:
         return None
 
 
-def delete_dependencies(sg_id, c):
+def delete_dependencies(sg_id):
     complete = True
-    filters = [{'Name': 'ip-permission.group-id', 'Values': [sg_id]}]
-    for sg in c.describe_security_groups(Filters=filters)['SecurityGroups']:
-        for p in sg['IpPermissions']:
-            if 'UserIdGroupPairs' in p.keys():
-                if sg_id in [x['GroupId'] for x in p['UserIdGroupPairs']]:
+    filters = [{"Name": "ip-permission.group-id", "Values": [sg_id]}]
+
+    for sg in ec2.describe_security_groups(Filters=filters)["SecurityGroups"]:
+        for p in sg["IpPermissions"]:
+            if "UserIdGroupPairs" in p.keys():
+                if sg_id in [x["GroupId"] for x in p["UserIdGroupPairs"]]:
                     try:
-                        c.revoke_security_group_ingress(GroupId=sg['GroupId'], IpPermissions=[p])
-                    except Exception as e:
+                        ec2.revoke_security_group_ingress(
+                            GroupId=sg["GroupId"], IpPermissions=[p]
+                        )
+                    except Exception:
                         complete = False
-                        logger.error("ERROR: %s %s" % (sg['GroupId'], str(e)))
-    filters = [{'Name': 'egress.ip-permission.group-id', 'Values': [sg_id]}]
-    for sg in c.describe_security_groups(Filters=filters)['SecurityGroups']:
-        for p in sg['IpPermissionsEgress']:
-            if 'UserIdGroupPairs' in p.keys():
-                if sg_id in [x['GroupId'] for x in p['UserIdGroupPairs']]:
+                        logger.exception("ERROR: %s" % (sg["GroupId"]))
+                        continue
+
+    filters = [{"Name": "egress.ip-permission.group-id", "Values": [sg_id]}]
+    for sg in ec2.describe_security_groups(Filters=filters)["SecurityGroups"]:
+        for p in sg["IpPermissionsEgress"]:
+            if "UserIdGroupPairs" in p.keys():
+                if sg_id in [x["GroupId"] for x in p["UserIdGroupPairs"]]:
                     try:
-                        c.revoke_security_group_egress(GroupId=sg['GroupId'], IpPermissions=[p])
-                    except Exception as e:
+                        ec2.revoke_security_group_egress(
+                            GroupId=sg["GroupId"], IpPermissions=[p]
+                        )
+                    except Exception:
                         complete = False
-                        logger.error("ERROR: %s %s" % (sg['GroupId'], str(e)))
-    filters = [{'Name': 'group-id', 'Values': [sg_id]}]
-    for eni in c.describe_network_interfaces(Filters=filters)['NetworkInterfaces']:
+                        logger.exception("ERROR: %s" % (sg["GroupId"]))
+                        continue
+
+    filters = [{"Name": "group-id", "Values": [sg_id]}]
+    for eni in ec2.describe_network_interfaces(Filters=filters)["NetworkInterfaces"]:
         try:
             attachment_id = get_attachment_id_for_eni(eni)
             if attachment_id:
-                c.detach_network_interface(AttachmentId=attachment_id, Force=True)
+                ec2.detach_network_interface(AttachmentId=attachment_id, Force=True)
                 sleep(5)
-            c.delete_network_interface(NetworkInterfaceId=eni['NetworkInterfaceId'])
-        except Exception as e:
+
+            ec2.delete_network_interface(NetworkInterfaceId=eni["NetworkInterfaceId"])
+        except Exception:
             complete = False
-            logger.error("ERROR: %s %s" % (eni['NetworkInterfaceId'], str(e)))
+            logger.exception("ERROR: %s" % (eni["NetworkInterfaceId"]))
+            continue
+
     return complete
 
 
