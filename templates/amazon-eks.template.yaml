@@ -1107,9 +1107,7 @@ Resources:
       Chart: aws-efs-csi-driver/aws-efs-csi-driver
       Repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver/
       Values:
-        image.repository: !Sub
-          - ${AmazonContainerImageRegistry}/eks/aws-efs-csi-driver
-          - AmazonContainerImageRegistry: !FindInMap [RegionMap, !Ref AWS::Region, Registry]
+        image.repository: public.ecr.aws/efs-csi-driver/amazon/aws-efs-csi-driver
         controller.serviceAccount.create: 'false'
         controller.serviceAccount.name: efs-csi-controller-sa
 Outputs:
