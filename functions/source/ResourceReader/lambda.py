@@ -97,7 +97,7 @@ def handler(event, context):
                 pid = resp[event['ResourceProperties']['IdField']]
             else:
                 pid = str(resp)
-    except Exception:
+    except Exception as e:
         logging.error('Unhandled exception', exc_info=True)
         reason = (str(e))
         status = FAILED
