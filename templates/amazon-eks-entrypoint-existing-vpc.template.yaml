@@ -1240,7 +1240,7 @@ Resources:
     Condition: CreatePerRegionSharedResources
     DeletionPolicy: Retain
     Metadata:
-      cfn-lint: { config: { ignore_checks: [W3011, W9901] } }
+      cfn-lint: { config: { ignore_checks: [W3011] } }
       DependsOn: !If [CreatePerAccountSharedResources, !Ref AccountSharedResources, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -1269,7 +1269,6 @@ Resources:
   EKSStack:
     Type: AWS::CloudFormation::Stack
     Metadata:
-      cfn-lint: { config: { ignore_checks: [ W9901, E9902 ] } }
       DependsOn:
         - !If [CreatePerRegionSharedResources, !Ref RegionalSharedResources, !Ref AWS::NoValue]
         - !If [CreatePerAccountSharedResources, !Ref AccountSharedResources, !Ref AWS::NoValue]
