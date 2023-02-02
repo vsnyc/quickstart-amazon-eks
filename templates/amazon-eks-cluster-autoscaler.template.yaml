@@ -3,8 +3,7 @@ Description: >-
   Deploys the auto-scaler helm chart into an existing kubernetes cluster
   (qs-1ql475ceo).
 Metadata:
-  QSLint:
-    Exclusions: [W9002, W9003, W9004, W9006]
+  cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006, W7001] } }
 Parameters:
   NodeAutoScalingGroup:
     Type: String
