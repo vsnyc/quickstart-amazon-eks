@@ -77,6 +77,12 @@ def delete_handler(event, context):
 
         while context.get_remaining_time_in_millis() > (interval * 1000):
             if delete_dependencies(sg_id):
+                try:
+                    ec2.delete_security_group(GroupId=sg_id, GroupName=sg_id)
+                except Exception:
+                    logger.exception(f"ERROR: Failed to delete {sg_id}")
+                    continue
+
                 break
 
             if retries == 0:
