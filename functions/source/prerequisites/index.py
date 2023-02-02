@@ -8,18 +8,19 @@ from time import sleep
 from uuid import uuid4
 
 logger = logging.getLogger()
-client = boto3.client
-regions = client("ec2").describe_regions()["Regions"]
+SX = "SharedResources"
+C = Config(retries={"max_attempts": 10, "mode": "standard"})
+BC = boto3.client
+CFN = "cloudformation"
 
 
-def waiter(cfn, operation, stack_id):
-    logger.info(f"waiter({operation}, {stack_id}) started")
+def waiter(c, o, s):
+    logger.info(f"waiter({o}, {s}) started")
     retries = 50
 
     while True:
         retries -= 1
-        status = cfn.describe_stacks(StackName=stack_id)["Stacks"][0]["StackStatus"]
-
+        status = c.describe_stacks(StackName=s)["Stacks"][0]["StackStatus"]
         if status in ["CREATE_COMPLETE", "UPDATE_COMPLETE"]:
             break
 
@@ -28,29 +29,26 @@ def waiter(cfn, operation, stack_id):
             or status in ["DELETE_COMPLETE", "UPDATE_ROLLBACK_COMPLETE"]
             or retries == 0
         ):
-            raise RuntimeError(
-                f"Stack operation failed: {operation} {status} {stack_id}"
-            )
+            raise RuntimeError(f"Stack operation failed: {o} {status} {s}")
 
         sleep(randint(1000, 1500) / 100)
 
-    logger.info(f"waiter({operation}, {stack_id}) done")
+    logger.info(f"waiter({o}, {s}) done")
 
 
-def get_stacks(key, value, region=None):
-    c = Config(retries={"max_attempts": 10, "mode": "standard"})
-    cfn = client("cloudformation", region_name=region, config=c)
+def get_stacks(key, val, region=None):
+    cfn = BC(CFN, region_name=region, config=C)
     stacks = []
 
-    for page in cfn.get_paginator("describe_stacks").paginate():
-        stacks += page["Stacks"]
-    stack = [stack for stack in stacks if {"Key": key, "Value": value} in stack["Tags"]]
+    for p in cfn.get_paginator("describe_stacks").paginate():
+        stacks += p["Stacks"]
+    s = [s for s in stacks if {"Key": key, "Value": val} in s["Tags"]]
 
-    if not len(stack):
+    if not len(s):
         return None
 
-    stack_id = stack[0]["StackId"]
-    status = stack[0]["StackStatus"]
+    stack_id = s[0]["StackId"]
+    status = s[0]["StackStatus"]
 
     if status.endswith("_IN_PROGRESS"):
         op = status.split("_")[0].lower()
@@ -69,15 +67,15 @@ def put_stack(name, region, template_url, parameters, key):
     # jitter to reduce the chance of concurrent queries racing
     sleep(randint(0, 6000) / 100)
 
-    if name == "AccountSharedResources":
-        for r in [r["RegionName"] for r in regions]:
-            account_stack = get_stacks(key, name, r)
-            if account_stack:
+    if name == f"Account{SX}":
+        for r in [r["RegionName"] for r in BC("ec2").describe_regions()["Regions"]]:
+            acc_stack = get_stacks(key, name, r)
+            if acc_stack:
                 region = r
                 break
 
     stack_id = get_stacks(key, name, region)
-    cfn = client("cloudformation", region_name=region)
+    client = BC(CFN, region_name=region)
 
     args = {
         "StackName": stack_id if stack_id else f"{key}-{name}",
@@ -94,11 +92,11 @@ def put_stack(name, region, template_url, parameters, key):
         "Tags": [{"Key": key, "Value": name}],
     }
 
-    method = cfn.create_stack
+    method = client.create_stack
 
     wait = "create"
     if stack_id:
-        method = cfn.update_stack
+        method = client.update_stack
         wait = "update"
         del args["OnFailure"]
 
@@ -111,19 +109,22 @@ def put_stack(name, region, template_url, parameters, key):
         logger.exception("Error getting stack ID")
         raise
 
-    waiter(cfn, wait, stack_id)
+    waiter(client, wait, stack_id)
 
 
 def handler(event, context):
+    props = event.get("ResourceProperties", None)
+    logger.setLevel(props.get("LogLevel", logging.INFO))
+
     logger.debug(json.dumps(event))
 
-    responseStatus = cfnresponse.SUCCESS
-    physicalResourceId = event.get("PhysicalResourceId", context.log_stream_name)
+    s = cfnresponse.SUCCESS
+    p = event.get("PhysicalResourceId", context.log_stream_name)
     props = event["ResourceProperties"]
     key = props["Key"]
-    account_template_uri = props["AccountTemplateUri"]
-    bucket = account_template_uri.split("https://")[1].split(".")[0]
-    prefix = "/".join(account_template_uri.split("/")[3:-2]) + "/"
+    acc_uri = props["AccountTemplateUri"]
+    bucket = acc_uri.split("https://")[1].split(".")[0]
+    prefix = "/".join(acc_uri.split("/")[3:-2]) + "/"
 
     try:
         if event["RequestType"] != "Delete":
@@ -132,11 +133,9 @@ def handler(event, context):
                 retries -= 1
 
                 try:
+                    put_stack(f"Account{SX}", None, acc_uri, {}, key)
                     put_stack(
-                        "AccountSharedResources", None, account_template_uri, {}, key
-                    )
-                    put_stack(
-                        "RegionalSharedResources",
+                        f"Regional{SX}",
                         None,
                         props["RegionalTemplateUri"],
                         {
@@ -155,7 +154,7 @@ def handler(event, context):
                     else:
                         raise
     except Exception:
-        responseStatus = cfnresponse.FAILED
+        s = cfnresponse.FAILED
         logger.exception("Error processing request")
     finally:
-        cfnresponse.send(event, context, responseStatus, {}, physicalResourceId)
+        cfnresponse.send(event, context, s, {}, p)
