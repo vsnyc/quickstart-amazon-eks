@@ -119,6 +119,7 @@ Resources:
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKSClusterPolicy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKSServicePolicy
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKSVPCResourceController
   CleanupLoadBalancersRole:
     Type: AWS::IAM::Role
     Metadata:

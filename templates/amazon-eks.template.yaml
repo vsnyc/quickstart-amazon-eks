@@ -769,6 +769,7 @@ Resources:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !Ref AmazonEksEbsCsiDriverAddon
+        - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -867,22 +868,15 @@ Resources:
         Email: !Ref RafaySysEmail
   WindowsSupportStack:
     Type: AWS::CloudFormation::Stack
-    DependsOn: [WindowsSupportNodeGroupStack, AwsNodeIrsa]
+    DependsOn: [WindowsSupportNodeGroupStack]
     Condition: EnableWindows
     Properties:
       TemplateURL: !Sub
-        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-windows-support-workload.template.yaml
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-windows-support.template.yaml
         - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
-        ClusterKubeServerEndpoint: !GetAtt EKSControlPlane.Outputs.EKSEndpoint
-        ClusterCACert: !GetAtt EKSControlPlane.Outputs.CAData
-        OIDCProviderArn: !GetAtt EKSControlPlane.Outputs.OIDCProviderArn
-        OIDCProviderEndpoint: !GetAtt EKSControlPlane.Outputs.OIDCProviderEndpoint
-        QSS3BucketName: !Ref QSS3BucketName
-        QSS3KeyPrefix: !Ref QSS3KeyPrefix
-        QSS3BucketRegion: !Ref QSS3BucketRegion
   RancherStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableRancher
@@ -1018,7 +1012,10 @@ Resources:
   # the EKS add-on implementation idea for the EBS CSI driver.
   # https://github.com/vmware-tap-on-public-cloud/quickstart-vmware-tanzu-application-platform/pull/15
     Type: AWS::EKS::Addon
-    DependsOn: AwsNodeIrsa
+    Metadata:
+      DependsOn:
+        - !Ref AwsNodeIrsa
+        - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
     Properties:
       AddonName: aws-ebs-csi-driver
       ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName

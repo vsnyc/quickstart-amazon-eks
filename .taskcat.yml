@@ -189,16 +189,15 @@ tests:
       ALBIngressController: Enabled
     regions:
       - af-south-1
-  # TODO: Troubleshoot TestApplyOnWindows resource failures & re-enable
-  # windows:
-  #   parameters:
-  #     AvailabilityZones: $[taskcat_genaz_3]
-  #     TestSuite: Enabled
-  #     NodeGroupOS: Windows
-  #     NodeGroupType: Unmanaged
-  #     ALBIngressController: Enabled
-  #   regions:
-  #     - eu-north-1
+  windows:
+    parameters:
+      AvailabilityZones: $[taskcat_genaz_3]
+      TestSuite: Enabled
+      NodeGroupOS: Windows
+      NodeGroupType: Unmanaged
+      ALBIngressController: Enabled
+    regions:
+      - eu-north-1
   calico:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]

@@ -42,9 +42,9 @@ Resources:
                 kubernetes.io/os: linux
                 kubernetes.io/arch: amd64
               containers:
-              - name: test-job
-                image: amazonlinux:2
-                command: ["/bin/bash", "-c", "yum install -y iputils; sleep 120; ping -c 1 aws.amazon.com"]
+                - name: test-job
+                  image: amazonlinux:2
+                  command: ["/bin/bash", "-c", "yum install -y iputils; sleep 120; ping -c 1 aws.amazon.com"]
               restartPolicy: OnFailure
           backoffLimit: 4
   TestApplyOnWindows:
@@ -65,9 +65,9 @@ Resources:
                 kubernetes.io/os: windows
                 kubernetes.io/arch: amd64
               containers:
-              - name: windows-test-container
-                image: mcr.microsoft.com/windows/servercore:ltsc2019
-                command: ["powershell", "-command", "sleep 20; ping aws.amazon.com"]
+                - name: windows-test-container
+                  image: mcr.microsoft.com/windows/servercore:ltsc2022
+                  command: ["powershell", "-command", "sleep 20; ping aws.amazon.com"]
               restartPolicy: OnFailure
           backoffLimit: 4
 Outputs:
