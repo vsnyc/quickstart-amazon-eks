@@ -1031,13 +1031,17 @@ Resources:
     Properties:
       ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
       Namespace: default
-      Manifest: |
-        apiVersion: storage.k8s.io/v1
-        kind: StorageClass
-        metadata:
-          name: ebs-sc
-        provisioner: ebs.csi.aws.com
-        volumeBindingMode: WaitForFirstConsumer
+      Manifest: !Sub
+        - |
+          apiVersion: storage.k8s.io/v1
+          kind: StorageClass
+          metadata:
+            name: ebs-sc
+          provisioner: ebs.csi.aws.com
+          volumeBindingMode: WaitForFirstConsumer
+          parameters:
+            fsType: ${FsType}
+        - FsType: !If [EnableWindows, ntfs, ext4]
   AmazonEksEfsCsiDriverRole:
     Type: AWS::IAM::Role
     Metadata:
