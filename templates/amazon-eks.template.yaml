@@ -421,7 +421,7 @@ Resources:
         NodeGroupName: ~~/<ConfigSetName>/default-nodegroup/NodeGroupName~~
         NodeVolumeSize: ~~/<ConfigSetName>/default-nodegroup/NodeVolumeSize~~
         CustomAmiId: ~~/<ConfigSetName>/default-nodegroup/CustomAmiId~~
-        EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
+        EKSClusterName: !If [GenerateClusterName, !Ref GenerateClusterName, !Ref EKSClusterName]
         NodeInstanceFamily: !Ref NodeInstanceFamily
         NodeGroupType: !Ref NodeGroupType
         OndemandPercentage: ~~/<ConfigSetName>/default-nodegroup/OnDemandPercentage~~
@@ -457,7 +457,7 @@ Resources:
         NumberOfNodes: 2
         NodeGroupName: windows-support-al2
         NodeVolumeSize: 20
-        EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
+        EKSClusterName: !If [GenerateClusterName, !Ref GenerateClusterName, !Ref EKSClusterName]
         NodeInstanceFamily: Standard
         NodeGroupType: Managed
         EC2MetadataPutResponseHopLimit: ~~/<ConfigSetName>/default-nodegroup/EC2MetadataPutResponseHopLimit~~
@@ -522,7 +522,7 @@ Resources:
               - 2AZDeployment
               - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID}
               - !Ref PrivateSubnet1ID
-        EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
+        EKSClusterName: !If [GenerateClusterName, !Ref GenerateClusterName, !Ref EKSClusterName]
         HttpProxy: !Ref HttpProxy
   ClusterAutoScalerStack:
     Type: AWS::CloudFormation::Stack
@@ -649,7 +649,7 @@ Resources:
         EKSClusterLoggingTypes: ~~/<ConfigSetName>/controlplane/EKSClusterLoggingTypes~~
         EKSEncryptSecrets: ~~/<ConfigSetName>/controlplane/EKSEncryptSecrets~~
         EKSEncryptSecretsKmsKeyArn: ~~/<ConfigSetName>/controlplane/EKSEncryptSecretsKmsKeyArn~~
-        EKSClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
+        EKSClusterName: !If [GenerateClusterName, !Ref GenerateClusterName, !Ref EKSClusterName]
   PrometheusStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnablePrometheus
@@ -755,8 +755,8 @@ Resources:
                   status = cfnresponse.FAILED
               finally:
                   cfnresponse.send(event, context, status, {}, pid)
-  GenerateName:
-    Type: Custom::GenerateName
+  GenerateClusterName:
+    Type: Custom::GenerateClusterName
     Condition: GenerateClusterName
     Properties:
       ServiceToken: !GetAtt GenerateNameFunction.Arn
@@ -936,10 +936,10 @@ Resources:
     Properties:
       ServiceToken: !Sub
         - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}
-        - ClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
+        - ClusterName: !If [GenerateClusterName, !Ref GenerateClusterName, !Ref EKSClusterName]
       HttpProxy: !Ref HttpProxy
       VpcId: !Ref VPCID
-      ClusterName: !If [GenerateClusterName, !Ref GenerateName, !Ref EKSClusterName]
+      ClusterName: !If [GenerateClusterName, !Ref GenerateClusterName, !Ref EKSClusterName]
   AwsNodeIrsa:
     Type: AWS::CloudFormation::Stack
     DependsOn: NodeGroupStack
