@@ -4,8 +4,6 @@ Description: >-
 Metadata:
   cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
 Parameters:
-  QSS3BucketName:
-    Type: String
   QSS3KeyPrefix:
     Type: String
   KubernetesAdminRoleArn:
@@ -26,24 +24,7 @@ Mappings:
     Prefix: { Value: eks-quickstart }
 Conditions:
   NoProxy: !Equals [!Ref HttpProxy, '']
-  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, aws-quickstart]
 Resources:
-  CopyZips:
-    Type: Custom::CopyZips
-    Properties:
-      ServiceToken: !Sub
-        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-CopyZips
-        - Prefix: !FindInMap [Config, Prefix, Value]
-      SourceBucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-      DestBucket: !Sub
-        - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-        - Prefix: !FindInMap [Config, Prefix, Value]
-      Prefix: !Ref QSS3KeyPrefix
-      Objects:
-        - functions/packages/kubernetesResources/awsqs_kubernetes_get_vpc.zip
-        - functions/packages/kubernetesResources/awsqs_kubernetes_apply_vpc.zip
-        - functions/packages/KubeManifest/lambda.zip
-        - functions/packages/KubeGet/lambda.zip
   LambdaSGCleanup:
     Type: Custom::LambdaSGCleanup
     Properties:
@@ -108,7 +89,7 @@ Resources:
       IdField: LayerVersionArn
   KubeResourceLambda:
     Type: AWS::Lambda::Function
-    DependsOn: [LambdaSGCleanup, CopyZips]
+    DependsOn: [LambdaSGCleanup]
     Properties:
       FunctionName: !Sub awsqs-kubernetes-resource-proxy-${EKSClusterName}
       Handler: awsqs_kubernetes_resource.utils.proxy_wrap
@@ -132,7 +113,6 @@ Resources:
         SubnetIds: !Ref EKSSubnetIds
   LegacyKubeManifestLambda:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZips
     Properties:
       FunctionName: !Sub EKS-QuickStart-KubeManifest-${EKSClusterName}
       Handler: lambda_function.lambda_handler
@@ -157,7 +137,6 @@ Resources:
         SubnetIds: !Ref EKSSubnetIds
   LegacyKubeGetLambda:
     Type: AWS::Lambda::Function
-    DependsOn: CopyZips
     Properties:
       FunctionName: !Sub EKS-QuickStart-KubeGet-${EKSClusterName}
       Handler: lambda_function.lambda_handler
