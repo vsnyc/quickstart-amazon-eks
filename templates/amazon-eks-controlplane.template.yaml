@@ -117,7 +117,9 @@ Resources:
               - NodeRole: !If
                   - CustomNodeRoleProvided
                   - !Ref CustomNodeRole
-                  - !Sub ['${Prefix}-UnmanagedNodeInstance', { Prefix: !FindInMap [Config, Prefix, Value] }]
+                  - !Sub
+                      - ${Prefix}-UnmanagedNodeInstance
+                      - Prefix: !FindInMap [Config, Prefix, Value]
             Username: system:node:{{EC2PrivateDNSName}}
             Groups: [system:bootstrappers, system:nodes, eks:kube-proxy-windows]
           - Arn: !Ref FunctionRoleArn
