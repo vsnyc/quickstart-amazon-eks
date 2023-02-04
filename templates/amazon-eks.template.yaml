@@ -1118,7 +1118,10 @@ Resources:
         controller.serviceAccount.name: efs-csi-controller-sa
 Outputs:
   BastionIP:
-    Value: !If [EnableBastionWithEIP, !GetAtt BastionStack.Outputs.EIP1, '']
+    Value: !If
+      - EnableBastion
+      - !If [EnableBastionWithEIP, !GetAtt BastionStack.Outputs.EIP1, !Ref RemoteAccessCIDR]
+      - ''
   BastionSecurityGroup:
     Value: !If [EnableBastion, !GetAtt BastionStack.Outputs.BastionSecurityGroupID, '']
   BastionAutoScalingGroup:
