@@ -73,11 +73,11 @@ Metadata:
           - NewRelicIntegration
           - NewRelicLicenseKey
       - Label:
-          default: Calico policy [APN security partner]
+          default: Calico policy (APN security partner)
         Parameters:
           - CalicoIntegration
       - Label:
-          default: Rafay Systems [APN software & internet partner]
+          default: Rafay Systems (APN software & internet partner)
         Parameters:
           - RafaySysIntegration
           - RafaySysProject
