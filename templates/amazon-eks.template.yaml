@@ -1129,3 +1129,7 @@ Outputs:
     Value: !GetAtt NodeGroupStack.Outputs.NodeAutoScalingGroup
   OIDCIssuerURL:
     Value : !GetAtt EKSControlPlane.Outputs.OIDCIssuerURL
+  OIDCProviderArn:
+    Value: !GetAtt EKSControlPlane.Outputs.OIDCProviderArn
+  OIDCProviderEndpoint:
+    Value: !GetAtt EKSControlPlane.Outputs.OIDCProviderEndpoint

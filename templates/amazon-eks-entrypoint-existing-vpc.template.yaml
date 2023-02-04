@@ -1359,6 +1359,10 @@ Outputs:
     Value: !GetAtt EKSStack.Outputs.ControlPlaneSecurityGroup
   OIDCIssuerURL:
     Value: !GetAtt EKSStack.Outputs.OIDCIssuerURL
+  OIDCProviderArn:
+    Value: !GetAtt EKSStack.Outputs.OIDCProviderArn
+  OIDCProviderEndpoint:
+    Value: !GetAtt EKSStack.Outputs.OIDCProviderEndpoint
 Rules:
   AutoDetectSharedParams:
     RuleCondition: !Or
