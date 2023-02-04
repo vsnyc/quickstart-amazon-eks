@@ -112,6 +112,7 @@ Metadata:
           - QSS3BucketName
           - QSS3KeyPrefix
           - QSS3BucketRegion
+          - TestSuite
     ParameterLabels:
       KeyPairName:
         default: SSH key name
@@ -195,6 +196,8 @@ Metadata:
         default: HTTP proxy
       ConfigSetName:
         default: Config set name
+      TestSuite:
+        default: Test suite
       PerAccountSharedResources:
         default: Per-account shared resources
       PerRegionSharedResources:
@@ -1022,6 +1025,11 @@ Parameters:
       parameter in that stack. If left blank, a new config set is created using
       default values.
     Default: ''
+  TestSuite:
+    Type: String
+    Description: Deploys a test stack that tests Quick Start components.
+    AllowedValues: [Enabled, Disabled]
+    Default: Disabled
   CalicoIntegration:
     Type: String
     Description: For more information see https://www.projectcalico.org/.
@@ -1335,6 +1343,7 @@ Resources:
         RafaySysLastName: !Ref RafaySysLastName
         RafaySysOrganizationName: !Ref RafaySysOrganizationName
         RafaySysEmail: !Ref RafaySysEmail
+        TestSuite: !Ref TestSuite
 Outputs:
   EKSClusterName:
     Value: !GetAtt EKSStack.Outputs.EKSClusterName
