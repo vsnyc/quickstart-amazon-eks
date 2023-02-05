@@ -173,7 +173,6 @@ Resources:
         - functions/packages/crhelperLayer/lambda.zip
         - functions/packages/GetCallerArn/lambda.zip
         - functions/packages/registerType/lambda.zip
-        - functions/packages/registerCustomResource/lambda.zip
         - functions/packages/EksClusterResource/awsqs-eks-cluster.zip
         - functions/packages/GenerateClusterName/lambda.zip
         - functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip
@@ -307,24 +306,6 @@ Resources:
           - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
           - Prefix: !FindInMap [Config, Prefix, Value]
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/registerType/lambda.zip
-  RegisterCustomResourceFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub ['${Prefix}-RegisterCustomResource', { Prefix: !FindInMap [Config, Prefix, Value] }]
-      Handler: lambda_function.lambda_handler
-      MemorySize: 128
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-RegisterCustomResource
-        - Prefix: !FindInMap [Config, Prefix, Value]
-      Layers: [!Ref CrhelperLayer]
-      Runtime: python3.8
-      Timeout: 900
-      Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
-      Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
-        S3Key: !Sub ${QSS3KeyPrefix}functions/packages/registerCustomResource/lambda.zip
   RegisterEksClusterType:
     Type: Custom::RegisterType
     DependsOn: ArtifactCopyPolicy
