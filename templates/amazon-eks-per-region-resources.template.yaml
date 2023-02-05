@@ -134,13 +134,13 @@ Resources:
         - functions/packages/CloudFormationVPCRoleCreation/lambda.zip
         - functions/packages/CrHelperLayer/lambda.zip
         - functions/packages/EksClusterResource/awsqs-eks-cluster.zip
+        - functions/packages/FargateProfile/lambda.zip
         - functions/packages/GenerateClusterName/lambda.zip
         - functions/packages/GetCallerArn/lambda.zip
         - functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip
         - functions/packages/KubectlLayer/lambda.zip
         - functions/packages/KubeGet/lambda.zip
         - functions/packages/KubeManifest/lambda.zip
-        - functions/packages/FargateProfile/lambda.zip
         - functions/packages/kubernetesResources/awsqs_kubernetes_get.zip
         - functions/packages/kubernetesResources/awsqs_kubernetes_get_vpc.zip
         - functions/packages/kubernetesResources/awsqs_kubernetes_apply.zip
@@ -566,8 +566,10 @@ Resources:
   FargateProfileLambda:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub ['${Prefix}-FargateProfile', { Prefix: !FindInMap [Config, Prefix, Value] }]
-      Handler: lambda_function.lambda_handler
+      FunctionName: !Sub
+        - ${Prefix}-FargateProfile
+        - Prefix: !FindInMap [Config, Prefix, Value]
+      Handler: index.handler
       MemorySize: 512
       Role: !Sub
         - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-FargateProfile
