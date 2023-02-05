@@ -22,7 +22,7 @@ Mappings:
 Conditions:
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, aws-quickstart]
 Resources:
-  PreReqsRole:
+  PrerequisitesRole:
     Type: AWS::IAM::Role
     Metadata:
       cfn-lint:
@@ -59,7 +59,7 @@ Resources:
                   - cloudformation:UpdateStack
                   - ec2:DescribeRegions
                 Resource: '*'
-  PreReqsFunction:
+  PrerequisitesFunction:
     Type: AWS::Lambda::Function
     Properties:
       Description: >-
@@ -67,15 +67,15 @@ Resources:
           are present and up to date.
       Handler: index.handler
       Runtime: python3.8
-      Role: !GetAtt PreReqsRole.Arn
+      Role: !GetAtt PrerequisitesRole.Arn
       Timeout: 900
       Code:
         S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-        S3Key: !Sub ${QSS3KeyPrefix}functions/packages/prerequisites/lambda.zip
-  PreReqs:
-    Type: Custom::PreReqs
+        S3Key: !Sub ${QSS3KeyPrefix}functions/packages/Prerequisites/lambda.zip
+  Prerequisites:
+    Type: Custom::Prerequisites
     Properties:
-      ServiceToken: !GetAtt PreReqsFunction.Arn
+      ServiceToken: !GetAtt PrerequisitesFunction.Arn
       AccountTemplateUri: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-per-account-resources.template.yaml
         - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
