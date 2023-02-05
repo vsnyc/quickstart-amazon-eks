@@ -126,6 +126,7 @@ Resources:
       Version: 1.0.0
       RandomStr: !Ref RandomStr
       Objects:
+        - functions/packages/AwsCliLayer/lambda.zip
         - functions/packages/DeleteBucketContents/lambda.zip
         - functions/packages/CleanupLoadBalancers/lambda.zip
         - functions/packages/CleanupSecurityGroupDependencies/lambda.zip
@@ -138,14 +139,13 @@ Resources:
         - functions/packages/EksClusterResource/awsqs-eks-cluster.zip
         - functions/packages/GenerateClusterName/lambda.zip
         - functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip
-        - functions/packages/awscliLayer/lambda.zip
+        - functions/packages/KubeGet/lambda.zip
         - functions/packages/FargateProfile/lambda.zip
         - functions/packages/kubernetesResources/awsqs_kubernetes_get.zip
         - functions/packages/kubernetesResources/awsqs_kubernetes_get_vpc.zip
         - functions/packages/kubernetesResources/awsqs_kubernetes_apply.zip
         - functions/packages/kubernetesResources/awsqs_kubernetes_apply_vpc.zip
         - functions/packages/KubeManifest/lambda.zip
-        - functions/packages/KubeGet/lambda.zip
         - functions/packages/QuickStartParameterResolver/lambda.zip
         - functions/packages/ResourceReader/lambda.zip
   ArtifactCopyPolicy:
@@ -185,7 +185,7 @@ Resources:
       Description: !Sub aws cli layer - ${RandomStr}
       Content:
         S3Bucket: !Ref LambdaZipsBucket
-        S3Key: !Sub ${QSS3KeyPrefix}functions/packages/awscliLayer/lambda.zip
+        S3Key: !Sub ${QSS3KeyPrefix}functions/packages/AwsCliLayer/lambda.zip
   CrHelperLayer:
     Type: AWS::Lambda::LayerVersion
     DependsOn: CopyZips
