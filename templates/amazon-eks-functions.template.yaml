@@ -115,7 +115,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Sub EKS-QuickStart-KubeManifest-${EKSClusterName}
-      Handler: lambda_function.lambda_handler
+      Handler: index.handler
       MemorySize: 256
       Role: !Ref KubernetesAdminRoleArn
       Runtime: python3.8
