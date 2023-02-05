@@ -493,6 +493,10 @@ Resources:
       IdField: RoleName
   IamStack:
     Type: AWS::CloudFormation::Stack
+    DependsOn:
+      - ControlPlaneSecurityGroupIngress
+        # Artificial dependency for cluster security group deletion timing in
+        # CleanupControlPlaneSecurityGroupDependencies
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-iam.template.yaml
@@ -599,6 +603,7 @@ Resources:
       VpcId: !Ref VPCID
   ControlPlaneSecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
+    DependsOn: [CleanupControlPlaneSecurityGroupDependencies]
     Properties:
       Description: Allow SG members to access k8s api
       GroupId: !Ref ControlPlaneSecurityGroup
