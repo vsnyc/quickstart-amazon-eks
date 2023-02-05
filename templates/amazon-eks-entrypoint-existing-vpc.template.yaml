@@ -1288,51 +1288,44 @@ Resources:
         - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
-        HttpProxy: !Ref HttpProxy
-        PublicSubnet1ID: !Ref PublicSubnet1ID
-        PublicSubnet2ID: !Ref PublicSubnet2ID
-        PublicSubnet3ID: !Ref PublicSubnet3ID
+        # Basic configuration
+        RemoteAccessCIDR: !Ref RemoteAccessCIDR
         KeyPairName: !Ref KeyPairName
-        QSS3BucketName: !Ref QSS3BucketName
-        QSS3KeyPrefix: !Ref QSS3KeyPrefix
-        QSS3BucketRegion: !Ref QSS3BucketRegion
+        ConfigSetName: !If [CreateAdvancedConfigWithDefaults, !Ref AWS::StackName, !Ref ConfigSetName]
+        # Network configuration
+        VPCID: !Ref VPCID
         PrivateSubnet1ID: !Ref PrivateSubnet1ID
         PrivateSubnet2ID: !Ref PrivateSubnet2ID
         PrivateSubnet3ID: !Ref PrivateSubnet3ID
-        NumberOfNodes: !Ref NumberOfNodes
-        MaxNumberOfNodes: !Ref MaxNumberOfNodes
-        NodeInstanceType: !Ref NodeInstanceType
-        RemoteAccessCIDR: !Ref RemoteAccessCIDR
+        PublicSubnet1ID: !Ref PublicSubnet1ID
+        PublicSubnet2ID: !Ref PublicSubnet2ID
+        PublicSubnet3ID: !Ref PublicSubnet3ID
+        HttpProxy: !Ref HttpProxy
+        # Bastion host configuration
+        ProvisionBastionHost: !Ref ProvisionBastionHost
+        # Amazon EKS configuration
+        EKSClusterName: !Ref EKSClusterName
+        EKSPublicAccessEndpoint: !Ref EKSPublicAccessEndpoint
         AdditionalEKSAdminUserArn: !Ref AdditionalEKSAdminUserArn
         AdditionalEKSAdminRoleArn: !Ref AdditionalEKSAdminRoleArn
-        VPCID: !Ref VPCID
-        ProvisionClusterAutoScaler: !Ref ClusterAutoScaler
-        EfsStorageClass: !Ref EfsStorageClass
-        ProvisionBastionHost: !Ref ProvisionBastionHost
-        EKSPublicAccessEndpoint: !Ref EKSPublicAccessEndpoint
-        ProvisionLoadBalancerController: !Ref ALBIngressController
-        EKSClusterName: !Ref EKSClusterName
-        SnykIntegrationId: !Ref SnykIntegrationId
-        SnykIntegration: !Ref SnykIntegration
-        NewRelicLicenseKey: !Ref NewRelicLicenseKey
-        NewRelicIntegration: !Ref NewRelicIntegration
-        ConfigSetName: !If [CreateAdvancedConfigWithDefaults, !Ref AWS::StackName, !Ref ConfigSetName]
-        GrafanaIntegration: !If [EnableGrafana, Enabled, Disabled]
-        PrometheusIntegration: !If [EnablePrometheus, Enabled, Disabled]
-        FargateLabels: !Ref FargateLabels
         FargateNamespaces: !Ref FargateNamespaces
-        NodeGroupOS: !Ref NodeGroupOS
-        NodeGroupType: !Ref NodeGroupType
+        FargateLabels: !Ref FargateLabels
+        # Default EKS node group configuration
+        NodeInstanceType: !Ref NodeInstanceType
+        NumberOfNodes: !Ref NumberOfNodes
+        MaxNumberOfNodes: !Ref MaxNumberOfNodes
         NodeInstanceFamily: !Ref NodeInstanceFamily
+        NodeGroupType: !Ref NodeGroupType
+        NodeGroupOS: !Ref NodeGroupOS
+        # Snyk monitor (AWS Partner security)
+        SnykIntegration: !Ref SnykIntegration
+        SnykIntegrationId: !Ref SnykIntegrationId
+        # New Relic infrastructure (AWS Partner monitoring)
+        NewRelicIntegration: !Ref NewRelicIntegration
+        NewRelicLicenseKey: !Ref NewRelicLicenseKey
+        # Calico policy (APN security partner)
         CalicoIntegration: !Ref CalicoIntegration
-        RancherIntegration: !Ref RancherIntegration
-        RancherDomainName: !Ref RancherDomainName
-        MuleSoftRtfIntegration: !Ref MuleSoftRtfIntegration
-        RTFFabricName: !Ref RTFFabricName
-        OrgID: !Ref OrgID
-        UserName: !Ref UserName
-        Password: !Ref Password
-        MuleLicenseKeyinbase64: !Ref MuleLicenseKeyinbase64
+        # Rafay Systems (APN software & internet partner)
         RafaySysIntegration: !Ref RafaySysIntegration
         RafaySysProject: !Ref RafaySysProject
         RafaySysBootstrapBucket: !Ref RafaySysBootstrapBucket
@@ -1343,6 +1336,26 @@ Resources:
         RafaySysLastName: !Ref RafaySysLastName
         RafaySysOrganizationName: !Ref RafaySysOrganizationName
         RafaySysEmail: !Ref RafaySysEmail
+        # Rancher management (AWS Partner management)
+        RancherIntegration: !Ref RancherIntegration
+        RancherDomainName: !Ref RancherDomainName
+        # MuleSoft Anypoint Runtime Fabric (AWS Partner integration)
+        MuleSoftRtfIntegration: !Ref MuleSoftRtfIntegration
+        RTFFabricName: !Ref RTFFabricName
+        OrgID: !Ref OrgID
+        UserName: !Ref UserName
+        Password: !Ref Password
+        MuleLicenseKeyinbase64: !Ref MuleLicenseKeyinbase64
+        # Kubernetes add-ins
+        ProvisionLoadBalancerController: !Ref ALBIngressController
+        ProvisionClusterAutoScaler: !Ref ClusterAutoScaler
+        EfsStorageClass: !Ref EfsStorageClass
+        PrometheusIntegration: !If [EnablePrometheus, Enabled, Disabled]
+        GrafanaIntegration: !If [EnableGrafana, Enabled, Disabled]
+        # AWS Quick Start configuration
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        QSS3BucketRegion: !Ref QSS3BucketRegion
         TestSuite: !Ref TestSuite
 Outputs:
   EKSClusterName:
