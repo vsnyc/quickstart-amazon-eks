@@ -724,42 +724,13 @@ Resources:
         OIDCProviderEndpoint: !GetAtt EKSControlPlane.Outputs.OIDCProviderEndpoint
         EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         VpcId: !Ref VPCID
-  GenerateNameFunction:
-    Type: AWS::Lambda::Function
-    Condition: GenerateClusterName
-    Properties:
-      Handler: index.handler
-      Runtime: python3.8
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CopyZips
-        - Prefix: !FindInMap [Config, Prefix, Value]
-      Timeout: 900
-      Code:
-        ZipFile: |
-          import cfnresponse
-          import logging
-          from random import choice
-          from string import ascii_uppercase, digits
-          logger = logging.getLogger(__name__)
-          def handler(event, context):
-              logger.debug(event)
-              status = cfnresponse.SUCCESS
-              pid = None
-              try:
-                  if event['RequestType'] == 'Create':
-                      pid = 'EKS-' + ''.join((choice(ascii_uppercase + digits) for i in range(8)))
-                  else:
-                      pid = event['PhysicalResourceId']
-              except Exception:
-                  logging.error('Unhandled exception', exc_info=True)
-                  status = cfnresponse.FAILED
-              finally:
-                  cfnresponse.send(event, context, status, {}, pid)
   GenerateClusterName:
     Type: Custom::GenerateClusterName
     Condition: GenerateClusterName
     Properties:
-      ServiceToken: !GetAtt GenerateNameFunction.Arn
+      ServiceToken: !Sub
+        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-GenerateClusterName
+        - Prefix: !FindInMap [Config, Prefix, Value]
   TestSuiteStack:
     Type: AWS::CloudFormation::Stack
     Condition: DeployTestStack

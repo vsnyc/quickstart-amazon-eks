@@ -174,6 +174,7 @@ Resources:
         - functions/packages/registerType/lambda.zip
         - functions/packages/registerCustomResource/lambda.zip
         - functions/packages/EksClusterResource/awsqs-eks-cluster.zip
+        - functions/packages/GenerateClusterName/lambda.zip
         - functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip
         - functions/packages/awscliLayer/lambda.zip
         - functions/packages/FargateProfile/lambda.zip
@@ -270,6 +271,22 @@ Resources:
           - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
           - Prefix: !FindInMap [Config, Prefix, Value]
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/CleanupLambdas/lambda.zip
+  GenerateClusterNameFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: CopyZips
+    Properties:
+      FunctionName: !Sub ['${Prefix}-GenerateClusterName', { Prefix: !FindInMap [Config, Prefix, Value] }]
+      Handler: index.handler
+      Runtime: python3.8
+      Role: !Sub
+        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-GenerateClusterName
+        - Prefix: !FindInMap [Config, Prefix, Value]
+      Timeout: 900
+      Code:
+        S3Bucket: !Sub
+          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
+          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Key: !Sub ${QSS3KeyPrefix}functions/packages/GenerateClusterName/lambda.zip
   RegisterTypeFunction:
     Type: AWS::Lambda::Function
     Properties:
