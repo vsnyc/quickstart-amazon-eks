@@ -132,12 +132,12 @@ Resources:
         - functions/packages/CleanupLoadBalancers/lambda.zip
         - functions/packages/CleanupSecurityGroupDependencies/lambda.zip
         - functions/packages/CloudFormationVPCRoleCreation/lambda.zip
-        - functions/packages/kubectlLayer/lambda.zip
         - functions/packages/CrHelperLayer/lambda.zip
         - functions/packages/GetCallerArn/lambda.zip
         - functions/packages/EksClusterResource/awsqs-eks-cluster.zip
         - functions/packages/GenerateClusterName/lambda.zip
         - functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip
+        - functions/packages/KubectlLayer/lambda.zip
         - functions/packages/KubeGet/lambda.zip
         - functions/packages/KubeManifest/lambda.zip
         - functions/packages/FargateProfile/lambda.zip
@@ -175,9 +175,10 @@ Resources:
     Properties:
       LayerName: !Sub ['${Prefix}-Kubectl', { Prefix: !FindInMap [Config, Prefix, Value] }]
       Description: !Sub kubectl layer - ${RandomStr}
+      CompatibleRuntimes: [python3.7, python3.8]
       Content:
         S3Bucket: !Ref LambdaZipsBucket
-        S3Key: !Sub ${QSS3KeyPrefix}functions/packages/kubectlLayer/lambda.zip
+        S3Key: !Sub ${QSS3KeyPrefix}functions/packages/KubectlLayer/lambda.zip
   AwsCliLayer:
     Type: AWS::Lambda::LayerVersion
     DependsOn: CopyZips
