@@ -170,7 +170,7 @@ Resources:
         - functions/packages/CleanupLambdas/lambda.zip
         - functions/packages/CloudFormationVPCRoleCreation/lambda.zip
         - functions/packages/kubectlLayer/lambda.zip
-        - functions/packages/crhelperLayer/lambda.zip
+        - functions/packages/CrHelperLayer/lambda.zip
         - functions/packages/GetCallerArn/lambda.zip
         - functions/packages/registerType/lambda.zip
         - functions/packages/EksClusterResource/awsqs-eks-cluster.zip
@@ -224,18 +224,16 @@ Resources:
       Content:
         S3Bucket: !Ref LambdaZipsBucket
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/awscliLayer/lambda.zip
-  CrhelperLayer:
+  CrHelperLayer:
     Type: AWS::Lambda::LayerVersion
     DependsOn: CopyZips
     Properties:
-      LayerName: !Sub ['${Prefix}-Crhelper', { Prefix: !FindInMap [Config, Prefix, Value] }]
+      LayerName: !Sub ['${Prefix}-CrHelper', { Prefix: !FindInMap [Config, Prefix, Value] }]
       Description: !Sub crhelper layer - ${RandomStr}
-      CompatibleRuntimes:
-        - python3.7
-        - python3.8
+      CompatibleRuntimes: [python3.7, python3.8]
       Content:
         S3Bucket: !Ref LambdaZipsBucket
-        S3Key: !Sub ${QSS3KeyPrefix}functions/packages/crhelperLayer/lambda.zip
+        S3Key: !Sub ${QSS3KeyPrefix}functions/packages/CrHelperLayer/lambda.zip
   CleanupLoadBalancersLambda:
     Type: AWS::Lambda::Function
     Properties:
@@ -247,7 +245,7 @@ Resources:
         - Prefix: !FindInMap [Config, Prefix, Value]
       Runtime: python3.8
       Timeout: 900
-      Layers: [!Ref CrhelperLayer]
+      Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
         S3Bucket: !Sub
@@ -265,7 +263,7 @@ Resources:
         - Prefix: !FindInMap [Config, Prefix, Value]
       Runtime: python3.8
       Timeout: 900
-      Layers: [!Ref CrhelperLayer]
+      Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
         S3Bucket: !Sub
@@ -297,7 +295,7 @@ Resources:
       Role: !Sub
         - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-RegisterType
         - Prefix: !FindInMap [Config, Prefix, Value]
-      Layers: [!Ref CrhelperLayer]
+      Layers: [!Ref CrHelperLayer]
       Runtime: python3.8
       Timeout: 900
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
@@ -535,7 +533,7 @@ Resources:
       Role: !Sub
         - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CleanupSecurityGroupDependencies
         - Prefix: !FindInMap [Config, Prefix, Value]
-      Layers: [!Ref CrhelperLayer]
+      Layers: [!Ref CrHelperLayer]
       Runtime: python3.8
       Timeout: 900
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
@@ -557,7 +555,7 @@ Resources:
         - Prefix: !FindInMap [Config, Prefix, Value]
       Runtime: python3.8
       Timeout: 900
-      Layers: [!Ref CrhelperLayer]
+      Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
         S3Bucket: !Sub
@@ -577,7 +575,7 @@ Resources:
         - Prefix: !FindInMap [Config, Prefix, Value]
       Runtime: python3.8
       Timeout: 900
-      Layers: [!Ref CrhelperLayer]
+      Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
         S3Bucket: !Sub
@@ -595,7 +593,7 @@ Resources:
         - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-NodeSG
         - Prefix: !FindInMap [Config, Prefix, Value]
       Timeout: 900
-      Layers: [!Ref CrhelperLayer]
+      Layers: [!Ref CrHelperLayer]
       Code:
         ZipFile: |
           import logging
@@ -632,7 +630,7 @@ Resources:
         - Prefix: !FindInMap [Config, Prefix, Value]
       Runtime: python3.8
       Timeout: 900
-      Layers: [!Ref CrhelperLayer]
+      Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
         S3Bucket: !Sub
