@@ -128,11 +128,11 @@ Resources:
       Objects:
         - functions/packages/AwsCliLayer/lambda.zip
         - functions/packages/CleanupLambdas/lambda.zip
-        - functions/packages/DeleteBucketContents/lambda.zip
         - functions/packages/CleanupLoadBalancers/lambda.zip
         - functions/packages/CleanupSecurityGroupDependencies/lambda.zip
         - functions/packages/CloudFormationVPCRoleCreation/lambda.zip
         - functions/packages/CrHelperLayer/lambda.zip
+        - functions/packages/DeleteBucketContents/lambda.zip
         - functions/packages/EksClusterResource/awsqs-eks-cluster.zip
         - functions/packages/FargateProfile/lambda.zip
         - functions/packages/GenerateClusterName/lambda.zip
@@ -512,7 +512,7 @@ Resources:
       FunctionName: !Sub
         - ${Prefix}-DeleteBucketContents
         - Prefix: !FindInMap [Config, Prefix, Value]
-      Handler: lambda_function.lambda_handler
+      Handler: index.handler
       MemorySize: 128
       Role: !Sub
         - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-DeleteBucketContents
