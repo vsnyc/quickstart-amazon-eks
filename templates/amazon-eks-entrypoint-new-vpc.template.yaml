@@ -1243,75 +1243,15 @@ Parameters:
 Conditions:
   EnablePrometheus: !Equals [!Ref PrometheusIntegration, Enabled]
   EnableGrafana: !Equals [!Ref GrafanaIntegration, Enabled]
-  DetectSharedStacks: !And
-    - !Equals [!Ref PerAccountSharedResources, AutoDetect]
-    - !Equals [!Ref PerRegionSharedResources, AutoDetect]
-  CreateAdvancedConfigWithDefaults: !Equals [!Ref ConfigSetName, '']
-  CreatePerAccountSharedResources: !Equals [!Ref PerAccountSharedResources, 'Yes']
-  CreatePerRegionSharedResources: !Equals [!Ref PerRegionSharedResources, 'Yes']
   3AZDeployment: !Equals [!Ref NumberOfAZs, 3]
   2AZDeployment: !Or
     - !Equals [!Ref NumberOfAZs, 2]
     - !Equals [!Ref NumberOfAZs, 3]
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, aws-quickstart]
-  WindowsNodes: !Equals [!Ref NodeGroupOS, Windows]
 Mappings:
   Config:
     Prefix: { Value: eks-quickstart }
 Resources:
-  AdvancedConfigDefaultsStack:
-    Type: AWS::CloudFormation::Stack
-    Condition: CreateAdvancedConfigWithDefaults
-    Properties:
-      TemplateURL: !Sub
-        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-advanced-configuration.template.yaml
-        - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
-          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-      Parameters:
-        ConfigSetName: !Ref AWS::StackName
-        KubernetesVersion: !Ref KubernetesVersion
-        NodeVolumeSize: !If [WindowsNodes, 50, !Ref AWS::NoValue]
-        OnDemandPercentage: !Ref OnDemandPercentage
-        OnDemandBastionPercentage: !Ref OnDemandBastionPercentage
-  AutoDetectSharedResources:
-    Type: AWS::CloudFormation::Stack
-    Condition: DetectSharedStacks
-    Properties:
-      TemplateURL: !Sub
-        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-prerequisites.template.yaml
-        - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
-          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-      Parameters:
-        QSS3BucketName: !Ref QSS3BucketName
-        QSS3BucketRegion: !Ref QSS3BucketRegion
-        QSS3KeyPrefix: !Ref QSS3KeyPrefix
-  AccountSharedResources:
-    Type: AWS::CloudFormation::Stack
-    DeletionPolicy: Retain
-    Condition: CreatePerAccountSharedResources
-    Metadata: { cfn-lint: { config: { ignore_checks: [W3011] } } }
-    Properties:
-      TemplateURL: !Sub
-        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-per-account-resources.template.yaml
-        - S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
-          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-      Tags: [{ Key: !FindInMap [Config, Prefix, Value], Value: AccountSharedResources }]
-  RegionalSharedResources:
-    Type: AWS::CloudFormation::Stack
-    Condition: CreatePerRegionSharedResources
-    DeletionPolicy: Retain
-    Metadata:
-      cfn-lint: { config: { ignore_checks: [W3011, W9901] } }
-      DependsOn: !If [CreatePerAccountSharedResources, !Ref AccountSharedResources, !Ref 'AWS::NoValue']
-    Properties:
-      TemplateURL: !Sub
-        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-per-region-resources.template.yaml
-        - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
-          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-      Parameters:
-        QSS3BucketName: !Ref QSS3BucketName
-        QSS3KeyPrefix: !Ref QSS3KeyPrefix
-      Tags: [{ Key: !FindInMap [Config, Prefix, Value], Value: RegionalSharedResources }]
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Metadata:
@@ -1333,33 +1273,22 @@ Resources:
         PublicSubnet3CIDR: !Ref PublicSubnet3CIDR
         PublicSubnetTag2: kubernetes.io/role/elb=
         VPCCIDR: !Ref VPCCIDR
-  EKSStack:
+  ExistingVpcStack:
     Type: AWS::CloudFormation::Stack
-    Metadata:
-      DependsOn:
-        - !If [CreatePerRegionSharedResources, !Ref RegionalSharedResources, !Ref AWS::NoValue]
-        - !If [CreatePerAccountSharedResources, !Ref AccountSharedResources, !Ref AWS::NoValue]
-        - !If [DetectSharedStacks, !Ref AutoDetectSharedResources, !Ref AWS::NoValue]
-      cfn-lint: { config: { ignore_checks: [ W9901, E9902 ] } }
     Properties:
       TemplateURL: !Sub
-        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks.template.yaml
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/amazon-eks-entrypoint-existing-vpc.template.yaml
         - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
-        PublicSubnet1ID: !GetAtt VPCStack.Outputs.PublicSubnet1ID
-        PublicSubnet2ID: !If
-          - 2AZDeployment
-          - !GetAtt VPCStack.Outputs.PublicSubnet2ID
-          - !Ref AWS::NoValue
-        PublicSubnet3ID: !If
-          - 3AZDeployment
-          - !GetAtt VPCStack.Outputs.PublicSubnet3ID
-          - !Ref AWS::NoValue
+        # Basic configuration
+        RemoteAccessCIDR: !Ref RemoteAccessCIDR
         KeyPairName: !Ref KeyPairName
-        QSS3BucketName: !Ref QSS3BucketName
-        QSS3KeyPrefix: !Ref QSS3KeyPrefix
-        QSS3BucketRegion: !Ref QSS3BucketRegion
+        ConfigSetName: !Ref ConfigSetName
+        PerAccountSharedResources: !Ref PerAccountSharedResources
+        PerRegionSharedResources: !Ref PerRegionSharedResources
+        # Network configuration
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
         PrivateSubnet1ID: !GetAtt VPCStack.Outputs.PrivateSubnet1AID
         PrivateSubnet2ID: !If
           - 2AZDeployment
@@ -1369,41 +1298,43 @@ Resources:
           - 3AZDeployment
           - !GetAtt VPCStack.Outputs.PrivateSubnet3AID
           - !Ref AWS::NoValue
-        NumberOfNodes: !Ref NumberOfNodes
-        MaxNumberOfNodes: !Ref MaxNumberOfNodes
-        NodeGroupOS: !Ref NodeGroupOS
-        NodeGroupType: !Ref NodeGroupType
-        NodeInstanceFamily: !Ref NodeInstanceFamily
-        NodeInstanceType: !Ref NodeInstanceType
-        RemoteAccessCIDR: !Ref RemoteAccessCIDR
+        PublicSubnet1ID: !GetAtt VPCStack.Outputs.PublicSubnet1ID
+        PublicSubnet2ID: !If
+          - 2AZDeployment
+          - !GetAtt VPCStack.Outputs.PublicSubnet2ID
+          - !Ref AWS::NoValue
+        PublicSubnet3ID: !If
+          - 3AZDeployment
+          - !GetAtt VPCStack.Outputs.PublicSubnet3ID
+          - !Ref AWS::NoValue
+        # Bastion host configuration
+        ProvisionBastionHost: !Ref ProvisionBastionHost
+        OnDemandBastionPercentage: !Ref OnDemandBastionPercentage
+        # Amazon EKS configuration
+        EKSClusterName: !Ref EKSClusterName
+        KubernetesVersion: !Ref KubernetesVersion
+        EKSPublicAccessEndpoint: !Ref EKSPublicAccessEndpoint
         AdditionalEKSAdminUserArn: !Ref AdditionalEKSAdminUserArn
         AdditionalEKSAdminRoleArn: !Ref AdditionalEKSAdminRoleArn
-        VPCID: !GetAtt VPCStack.Outputs.VPCID
-        ProvisionClusterAutoScaler: !Ref ClusterAutoScaler
-        EfsStorageClass: !Ref EfsStorageClass
-        GrafanaIntegration: !If [EnableGrafana, Enabled, Disabled]
-        PrometheusIntegration: !If [EnablePrometheus, Enabled, Disabled]
-        ProvisionBastionHost: !Ref ProvisionBastionHost
-        EKSPublicAccessEndpoint: !Ref EKSPublicAccessEndpoint
-        ProvisionLoadBalancerController: !Ref ALBIngressController
-        FargateLabels: !Ref FargateLabels
         FargateNamespaces: !Ref FargateNamespaces
-        EKSClusterName: !Ref EKSClusterName
-        SnykIntegrationId: !Ref SnykIntegrationId
+        FargateLabels: !Ref FargateLabels
+        # Default EKS node group configuration
+        NodeInstanceType: !Ref NodeInstanceType
+        NumberOfNodes: !Ref NumberOfNodes
+        MaxNumberOfNodes: !Ref MaxNumberOfNodes
+        NodeInstanceFamily: !Ref NodeInstanceFamily
+        NodeGroupType: !Ref NodeGroupType
+        OnDemandPercentage: !Ref OnDemandPercentage
+        NodeGroupOS: !Ref NodeGroupOS
+        # Snyk monitor (AWS Partner security)
         SnykIntegration: !Ref SnykIntegration
-        NewRelicLicenseKey: !Ref NewRelicLicenseKey
+        SnykIntegrationId: !Ref SnykIntegrationId
+        # New Relic infrastructure (AWS Partner monitoring)
         NewRelicIntegration: !Ref NewRelicIntegration
-        RancherIntegration: !Ref RancherIntegration
-        RancherDomainName: !Ref RancherDomainName
-        MuleSoftRtfIntegration: !Ref MuleSoftRtfIntegration
-        RTFFabricName: !Ref RTFFabricName
-        OrgID: !Ref OrgID
-        UserName: !Ref UserName
-        Password: !Ref Password
-        MuleLicenseKeyinbase64: !Ref MuleLicenseKeyinbase64
-        ConfigSetName: !If [CreateAdvancedConfigWithDefaults, !Ref AWS::StackName, !Ref ConfigSetName]
-        TestSuite: !Ref TestSuite
+        NewRelicLicenseKey: !Ref NewRelicLicenseKey
+        # Calico policy (APN security partner)
         CalicoIntegration: !Ref CalicoIntegration
+        # Rafay Systems (APN software & internet partner)
         RafaySysIntegration: !Ref RafaySysIntegration
         RafaySysProject: !Ref RafaySysProject
         RafaySysBootstrapBucket: !Ref RafaySysBootstrapBucket
@@ -1414,25 +1345,46 @@ Resources:
         RafaySysLastName: !Ref RafaySysLastName
         RafaySysOrganizationName: !Ref RafaySysOrganizationName
         RafaySysEmail: !Ref RafaySysEmail
+        # Rancher management (AWS Partner management)
+        RancherIntegration: !Ref RancherIntegration
+        RancherDomainName: !Ref RancherDomainName
+        # MuleSoft Anypoint Runtime Fabric (AWS Partner integration)
+        MuleSoftRtfIntegration: !Ref MuleSoftRtfIntegration
+        RTFFabricName: !Ref RTFFabricName
+        OrgID: !Ref OrgID
+        UserName: !Ref UserName
+        Password: !Ref Password
+        MuleLicenseKeyinbase64: !Ref MuleLicenseKeyinbase64
+        # Kubernetes add-ins
+        ALBIngressController: !Ref ALBIngressController
+        ClusterAutoScaler: !Ref ClusterAutoScaler
+        EfsStorageClass: !Ref EfsStorageClass
+        PrometheusIntegration: !If [EnablePrometheus, Enabled, Disabled]
+        GrafanaIntegration: !If [EnableGrafana, Enabled, Disabled]
+        # AWS Quick Start configuration
+        QSS3BucketName: !Ref QSS3BucketName
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        QSS3BucketRegion: !Ref QSS3BucketRegion
+        TestSuite: !Ref TestSuite
 Outputs:
   EKSClusterName:
-    Value: !GetAtt EKSStack.Outputs.EKSClusterName
+    Value: !GetAtt ExistingVpcStack.Outputs.EKSClusterName
   KubernetesVersion:
     Value: !Ref KubernetesVersion
   BastionIP:
-    Value: !GetAtt EKSStack.Outputs.BastionIP
+    Value: !GetAtt ExistingVpcStack.Outputs.BastionIP
   BastionSecurityGroup:
-    Value: !GetAtt EKSStack.Outputs.BastionSecurityGroup
+    Value: !GetAtt ExistingVpcStack.Outputs.BastionSecurityGroup
   NodeGroupSecurityGroup:
-    Value: !GetAtt EKSStack.Outputs.NodeGroupSecurityGroup
+    Value: !GetAtt ExistingVpcStack.Outputs.NodeGroupSecurityGroup
   ControlPlaneSecurityGroup:
-    Value: !GetAtt EKSStack.Outputs.ControlPlaneSecurityGroup
+    Value: !GetAtt ExistingVpcStack.Outputs.ControlPlaneSecurityGroup
   OIDCIssuerURL:
-    Value: !GetAtt EKSStack.Outputs.OIDCIssuerURL
+    Value: !GetAtt ExistingVpcStack.Outputs.OIDCIssuerURL
   OIDCProviderArn:
-    Value: !GetAtt EKSStack.Outputs.OIDCProviderArn
+    Value: !GetAtt ExistingVpcStack.Outputs.OIDCProviderArn
   OIDCProviderEndpoint:
-    Value: !GetAtt EKSStack.Outputs.OIDCProviderEndpoint
+    Value: !GetAtt ExistingVpcStack.Outputs.OIDCProviderEndpoint
 Rules:
   AutoDetectSharedParams:
     RuleCondition: !Or
