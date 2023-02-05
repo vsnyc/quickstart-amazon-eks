@@ -547,11 +547,11 @@ Resources:
                   - iam:CreateServiceLinkedRole
                   - ec2:DescribeSubnets
                 Resource: '*'
-  ParameterResolverRole:
+  QuickStartParameterResolverRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub
-        - ${Prefix}-ParameterResolver
+        - ${Prefix}-QuickStartParameterResolver
         - Prefix: !FindInMap [Config, Prefix, Value]
       AssumeRolePolicyDocument:
         Version: 2012-10-17
