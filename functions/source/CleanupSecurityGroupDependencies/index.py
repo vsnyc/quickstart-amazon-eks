@@ -6,11 +6,13 @@
 #  See the License for the specific language governing permissions and limitations under the License.
 
 import boto3
+import json
 import logging
-from crhelper import CfnResource
+from crhelper import CfnResource # Provided through CrhelperLayer in amazon-eks-per-region-resources.template.yaml
 from time import sleep
 
 logger = logging.getLogger(__name__)
+
 ec2 = boto3.client("ec2")
 helper = CfnResource(json_logging=True, log_level="DEBUG")
 
@@ -37,6 +39,7 @@ def delete_dependencies(sg_id):
                     except Exception:
                         complete = False
                         logger.exception("ERROR: %s" % (sg["GroupId"]))
+
                         continue
 
     filters = [{"Name": "egress.ip-permission.group-id", "Values": [sg_id]}]
@@ -51,6 +54,7 @@ def delete_dependencies(sg_id):
                     except Exception:
                         complete = False
                         logger.exception("ERROR: %s" % (sg["GroupId"]))
+
                         continue
 
     filters = [{"Name": "group-id", "Values": [sg_id]}]
@@ -65,6 +69,7 @@ def delete_dependencies(sg_id):
         except Exception:
             complete = False
             logger.exception("ERROR: %s" % (eni["NetworkInterfaceId"]))
+
             continue
 
     return complete
@@ -74,25 +79,31 @@ def delete_dependencies(sg_id):
 def delete_handler(event, context):
     for sg_id in event["ResourceProperties"]["SecurityGroups"]:
         interval = 15  # seconds
+        retries = context.get_remaining_time_in_millis() / (interval * 1000)
 
-        while context.get_remaining_time_in_millis() > (interval * 1000):
+        while retries > 0:
             if delete_dependencies(sg_id):
                 try:
                     ec2.delete_security_group(GroupId=sg_id, GroupName=sg_id)
+
+                    break
                 except Exception:
                     logger.exception(f"ERROR: Failed to delete {sg_id}")
+
+                    retries -= 120 / interval
+                    sleep(interval)
                     continue
-
-                break
-
-            if retries == 0:
-                logger.error(f"failed to delete {sg_id} dependencies")
-                break
+            else:
+                logger.error(f"ERROR: Failed to delete {sg_id} dependencies")
 
             retries -= 1
-
             sleep(interval)
 
 
-def lambda_handler(event, context):
+def handler(event, context):
+    props = event.get("ResourceProperties", {})
+    logger.setLevel(props.get("LogLevel", logging.INFO))
+
+    logger.debug(json.dumps(event))
+
     helper(event, context)

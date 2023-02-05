@@ -492,7 +492,7 @@ Resources:
       FunctionName: !Sub
         - ${Prefix}-CleanupSecurityGroupDependencies
         - Prefix: !FindInMap [Config, Prefix, Value]
-      Handler: lambda_function.lambda_handler
+      Handler: index.handler
       MemorySize: 128
       Role: !Sub
         - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CleanupSecurityGroupDependencies
