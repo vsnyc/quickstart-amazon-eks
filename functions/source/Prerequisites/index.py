@@ -7,11 +7,7 @@ from random import randint
 from time import sleep
 from uuid import uuid4
 
-logger = logging.getLogger()
-SX = "SharedResources"
-C = Config(retries={"max_attempts": 10, "mode": "standard"})
-BC = boto3.client
-CFN = "cloudformation"
+logger = logging.getLogger(__name__)
 
 
 def waiter(c, o, s):
@@ -37,7 +33,8 @@ def waiter(c, o, s):
 
 
 def get_stacks(key, val, region=None):
-    cfn = BC(CFN, region_name=region, config=C)
+    C = Config(retries={"max_attempts": 10, "mode": "standard"})
+    cfn = boto3.client("cloudformation", region_name=region, config=C)
     stacks = []
 
     for p in cfn.get_paginator("describe_stacks").paginate():
@@ -67,15 +64,17 @@ def put_stack(name, region, template_url, parameters, key):
     # jitter to reduce the chance of concurrent queries racing
     sleep(randint(0, 6000) / 100)
 
-    if name == f"Account{SX}":
-        for r in [r["RegionName"] for r in BC("ec2").describe_regions()["Regions"]]:
+    if name == "AccountSharedResources":
+        for r in [
+            r["RegionName"] for r in boto3.client("ec2").describe_regions()["Regions"]
+        ]:
             acc_stack = get_stacks(key, name, r)
             if acc_stack:
                 region = r
                 break
 
     stack_id = get_stacks(key, name, region)
-    client = BC(CFN, region_name=region)
+    client = boto3.client("cloudformation", region_name=region)
 
     args = {
         "StackName": stack_id if stack_id else f"{key}-{name}",
@@ -113,14 +112,13 @@ def put_stack(name, region, template_url, parameters, key):
 
 
 def handler(event, context):
-    props = event.get("ResourceProperties", None)
+    props = event.get("ResourceProperties", {})
     logger.setLevel(props.get("LogLevel", logging.INFO))
 
     logger.debug(json.dumps(event))
 
-    s = cfnresponse.SUCCESS
-    p = event.get("PhysicalResourceId", context.log_stream_name)
-    props = event["ResourceProperties"]
+    status = cfnresponse.SUCCESS
+    physical_resource_id = event.get("PhysicalResourceId", context.log_stream_name)
     key = props["Key"]
     acc_uri = props["AccountTemplateUri"]
     bucket = acc_uri.split("https://")[1].split(".")[0]
@@ -133,9 +131,9 @@ def handler(event, context):
                 retries -= 1
 
                 try:
-                    put_stack(f"Account{SX}", None, acc_uri, {}, key)
+                    put_stack("AccountSharedResources", None, acc_uri, {}, key)
                     put_stack(
-                        f"Regional{SX}",
+                        "RegionalSharedResources",
                         None,
                         props["RegionalTemplateUri"],
                         {
@@ -154,7 +152,7 @@ def handler(event, context):
                     else:
                         raise
     except Exception:
-        s = cfnresponse.FAILED
+        status = cfnresponse.FAILED
         logger.exception("Error processing request")
     finally:
-        cfnresponse.send(event, context, s, {}, p)
+        cfnresponse.send(event, context, status, {}, physical_resource_id)
