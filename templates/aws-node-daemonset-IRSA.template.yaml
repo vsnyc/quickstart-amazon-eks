@@ -142,3 +142,8 @@ Resources:
                       done
               restartPolicy: OnFailure
           backoffLimit: 4
+Outputs:
+  OIDCProviderArn:
+    Value: !Ref OIDCProviderArn
+  OIDCProviderEndpoint:
+    Value: !Ref OIDCProviderEndpoint

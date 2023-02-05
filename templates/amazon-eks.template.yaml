@@ -399,10 +399,10 @@ Resources:
               - KubectlVersion
   NodeGroupStack:
     Type: AWS::CloudFormation::Stack
+    DependsOn: [EKSControlPlane]
     Metadata:
       DependsOn:
         - !If [EnableWindows, !Ref WindowsSupportNodeGroupStack, !Ref AWS::NoValue]
-        - !Ref EKSControlPlane
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-amazon-eks-nodegroup/templates/amazon-eks-nodegroup.template.yaml
@@ -527,9 +527,9 @@ Resources:
   ClusterAutoScalerStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableClusterAutoScaler
+    DependsOn: [ControlPlaneSecurityGroupIngress]
     Metadata:
       DependsOn:
-        - !Ref ControlPlaneSecurityGroupIngress
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -543,9 +543,9 @@ Resources:
   MetricsServerStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableMetricsServer
+    DependsOn: [ControlPlaneSecurityGroupIngress]
     Metadata:
       DependsOn:
-        - !Ref ControlPlaneSecurityGroupIngress
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -557,9 +557,9 @@ Resources:
   EfsStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableEfs
+    DependsOn: [AmazonEksEfsCsiDriverHelmChart]
     Metadata:
       DependsOn:
-        - !Ref AmazonEksEfsCsiDriverHelmChart
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -653,11 +653,9 @@ Resources:
   PrometheusStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnablePrometheus
+    DependsOn: [ControlPlaneSecurityGroupIngress, NodeGroupStack, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !Ref ControlPlaneSecurityGroupIngress
-        - !Ref NodeGroupStack
-        - !Ref EbsStorageClass
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -670,11 +668,9 @@ Resources:
   GrafanaStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableGrafana
+    DependsOn: [ControlPlaneSecurityGroupIngress, NodeGroupStack, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !Ref ControlPlaneSecurityGroupIngress
-        - !Ref NodeGroupStack
-        - !Ref EbsStorageClass
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -708,11 +704,9 @@ Resources:
   LoadBalancerStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableLoadBalancerController
+    DependsOn: [ControlPlaneSecurityGroupIngress, NodeGroupStack]
     Metadata:
       DependsOn:
-        - !Ref ControlPlaneSecurityGroupIngress
-        - !Ref NodeGroupStack
-        - !Ref AwsNodeIrsa
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -720,8 +714,8 @@ Resources:
         - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
-        OIDCProviderArn: !GetAtt EKSControlPlane.Outputs.OIDCProviderArn
-        OIDCProviderEndpoint: !GetAtt EKSControlPlane.Outputs.OIDCProviderEndpoint
+        OIDCProviderArn: !GetAtt AwsNodeIrsaStack.Outputs.OIDCProviderArn
+        OIDCProviderEndpoint: !GetAtt AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint
         EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
         VpcId: !Ref VPCID
   GenerateClusterName:
@@ -792,12 +786,9 @@ Resources:
   CalicoStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableCalico
+    DependsOn: [FunctionStack, ControlPlaneSecurityGroupIngress, NodeGroupStack, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !Ref FunctionStack
-        - !Ref ControlPlaneSecurityGroupIngress
-        - !Ref NodeGroupStack
-        - !Ref EbsStorageClass
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -812,12 +803,9 @@ Resources:
   RafaySysStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableRafaySys
+    DependsOn: [FunctionStack, ControlPlaneSecurityGroupIngress, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !Ref FunctionStack
-        - !Ref ControlPlaneSecurityGroupIngress
-        - !Ref NodeGroupStack
-        - !Ref EbsStorageClass
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -851,12 +839,9 @@ Resources:
   RancherStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableRancher
+    DependsOn: [FunctionStack, ControlPlaneSecurityGroupIngress, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !Ref FunctionStack
-        - !Ref ControlPlaneSecurityGroupIngress
-        - !Ref NodeGroupStack
-        - !Ref EbsStorageClass
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -875,12 +860,9 @@ Resources:
   MuleSoftRtfStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableMuleSoftRtf
+    DependsOn: [FunctionStack, ControlPlaneSecurityGroupIngress, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !Ref FunctionStack
-        - !Ref ControlPlaneSecurityGroupIngress
-        - !Ref NodeGroupStack
-        - !Ref EbsStorageClass
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -903,15 +885,12 @@ Resources:
   ConfigureProxy:
     Type: Custom::EnableProxy
     Condition: EnableProxy
-    DependsOn: EKSControlPlane
     Properties:
-      ServiceToken: !Sub
-        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${ClusterName}
-        - ClusterName: !If [GenerateClusterName, !Ref GenerateClusterName, !Ref EKSClusterName]
+      ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${EKSControlPlane.Outputs.EKSName}
       HttpProxy: !Ref HttpProxy
       VpcId: !Ref VPCID
-      ClusterName: !If [GenerateClusterName, !Ref GenerateClusterName, !Ref EKSClusterName]
-  AwsNodeIrsa:
+      ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+  AwsNodeIrsaStack:
     Type: AWS::CloudFormation::Stack
     DependsOn: NodeGroupStack
     Metadata:
@@ -985,9 +964,9 @@ Resources:
   # the EKS add-on implementation idea for the EBS CSI driver.
   # https://github.com/vmware-tap-on-public-cloud/quickstart-vmware-tanzu-application-platform/pull/15
     Type: AWS::EKS::Addon
+    DependsOn: [AwsNodeIrsaStack]
     Metadata:
       DependsOn:
-        - !Ref AwsNodeIrsa
         - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
     Properties:
       AddonName: aws-ebs-csi-driver
@@ -996,7 +975,7 @@ Resources:
       ServiceAccountRoleArn: !GetAtt AmazonEksEbsCsiDriverRole.Arn
   EbsStorageClass:
     Type: AWSQS::Kubernetes::Resource
-    DependsOn: AmazonEksEbsCsiDriverAddon
+    DependsOn: [AmazonEksEbsCsiDriverAddon]
     UpdateReplacePolicy: Delete
     DeletionPolicy: Retain
     Properties:
@@ -1062,7 +1041,7 @@ Resources:
     Type: AWSQS::Kubernetes::Resource
     UpdateReplacePolicy: Delete
     DeletionPolicy: Retain
-    DependsOn: AwsNodeIrsa
+    DependsOn: [AwsNodeIrsaStack]
     Properties:
       ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
       Namespace: kube-system
