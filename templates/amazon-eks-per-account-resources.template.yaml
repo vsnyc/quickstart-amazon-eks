@@ -673,11 +673,11 @@ Resources:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticFileSystemReadOnlyAccess
         - !Sub arn:${AWS::Partition}:iam::aws:policy/CloudWatchAgentServerPolicy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
-  CloudformationVPCRoleCreationRole:
+  CloudFormationVPCRoleCreationRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub
-        - ${Prefix}-CloudformationVPCRoleCreation
+        - ${Prefix}-CloudFormationVPCRoleCreation
         - Prefix: !FindInMap [Config, Prefix, Value]
       AssumeRolePolicyDocument:
         Version: 2012-10-17

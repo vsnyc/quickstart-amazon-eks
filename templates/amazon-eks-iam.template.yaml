@@ -168,7 +168,7 @@ Resources:
     Condition: CreateCloudFormationKubernetesVPCRole
     Properties:
       ServiceToken: !Sub
-        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-CloudformationVPCRoleCreation
+        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-CloudFormationVPCRoleCreation
         - Prefix: !FindInMap [Config, Prefix, Value]
       Partition: !Ref AWS::Partition
 Outputs:

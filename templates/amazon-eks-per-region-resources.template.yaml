@@ -168,6 +168,7 @@ Resources:
         - functions/packages/CleanupLoadBalancers/lambda.zip
         - functions/packages/CleanupSecurityGroupDependencies/lambda.zip
         - functions/packages/CleanupLambdas/lambda.zip
+        - functions/packages/CloudFormationVPCRoleCreation/lambda.zip
         - functions/packages/kubectlLayer/lambda.zip
         - functions/packages/crhelperLayer/lambda.zip
         - functions/packages/GetCallerArn/lambda.zip
@@ -767,18 +768,18 @@ Resources:
       Name: QuickStartParameterResolver
       Description: !Sub Resolves ssm parameters in templates ${RandomStr}
       FunctionName: !GetAtt ParameterResolverFunction.Arn
-  CloudformationVPCRoleCreationFunction:
+  CloudFormationVPCRoleCreationFunction:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Sub
-        - ${Prefix}-CloudformationVPCRoleCreation
+        - ${Prefix}-CloudFormationVPCRoleCreation
         - Prefix: !FindInMap [Config, Prefix, Value]
       Description: >-
-        Creates the CloudformationVPCRoleCreation if it does not yet exist.
+        Creates the CloudFormationVPCRoleCreation if it does not yet exist.
       Handler: index.handler
       Runtime: python3.8
       Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CloudformationVPCRoleCreation
+        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CloudFormationVPCRoleCreation
         - Prefix: !FindInMap [Config, Prefix, Value]
       Timeout: 900
       Code:
