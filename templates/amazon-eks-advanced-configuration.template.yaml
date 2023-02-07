@@ -405,6 +405,19 @@ Parameters:
     AllowedValues: [optional, required]
     Default: optional
 Mappings:
+  KubernetesVersion:
+  # https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
+  # You must use a kubectl version that is within one minor version
+  # difference of your Amazon EKS cluster control plane. For example, a 1.23
+  # kubectl client works with Kubernetes 1.22, 1.23 and 1.24 clusters.
+    '1.21':
+      KubectlVersion: 1.22.17/2023-01-11
+    '1.22':
+      KubectlVersion: 1.23.15/2023-01-11
+    '1.23':
+      KubectlVersion: 1.24.9/2023-01-11
+    '1.24':
+      KubectlVersion: 1.24.9/2023-01-11
 Resources:
   EKSPrivateAccessEndpointParameter:
     Type: AWS::SSM::Parameter
@@ -518,9 +531,14 @@ Resources:
       Type: String
       Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/controlplane/KubernetesVersion
       Value: !Sub '{ "Value": "${KubernetesVersion}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/controlplane/KubernetesVersion
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
+  KubectlVersionParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/controlplane/KubectlVersion
+      Value: !Sub
+        - '{ "Value": "${KubectlVersion}" }'
+        - KubectlVersion: !FindInMap [KubernetesVersion, !Ref KubernetesVersion, KubectlVersion]
   BastionOSParameter:
     Type: AWS::SSM::Parameter
     Properties:
