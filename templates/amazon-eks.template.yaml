@@ -329,7 +329,7 @@ Resources:
               - eks:DescribeUpdate
               - eks:ListUpdates
               - eks:UpdateClusterVersion
-            Resource: !Sub arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/${EKSControlPlane.Outputs.EKSName}
+            Resource: !GetAtt EKSControlPlane.Outputs.EksArn
       Roles:
         - !GetAtt IamStack.Outputs.BastionRole
   BastionStack:
