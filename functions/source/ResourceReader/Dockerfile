@@ -10,7 +10,6 @@ RUN pip install -t . -r ./requirements.txt && \
     find . -name "__pycache__"  -exec rm -rf {} \; | true && \
     rm requirements.txt && \
     curl -o awscliv2.zip https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip && \
-    find . -exec touch -t 202007010000.00 {} + && \
     zip -X -r lambda.zip ./
 
 CMD mkdir -p /output/ && mv lambda.zip /output/

@@ -9,7 +9,6 @@ RUN mkdir -p bin/ && \
     curl -o bin/aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/${VERSION}/bin/linux/amd64/aws-iam-authenticator && \
     chmod +x bin/kubectl && \
     chmod +x bin/aws-iam-authenticator && \
-    find . -exec touch -t 202007010000.00 {} + && \
     zip -X -r lambda.zip ./
 
 CMD mkdir -p /output/ && mv lambda.zip /output/

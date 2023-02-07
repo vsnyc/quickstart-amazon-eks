@@ -10,7 +10,6 @@ RUN mkdir -p python/ && \
     find . -name "*.pth"  -exec rm -rf {} \; | true && \
     find . -name "__pycache__"  -exec rm -rf {} \; | true && \
     rm requirements.txt && \
-    find . -exec touch -t 202007010000.00 {} + && \
     zip -X -r lambda.zip ./
 
 CMD mkdir -p /output/ && mv lambda.zip /output/
