@@ -89,6 +89,7 @@ Resources:
       SecurityGroups: [!Ref NodeGroupSecurityGroup]
       SubnetId: !Ref PrivateSubnet3ID
   EfsStorageClass:
+    # https://github.com/kubernetes-sigs/aws-efs-csi-driver#storage-class-parameters-for-dynamic-provisioning
     Type: AWSQS::Kubernetes::Resource
     UpdateReplacePolicy: Delete
     DeletionPolicy: Retain
