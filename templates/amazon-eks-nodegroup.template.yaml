@@ -906,7 +906,6 @@ Conditions:
   AddTaints: !Not [!Equals [!Ref Taints, '']]
   IsBottlerocket: !Equals [!Ref NodeGroupOS, Bottlerocket]
   UseCustomAmi: !Not [!Equals [!Ref CustomAmiId, '']]
-  UseSSmAmi: !Equals [!Ref CustomAmiId, '']
   CreateNodeGroup: !Equals [!Ref CreateNodeGroup, 'Yes']
   CreateManagedNodeGroup: !And [!Condition IsManaged, !Condition CreateNodeGroup]
   CreateUnmanagedNodeGroup: !And [!Condition IsUnmanaged, !Condition CreateNodeGroup]
@@ -978,30 +977,6 @@ Resources:
       AwsCliCommand: !Sub >-
         autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[? Tags[? Key==`eks:cluster-name` && Value==`${EKSClusterName}`] && Tags[? Key==`eks:nodegroup-name` && Value==`${ManagedNodeGroup.NodegroupName}`]] | [0] | {Id: AutoScalingGroupName}'
       IdField: Id
-  NodeImageId:
-    Type: Custom::CliQuery
-    Condition: UseSSmAmi
-    Properties:
-      ServiceToken: !Sub
-        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-ResourceReader
-        - Prefix: !FindInMap [Config, Prefix, Value]
-      AwsCliCommand: !Sub
-       - ssm get-parameter --name '${ParamPath}' --query Parameter
-       - ParamPath: !If
-         - IsAL2
-         - !Sub
-              - /aws/service/eks/optimized-ami/${KubernetesVersion}/${OS}/recommended/image_id
-              - OS: !If [IsArm, amazon-linux-2-arm64, !If [IsGpu, amazon-linux-2-gpu, amazon-linux-2]]
-         - !If
-           - IsWindows
-           - !Sub /aws/service/ami-windows-latest/Windows_Server-${WindowsVersion}-English-${WindowsEdition}-EKS_Optimized-${KubernetesVersion}/image_id
-           - !If
-              - IsBottlerocket
-              - !Sub
-                  - /aws/service/bottlerocket/aws-k8s-${KubernetesVersion}/${OS}/latest/image_id
-                  - OS: !If [IsArm, arm64, x86_64]
-              - !Ref AWS::NoValue
-      IdField: Value
   UnmanagedASG:
     Type: AWS::AutoScaling::AutoScalingGroup
     Condition: CreateUnmanagedNodeGroup
@@ -1089,7 +1064,23 @@ Resources:
             Description: String
             Groups:
               - !If [UseClusterNodeSecurityGroup, !Ref ClusterNodeSecurityGroup, !Ref NodeSecurityGroupId]
-        ImageId: !If [UseCustomAmi, !Ref CustomAmiId, !Ref NodeImageId]
+        ImageId: !If
+          - UseCustomAmi
+          - !Ref CustomAmiId
+          - !If
+              - IsAL2
+              - !Sub
+                  - '{{resolve:ssm:/aws/service/eks/optimized-ami/${KubernetesVersion}/${OS}/recommended/image_id}}'
+                  - OS: !If [IsArm, amazon-linux-2-arm64, !If [IsGpu, amazon-linux-2-gpu, amazon-linux-2]]
+              - !If
+                  - IsWindows
+                  - !Sub '{{resolve:ssm:/aws/service/ami-windows-latest/Windows_Server-${WindowsVersion}-English-${WindowsEdition}-EKS_Optimized-${KubernetesVersion}/image_id}}'
+                  - !If
+                      - IsBottlerocket
+                      - !Sub
+                          - '{{resolve:ssm:/aws/service/bottlerocket/aws-k8s-${KubernetesVersion}/${OS}/latest/image_id}}'
+                          - OS: !If [IsArm, arm64, x86_64]
+                      - !Ref AWS::NoValue
         InstanceType: !Ref NodeInstanceType
         UserData:
           Fn::Base64: !If
