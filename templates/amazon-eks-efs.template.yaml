@@ -105,6 +105,4 @@ Resources:
           provisioningMode: efs-ap
           fileSystemId: ${EFSFileSystem}
           directoryPerms: "${DirectoryPermissions}"
-          # gidRangeStart: "2000" # optional
-          # gidRangeEnd: "2147483647" # optional
           basePath: "/${ClusterName}" # optional
