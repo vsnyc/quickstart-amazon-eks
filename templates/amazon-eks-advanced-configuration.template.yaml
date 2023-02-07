@@ -2,12 +2,6 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   Configure advanced options for the Amazon EKS Quick Start (qs-1r0q2rlel).
 Metadata:
-  cfn-lint:
-    config:
-      ignore_checks: [W9002, W9003]
-      ignore_reasons:
-        W9002: Workload template
-        W9003: Workload template
   QuickStartDocumentation:
     EntrypointName: Configure advanced options
     Order: Index d
@@ -44,6 +38,10 @@ Metadata:
           - NodeInstanceType3
           - NodeInstanceType4
           - OnDemandPercentage
+          - WindowsNodeEdition
+          - WindowsNodeVersion
+          - EC2MetadataPutResponseHopLimit
+          - EC2MetadataHttpTokens
       - Label:
           default: Bastion configuration
         Parameters:
@@ -125,6 +123,14 @@ Metadata:
         default: On-demand percentage
       OnDemandBastionPercentage:
         default: On-demand percentage
+      WindowsNodeEdition:
+        default: Windows edition
+      WindowsNodeVersion:
+        default: Windows version
+      EC2MetadataPutResponseHopLimit:
+        default: Amazon EC2 metadata put response hop limit
+      EC2MetadataHttpTokens:
+        default: Amazon EC2 metadata HTTP tokens
 Parameters:
   ConfigSetName:
     Type: String
