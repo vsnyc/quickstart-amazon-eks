@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description:
+Description: >-
   Configure advanced options for the Amazon EKS Quick Start (qs-1r0q2rlel).
 Metadata:
   cfn-lint:
@@ -136,8 +136,8 @@ Parameters:
     Type: String
     Description: >-
       Configure access to the Kubernetes API server endpoint from within your
-      VPC. If this is set to "Disabled," "EKS public access endpoint" must be
-      set to "Enabled."
+      VPC. If this is set to "Disabled", "EKS public access endpoint" must be
+      set to "Enabled".
     AllowedValues: [Enabled, Disabled]
     Default: Enabled
   EKSClusterLoggingTypes:
@@ -167,7 +167,7 @@ Parameters:
     Type: List<String>
     Description: >-
       These values are used only if the EKSPublicAccessEndpoint parameter is
-      set to "Enabled." These are the public CIDR IP ranges permitted to access
+      set to "Enabled". These are the public CIDR IP ranges permitted to access
       the Kubernetes API. They cannot contain private IP ranges.
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x.
@@ -194,6 +194,7 @@ Parameters:
     Default: 1.24
   BastionOS:
     Type: String
+    Description: Linux distribution of the bastion host.
     AllowedValues:
       - Amazon-Linux2-HVM
       - Amazon-Linux2-HVM-ARM
@@ -205,7 +206,6 @@ Parameters:
       - Ubuntu-Server-22.04-LTS-HVM-ARM
       - SUSE-SLES-15-HVM
     Default: Amazon-Linux2-HVM
-    Description: Linux distribution of the bastion host.
   BastionBootstrapScript:
     Type: String
     Description: >-
@@ -221,13 +221,13 @@ Parameters:
       (example: https://bucket/key/file.txt) or empty.
     Default: ''
   BastionInstanceType:
-    Default: t3.micro
     Type: String
     Description: Instance type for the bastion host.
+    Default: t3.micro
   BastionRootVolumeSize:
     Type: Number
-    Default: 10
     Description: Size in GB for the root EBS volume.
+    Default: 10
   BastionIAMRoleName:
     Type: String
     Description: >-
@@ -255,30 +255,30 @@ Parameters:
     Type: String
     AllowedValues: [generalPurpose, maxIO]
     Description: >-
-      Only applies if the EfsStorageClass parameter is set to "Enabled." Choose
+      Only applies if the EfsStorageClass parameter is set to "Enabled". Choose
       "maxIO" mode to provide greater IOPS with an increased latency.
     Default: generalPurpose
   EfsThroughputMode:
     Type: String
     Description: >-
-      Only applies if the EfsStorageClass parameter is set to "Enabled." For
+      Only applies if the EfsStorageClass parameter is set to "Enabled". For
       throughput that is not dependent on the amount of data stored in the file
-      system, choose "provisioned."
+      system, choose "provisioned".
     AllowedValues: [bursting, provisioned]
     Default: bursting
   EfsProvisionedThroughputInMibps:
     Type: Number
     Description: >-
-      Only applies if the EfsStorageClass parameter is set to "Enabled." If
+      Only applies if the EfsStorageClass parameter is set to "Enabled". If
       "EFS throughput mode" is set, the "provisioned" value must be in the
-      0-1024 range. If it's set to "bursting," this must be set to 0.
+      0-1024 range. If it's set to "bursting", this must be set to 0.
     MinValue: 0
     MaxValue: 1024
     Default: 0
   OnDemandPercentage:
     Type: Number
     Description: >-
-      Only applies if the NodeGroupType parameter is set to "Unmanaged." Set
+      Only applies if the NodeGroupType parameter is set to "Unmanaged". Set
       the percentage of on-demand instances and spot instances. With a default
       of 100, the percentages are 100% for on-demand instances and 0% for spot
       instances.
@@ -327,12 +327,12 @@ Parameters:
     AllowedPattern: (?!^\$Latest$|^\$Default$)
     Default: ''
   Labels:
-    Default: ''
     Type: String
     Description: >-
       (Optional) Comma-separated list of key-value pairs that represent node
       labels to assign to the node group. Ignore this if "Custom launch
       template" is provided.
+    Default: ''
   Taints:
     Type: String
     Description: >-
