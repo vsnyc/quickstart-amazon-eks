@@ -201,7 +201,7 @@ Resources:
       Code:
         S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/CleanupLoadBalancers/lambda.zip
-  CleanupLambdasLambda:
+  CleanupLambdasFunction:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: eks-quickstart-CleanupLambdas
@@ -451,7 +451,7 @@ Resources:
               - cloudwatch:ListMetrics  # required if this role is also used for Resource type logging
               - cloudwatch:PutMetricData  # required if this role is also used for Resource type logging
             Resource: '*'
-  CleanupSecurityGroupDependenciesLambda:
+  CleanupSecurityGroupDependenciesFunction:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: eks-quickstart-CleanupSecurityGroupDependencies
@@ -465,7 +465,7 @@ Resources:
       Code:
         S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/CleanupSecurityGroupDependencies/lambda.zip
-  DeleteBucketContentsLambda:
+  DeleteBucketContentsFunction:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: eks-quickstart-DeleteBucketContents
