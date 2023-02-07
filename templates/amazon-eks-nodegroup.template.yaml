@@ -956,15 +956,6 @@ Resources:
       AwsCliCommand: !Sub >-
         eks describe-cluster --name ${EKSClusterName} --query '{SGID: cluster.resourcesVpcConfig.clusterSecurityGroupId}'
       IdField: SGID
-  EksClusterSecurityGroupId:
-    Type: Custom::CliQuery
-    Properties:
-      ServiceToken: !Sub
-        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-ResourceReader
-        - Prefix: !FindInMap [Config, Prefix, Value]
-      AwsCliCommand: !Sub >-
-        eks describe-cluster --name ${EKSClusterName} --query '{Id: cluster.resourcesVpcConfig.clusterSecurityGroupId}'
-      IdField: Id
   KubernetesVersion:
     Type: Custom::CliQuery
     Properties:
