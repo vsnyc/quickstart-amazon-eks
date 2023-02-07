@@ -2,8 +2,9 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: Deploys an EKS cluster into an existing VPC (qs-1p7nknoi6).
 Transform: [QuickStartParameterResolver]
 # QuickStartParameterResolver interpolates the ~~/<ConfigSetName>/*~~ values
-# below into the values of the resolved SSM parameter via the ParameterResolver
-# macro resource in the amazon-eks-per-region-resources.template.yaml template.
+# below into the values of the resolved SSM parameter via the
+# QuickStartParameterResolver macro resource in the
+# amazon-eks-per-region-resources.template.yaml template.
 Metadata:
   cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
   ConfigSetName: !Ref ConfigSetName
