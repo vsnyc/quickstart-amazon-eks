@@ -2,17 +2,11 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   Shared resources required by all Amazon EKS Quick Start stacks in this
   account (qs-1r0qgtn7j).
-Mappings:
-  Config:
-    Prefix: { Value: eks-quickstart }
-    ParameterPrefix: { Value: /quickstart/amazon-eks }
 Resources:
   CopyZipsRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-CopyZips
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-CopyZips
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -33,9 +27,7 @@ Resources:
   GenerateClusterNameRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-GenerateClusterName
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-GenerateClusterName
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -48,9 +40,7 @@ Resources:
   ResourceReaderRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-ResourceReader
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-ResourceReader
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -64,9 +54,7 @@ Resources:
   CreateVpcRoleRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-CreateVpcRole
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-CreateVpcRole
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -95,9 +83,7 @@ Resources:
   DeleteBucketContentsRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-DeleteBucketContents
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-DeleteBucketContents
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -110,9 +96,7 @@ Resources:
   ControlPlaneRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-ControlPlane
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-ControlPlane
       Policies:
         - PolicyName: ec2-describe-policy
           PolicyDocument:
@@ -147,9 +131,7 @@ Resources:
               deployment and as such resource names that will only be created
               in the future are unknown.
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-CleanupLoadBalancers
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-CleanupLoadBalancers
       AssumeRolePolicyDocument:
         Statement:
           - Action: [sts:AssumeRole]
@@ -186,9 +168,7 @@ Resources:
   CleanupSecurityGroupDependenciesRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-CleanupSecurityGroupDependencies
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-CleanupSecurityGroupDependencies
       AssumeRolePolicyDocument:
         Statement:
           - Action: [sts:AssumeRole]
@@ -234,9 +214,7 @@ Resources:
               deployment and as such resource names that will only be created
               in the future are unknown.
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-CleanupLambdas
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-CleanupLambdas
       AssumeRolePolicyDocument:
         Statement:
           - Action: [sts:AssumeRole]
@@ -274,9 +252,7 @@ Resources:
               deployment and as such resource names that will only be created
               in the future are unknown.
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-GetCallerArn
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-GetCallerArn
       AssumeRolePolicyDocument:
         Statement:
           - Action: [sts:AssumeRole]
@@ -313,9 +289,7 @@ Resources:
               deployment and as such resource names that will only be created
               in the future are unknown.
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-RegisterType
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-RegisterType
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -363,9 +337,7 @@ Resources:
               deployment and as such resource names that will only be created
               in the future are unknown.
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-NodeSG
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-NodeSG
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       AssumeRolePolicyDocument:
@@ -387,9 +359,7 @@ Resources:
   FargateExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-FargateExecution
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-FargateExecution
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -412,9 +382,7 @@ Resources:
               deployment and as such resource names that will only be created
               in the future are unknown.
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-FargateProfile
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-FargateProfile
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -443,9 +411,7 @@ Resources:
   QuickStartParameterResolverRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-QuickStartParameterResolver
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-QuickStartParameterResolver
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -467,9 +433,7 @@ Resources:
                   - ssm:GetParameters
                   - ssm:GetParameterHistory
                   - ssm:GetParameter
-                Resource: !Sub
-                  - arn:${AWS::Partition}:ssm:*:${AWS::AccountId}:parameter${ParameterPrefix}/*
-                  - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
+                Resource: !Sub arn:${AWS::Partition}:ssm:*:${AWS::AccountId}:parameter/quickstart/amazon-eks/*
   UnmanagedNodeInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
@@ -496,9 +460,7 @@ Resources:
               deployment and as such resource names that will only be created
               in the future are unknown.
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-UnmanagedNodeInstance
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-UnmanagedNodeInstance
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -537,9 +499,7 @@ Resources:
               deployment and as such resource names that will only be created
               in the future are unknown.
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-ManagedNodeInstance
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-ManagedNodeInstance
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -569,9 +529,7 @@ Resources:
   CloudFormationVPCRoleCreationRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub
-        - ${Prefix}-CloudFormationVPCRoleCreation
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      RoleName: eks-quickstart-CloudFormationVPCRoleCreation
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:

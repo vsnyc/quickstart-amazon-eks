@@ -405,153 +405,118 @@ Parameters:
     AllowedValues: [optional, required]
     Default: optional
 Mappings:
-  Config:
-    ParameterPrefix: { Value: /quickstart/amazon-eks }
 Resources:
   EKSPrivateAccessEndpointParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/controlplane/EKSPrivateAccessEndpoint
       Value: !Sub '{ "Value": "${EKSPrivateAccessEndpoint}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/controlplane/EKSPrivateAccessEndpoint
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EKSClusterLoggingTypesParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/controlplane/EKSClusterLoggingTypes
       Value: !Sub
-      - '{ "Value": "${JoinedEKSClusterLoggingTypes}" }'
-      - JoinedEKSClusterLoggingTypes: !Join [',', !Ref EKSClusterLoggingTypes]
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/controlplane/EKSClusterLoggingTypes
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
+        - '{ "Value": "${JoinedEKSClusterLoggingTypes}" }'
+        - JoinedEKSClusterLoggingTypes: !Join [',', !Ref EKSClusterLoggingTypes]
   EKSEncryptSecretsParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/controlplane/EKSEncryptSecrets
       Value: !Sub '{ "Value": "${EKSEncryptSecrets}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/controlplane/EKSEncryptSecrets
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EKSEncryptSecretsKmsKeyArnParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/controlplane/EKSEncryptSecretsKmsKeyArn
       Value: !Sub '{ "Value": "${EKSEncryptSecretsKmsKeyArn}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/controlplane/EKSEncryptSecretsKmsKeyArn
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EKSPublicAccessCIDRsParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/controlplane/EKSPublicAccessCIDRs
       Value: !Sub
         - '{ "Value": "${JoinedEKSPublicAccessCIDRs}" }'
         - JoinedEKSPublicAccessCIDRs: !Join [',', !Ref EKSPublicAccessCIDRs]
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/controlplane/EKSPublicAccessCIDRs
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   NodeGroupNameParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/NodeGroupName
       Value: !Sub '{ "Value": "${NodeGroupName}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeGroupName
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   NodeVolumeSizeParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/NodeVolumeSize
       Value: !Sub '{ "Value": "${NodeVolumeSize}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeVolumeSize
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   CustomAmiIdParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/CustomAmiId
       Value: !Sub '{ "Value": "${CustomAmiId}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/CustomAmiId
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   NodeSecurityGroupIdParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/NodeSecurityGroupId
       Value: !Sub '{ "Value": "${NodeSecurityGroupId}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeSecurityGroupId
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   TaintsParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/Taints
       Value: !Sub '{ "Value": "${Taints}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/Taints
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   LabelsParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/Labels
       Value: !Sub '{ "Value": "${Labels}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/Labels
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   LaunchTemplateVersionParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/LaunchTemplateVersion
       Value: !Sub '{ "Value": "${LaunchTemplateVersion}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/LaunchTemplateVersion
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   LaunchTemplateIdParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/LaunchTemplateId
       Value: !Sub '{ "Value": "${LaunchTemplateId}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/LaunchTemplateId
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   NodeInstanceType2Parameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/NodeInstanceType2
       Value: !Sub '{ "Value": "${NodeInstanceType2}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeInstanceType2
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   NodeInstanceType3Parameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/NodeInstanceType3
       Value: !Sub '{ "Value": "${NodeInstanceType3}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeInstanceType3
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   NodeInstanceType4Parameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/NodeInstanceType4
       Value: !Sub '{ "Value": "${NodeInstanceType4}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/NodeInstanceType4
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   OnDemandPercentageParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/OnDemandPercentage
       Value: !Sub '{ "Value": "${OnDemandPercentage}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/OnDemandPercentage
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   KubernetesVersionParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/controlplane/KubernetesVersion
       Value: !Sub '{ "Value": "${KubernetesVersion}" }'
       Name: !Sub
         - ${ParameterPrefix}/${ConfigSetName}/controlplane/KubernetesVersion
@@ -560,131 +525,99 @@ Resources:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/bastion/BastionOS
       Value: !Sub '{ "Value": "${BastionOS}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionOS
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionBootstrapScriptParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/bastion/BastionBootstrapScript
       Value: !Sub '{ "Value": "${BastionBootstrapScript}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionBootstrapScript
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionInstanceTypeParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/bastion/BastionInstanceType
       Value: !Sub '{ "Value": "${BastionInstanceType}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionInstanceType
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionRootVolumeSizeParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/bastion/BastionRootVolumeSize
       Value: !Sub '{ "Value": "${BastionRootVolumeSize}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionRootVolumeSize
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionIAMRoleNameParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/bastion/BastionIAMRoleName
       Value: !Sub '{ "Value": "${BastionIAMRoleName}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionIAMRoleName
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionEnableX11ForwardingParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/bastion/BastionEnableX11Forwarding
       Value: !Sub '{ "Value": "${BastionEnableX11Forwarding}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionEnableX11Forwarding
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionEnableTCPForwardingParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/bastion/BastionEnableTCPForwarding
       Value: !Sub '{ "Value": "${BastionEnableTCPForwarding}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionEnableTCPForwarding
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   BastionVariablesParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/bastion/BastionVariables
       Value: !Sub '{ "Value": "${BastionVariables}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/bastion/BastionVariables
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   OnDemandBastionPercentageParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/bastion/OnDemandPercentage
       Value: !Sub '{ "Value": "${OnDemandBastionPercentage}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/bastion/OnDemandPercentage
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EfsPerformanceModeParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/efs/EfsPerformanceMode
       Value: !Sub '{ "Value": "${EfsPerformanceMode}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/efs/EfsPerformanceMode
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EfsThroughputModeParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/efs/EfsThroughputMode
       Value: !Sub '{ "Value": "${EfsThroughputMode}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/efs/EfsThroughputMode
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EfsProvisionedThroughputInMibpsParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/efs/EfsProvisionedThroughputInMibps
       Value: !Sub '{ "Value": "${EfsProvisionedThroughputInMibps}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/efs/EfsProvisionedThroughputInMibps
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   WindowsNodeEditionParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/windows-nodegroup/WindowsNodeEdition
       Value: !Sub '{ "Value": "${WindowsNodeEdition}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/windows-nodegroup/WindowsNodeEdition
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   WindowsNodeVersionParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/windows-nodegroup/WindowsNodeVersion
       Value: !Sub '{ "Value": "${WindowsNodeVersion}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/windows-nodegroup/WindowsNodeVersion
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EC2MetadataPutResponseHopLimitParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/EC2MetadataPutResponseHopLimit
       Value: !Sub '{ "Value": "${EC2MetadataPutResponseHopLimit}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/EC2MetadataPutResponseHopLimit
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
   EC2MetadataHttpTokensParameter:
     Type: AWS::SSM::Parameter
     Properties:
       Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/EC2MetadataHttpTokens
       Value: !Sub '{ "Value": "${EC2MetadataHttpTokens}" }'
-      Name: !Sub
-        - ${ParameterPrefix}/${ConfigSetName}/default-nodegroup/EC2MetadataHttpTokens
-        - ParameterPrefix: !FindInMap [Config, ParameterPrefix, Value]
 Outputs:
   ConfigSetName:
-    Description: Config set name
+    Description: Config set name.
     Value: !Ref ConfigSetName

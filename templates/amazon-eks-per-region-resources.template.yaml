@@ -50,23 +50,16 @@ Parameters:
     Default: ''
 Conditions:
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, aws-quickstart]
-Mappings:
-  Config:
-    Prefix: { Value: eks-quickstart }
 Resources:
   LambdaZipsBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub
-        - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      BucketName: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
   CopyZipsRolePolicy:
     Type: AWS::IAM::Policy
     Properties:
-      Roles: [!Sub ['${Prefix}-CopyZips', { Prefix: !FindInMap [Config, Prefix, Value] }]]
-      PolicyName: !Sub
-        - ${Prefix}-lambda-zip-bucket-access-${AWS::Region}
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Roles: [eks-quickstart-CopyZips]
+      PolicyName: !Sub eks-quickstart-lambda-zip-bucket-access-${AWS::Region}
       PolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -78,10 +71,8 @@ Resources:
   DeleteBucketContentsRolePolicy:
     Type: AWS::IAM::Policy
     Properties:
-      Roles: [!Sub ['${Prefix}-DeleteBucketContents', { Prefix: !FindInMap [Config, Prefix, Value] }]]
-      PolicyName: !Sub
-        - ${Prefix}-delete-bucket-contents-${AWS::Region}
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Roles: [eks-quickstart-DeleteBucketContents]
+      PolicyName: !Sub eks-quickstart-delete-bucket-contents-${AWS::Region}
       PolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -105,13 +96,11 @@ Resources:
     Type: AWS::Lambda::Function
     DependsOn: CopyZipsRolePolicy
     Properties:
-      FunctionName: !Sub ['${Prefix}-CopyZips', {Prefix: !FindInMap [Config, Prefix, Value]}]
+      FunctionName: eks-quickstart-CopyZips
       Description: Copies objects from a source S3 bucket to a destination.
       Handler: index.handler
       Runtime: python3.8
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CopyZips
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-CopyZips
       Timeout: 900
       Code:
         S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
@@ -173,7 +162,7 @@ Resources:
     Type: AWS::Lambda::LayerVersion
     DependsOn: CopyZips
     Properties:
-      LayerName: !Sub ['${Prefix}-Kubectl', { Prefix: !FindInMap [Config, Prefix, Value] }]
+      LayerName: eks-quickstart-Kubectl
       Description: !Sub kubectl layer - ${RandomStr}
       CompatibleRuntimes: [python3.7, python3.8]
       Content:
@@ -183,7 +172,7 @@ Resources:
     Type: AWS::Lambda::LayerVersion
     DependsOn: CopyZips
     Properties:
-      LayerName: !Sub ['${Prefix}-AwsCli', { Prefix: !FindInMap [Config, Prefix, Value] }]
+      LayerName: eks-quickstart-AwsCli
       Description: !Sub aws cli layer - ${RandomStr}
       Content:
         S3Bucket: !Ref LambdaZipsBucket
@@ -192,7 +181,7 @@ Resources:
     Type: AWS::Lambda::LayerVersion
     DependsOn: CopyZips
     Properties:
-      LayerName: !Sub ['${Prefix}-CrHelper', { Prefix: !FindInMap [Config, Prefix, Value] }]
+      LayerName: eks-quickstart-CrHelper
       Description: !Sub crhelper layer - ${RandomStr}
       CompatibleRuntimes: [python3.7, python3.8]
       Content:
@@ -201,72 +190,56 @@ Resources:
   CleanupLoadBalancersFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub ['${Prefix}-CleanupLoadBalancers', { Prefix: !FindInMap [Config, Prefix, Value] }]
+      FunctionName: eks-quickstart-CleanupLoadBalancers
       Handler: index.handler
       MemorySize: 128
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CleanupLoadBalancers
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-CleanupLoadBalancers
       Runtime: python3.8
       Timeout: 900
       Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/CleanupLoadBalancers/lambda.zip
   CleanupLambdasLambda:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub ['${Prefix}-CleanupLambdas', { Prefix: !FindInMap [Config, Prefix, Value] }]
+      FunctionName: eks-quickstart-CleanupLambdas
       Handler: index.handler
       MemorySize: 128
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CleanupLambdas
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-CleanupLambdas
       Runtime: python3.8
       Timeout: 900
       Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/CleanupLambdas/lambda.zip
   GenerateClusterNameFunction:
     Type: AWS::Lambda::Function
     DependsOn: CopyZips
     Properties:
-      FunctionName: !Sub ['${Prefix}-GenerateClusterName', { Prefix: !FindInMap [Config, Prefix, Value] }]
+      FunctionName: eks-quickstart-GenerateClusterName
       Handler: index.handler
       Runtime: python3.8
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-GenerateClusterName
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-GenerateClusterName
       Timeout: 900
       Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/GenerateClusterName/lambda.zip
   RegisterTypeFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub ['${Prefix}-RegisterType', { Prefix: !FindInMap [Config, Prefix, Value] }]
+      FunctionName: eks-quickstart-RegisterType
       Handler: index.handler
       MemorySize: 128
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-RegisterType
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-RegisterType
       Layers: [!Ref CrHelperLayer]
       Runtime: python3.8
       Timeout: 900
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/RegisterType/lambda.zip
   RegisterEksClusterType:
     Type: Custom::RegisterType
@@ -284,9 +257,7 @@ Resources:
       Version: 3.1.4
       RandomStr: !Ref RandomStr
       TypeName: AWSQS::EKS::Cluster
-      SchemaHandlerPackage: !Sub
-        - s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/EksClusterResource/awsqs-eks-cluster.zip
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      SchemaHandlerPackage: !Sub s3://eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/EksClusterResource/awsqs-eks-cluster.zip
       IamPolicy:
         Version: 2012-10-17
         Statement:
@@ -338,9 +309,7 @@ Resources:
       TypeName: AWSQS::Kubernetes::Helm
       Version: 3.1.2
       RandomStr: !Ref RandomStr
-      SchemaHandlerPackage: !Sub
-        - s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      SchemaHandlerPackage: !Sub s3://eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip
       IamPolicy:
         Version: 2012-10-17
         Statement:
@@ -390,9 +359,7 @@ Resources:
       TypeName: AWSQS::Kubernetes::Get
       Version: 3.2.0
       RandomStr: !Ref RandomStr
-      SchemaHandlerPackage: !Sub
-        - s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_get.zip
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      SchemaHandlerPackage: !Sub s3://eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_get.zip
       IamPolicy:
         Version: 2012-10-17
         Statement:
@@ -448,9 +415,7 @@ Resources:
       TypeName: AWSQS::Kubernetes::Resource
       Version: 3.2.0
       RandomStr: !Ref RandomStr
-      SchemaHandlerPackage: !Sub
-        - s3://${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_apply.zip
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      SchemaHandlerPackage: !Sub s3://eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_apply.zip
       IamPolicy:
         Version: 2012-10-17
         Statement:
@@ -489,140 +454,100 @@ Resources:
   CleanupSecurityGroupDependenciesLambda:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub
-        - ${Prefix}-CleanupSecurityGroupDependencies
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      FunctionName: eks-quickstart-CleanupSecurityGroupDependencies
       Handler: index.handler
       MemorySize: 128
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CleanupSecurityGroupDependencies
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-CleanupSecurityGroupDependencies
       Layers: [!Ref CrHelperLayer]
       Runtime: python3.8
       Timeout: 900
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/CleanupSecurityGroupDependencies/lambda.zip
   DeleteBucketContentsLambda:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub
-        - ${Prefix}-DeleteBucketContents
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      FunctionName: eks-quickstart-DeleteBucketContents
       Handler: index.handler
       MemorySize: 128
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-DeleteBucketContents
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-DeleteBucketContents
       Runtime: python3.8
       Timeout: 900
       Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/DeleteBucketContents/lambda.zip
   GetCallerArnFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub
-        - ${Prefix}-GetCallerArn
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      FunctionName: eks-quickstart-GetCallerArn
       Handler: index.handler
       MemorySize: 128
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-GetCallerArn
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-GetCallerArn
       Runtime: python3.8
       Timeout: 900
       Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/GetCallerArn/lambda.zip
   NodeSGFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub ['${Prefix}-NodeSG', { Prefix: !FindInMap [Config, Prefix, Value] }]
+      FunctionName: eks-quickstart-NodeSG
       Description: Fetches the Security Group ID for a given EKS Managed Node Group
       Handler: index.handler
       Runtime: python3.8
-      Role:  !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-NodeSG
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role:  !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-NodeSG
       Timeout: 900
       Layers: [!Ref CrHelperLayer]
       Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/NodeSG/lambda.zip
-  FargateProfileLambda:
+  FargateProfileFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub
-        - ${Prefix}-FargateProfile
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      FunctionName: eks-quickstart-FargateProfile
       Handler: index.handler
       MemorySize: 512
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-FargateProfile
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-FargateProfile
       Runtime: python3.8
       Timeout: 900
       Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/FargateProfile/lambda.zip
   ResourceReaderFunction:
     DependsOn: CopyZips
     Type: AWS::Lambda::Function
     Properties:
       MemorySize: 512
-      FunctionName: !Sub
-        - ${Prefix}-ResourceReader
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      FunctionName: eks-quickstart-ResourceReader
       Description: >-
         Performs an AWS CLI command and returns the json result. Used to get
         the state of existing resources.
       Handler: index.handler
       Runtime: python3.8
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-ResourceReader
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-ResourceReader
       Timeout: 900
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/ResourceReader/lambda.zip
   QuickStartParameterResolverFunction:
     Type: AWS::Lambda::Function
     DependsOn: CopyZips
     Properties:
-      FunctionName: !Sub
-        - ${Prefix}-QuickStartParameterResolver
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      FunctionName: eks-quickstart-QuickStartParameterResolver
       Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/QuickStartParameterResolver/lambda.zip
       Handler: index.handler
       Runtime: python3.8
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-QuickStartParameterResolver
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-QuickStartParameterResolver
       Timeout: 900
   QuickStartParameterResolverFunctionPermissions:
     Type: AWS::Lambda::Permission
@@ -640,19 +565,13 @@ Resources:
     Type: AWS::Lambda::Function
     DependsOn: CopyZips
     Properties:
-      FunctionName: !Sub
-        - ${Prefix}-CloudFormationVPCRoleCreation
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      FunctionName: eks-quickstart-CloudFormationVPCRoleCreation
       Description: >-
         Creates the CloudFormationVPCRoleCreation if it does not yet exist.
       Handler: index.handler
       Runtime: python3.8
-      Role: !Sub
-        - arn:${AWS::Partition}:iam::${AWS::AccountId}:role/${Prefix}-CloudFormationVPCRoleCreation
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-CloudFormationVPCRoleCreation
       Timeout: 900
       Code:
-        S3Bucket: !Sub
-          - ${Prefix}-lambdazips-${AWS::Region}-${AWS::AccountId}
-          - Prefix: !FindInMap [Config, Prefix, Value]
+        S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/CloudFormationVPCRoleCreation/lambda.zip

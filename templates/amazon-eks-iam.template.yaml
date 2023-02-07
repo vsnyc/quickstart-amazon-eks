@@ -23,9 +23,6 @@ Conditions:
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, aws-quickstart]
   CreateCloudFormationKubernetesVPCRole: !Not
     - !Equals [!Ref CloudFormationKubernetesVPCRoleExists, CloudFormation-Kubernetes-VPC]
-Mappings:
-  Config:
-    Prefix: { Value: eks-quickstart }
 Resources:
   KubernetesAdminRole:
     Type: AWS::IAM::Role
@@ -167,9 +164,7 @@ Resources:
     Type: Custom::CreateCloudFormationKubernetesVPCRole
     Condition: CreateCloudFormationKubernetesVPCRole
     Properties:
-      ServiceToken: !Sub
-        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-CloudFormationVPCRoleCreation
-        - Prefix: !FindInMap [Config, Prefix, Value]
+      ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-CloudFormationVPCRoleCreation
       Partition: !Ref AWS::Partition
 Outputs:
   KubernetesAdminRoleArn:

@@ -16,9 +16,6 @@ Parameters:
   QSS3KeyPrefix:
     Type: String
     AllowedPattern: ^[0-9a-zA-Z-/.]*$
-Mappings:
-  Config:
-    Prefix: { Value: eks-quickstart }
 Conditions:
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, aws-quickstart]
 Resources:
@@ -85,4 +82,4 @@ Resources:
         - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Version: !Ref Version
-      Key: !FindInMap [Config, Prefix, Value]
+      Key: eks-quickstart

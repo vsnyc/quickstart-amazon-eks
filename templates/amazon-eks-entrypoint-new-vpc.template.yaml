@@ -1248,14 +1248,11 @@ Conditions:
     - !Equals [!Ref NumberOfAZs, 2]
     - !Equals [!Ref NumberOfAZs, 3]
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, aws-quickstart]
-Mappings:
-  Config:
-    Prefix: { Value: eks-quickstart }
 Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Metadata:
-      cfn-lint: { config: { ignore_checks: [ W9901 ] } }
+      cfn-lint: { config: { ignore_checks: [W9901] } }
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml
