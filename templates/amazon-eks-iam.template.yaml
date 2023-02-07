@@ -32,8 +32,9 @@ Resources:
           ignore_checks: [EIAMPolicyWildcardResource]
           ignore_reasons:
             EIAMPolicyWildcardResource: >-
-              Resources are created after stack is created by k8s/helm/eks
-              resource types, and as such are unkown at role cretion time.
+              Action eks:DescribeAddonConfiguration requires a wildcard
+              resource. As of 2023-02-05, cfn-lint falsely reports this as an
+              issue.
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
@@ -49,78 +50,92 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
+                  - eks:CreateCluster
+                  - eks:DescribeAddonConfiguration
+                  - eks:DescribeAddonVersions
+                  - eks:ListClusters
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - eks:AccessKubernetesApi
+                  - eks:AssociateEncryptionConfig
+                  - eks:AssociateIdentityProviderConfig
+                  - eks:CreateAddon
+                  - eks:CreateFargateProfile
+                  - eks:CreateNodegroup
+                  - eks:DeleteAddon
+                  - eks:DeleteCluster
+                  - eks:DeleteNodegroup
+                  - eks:DeleteFargateProfile
+                  - eks:DescribeAddon
+                  - eks:DescribeCluster
                   - eks:DescribeFargateProfile
+                  - eks:DescribeIdentityProviderConfig
+                  - eks:DescribeNodegroup
+                  - eks:DescribeUpdate
+                  - eks:DisassociateIdentityProviderConfig
+                  - eks:ListAddons
+                  - eks:ListFargateProfiles
+                  - eks:ListIdentityProviderConfigs
+                  - eks:ListNodegroups
                   - eks:ListTagsForResource
                   - eks:ListUpdates
-                  - eks:DisassociateIdentityProviderConfig
-                  - eks:DescribeCluster
-                  - eks:CreateAddon
-                  - eks:DeleteAddon
-                  - eks:UntagResource
-                  - eks:ListClusters
-                  - eks:UpdateClusterVersion
-                  - eks:AssociateEncryptionConfig
-                  - eks:UpdateNodegroupConfig
-                  - eks:DeleteCluster
-                  - eks:DeleteFargateProfile
-                  - eks:UpdateClusterConfig
-                  - eks:DescribeAddonVersions
-                  - eks:DescribeUpdate
-                  - eks:CreateCluster
-                  - eks:DescribeIdentityProviderConfig
-                  - eks:ListAddons
-                  - eks:DescribeAddon
-                  - eks:UpdateNodegroupVersion
-                  - eks:AccessKubernetesApi
-                  - eks:AssociateIdentityProviderConfig
-                  - eks:DeleteNodegroup
-                  - eks:CreateFargateProfile
-                  - eks:UpdateAddon
                   - eks:TagResource
-                  - eks:ListNodegroups
-                  - eks:ListIdentityProviderConfigs
-                  - eks:CreateNodegroup
-                  - eks:ListFargateProfiles
-                  - eks:DescribeNodegroup
+                  - eks:UntagResource
+                  - eks:UpdateAddon
+                  - eks:UpdateClusterConfig
+                  - eks:UpdateClusterVersion
+                  - eks:UpdateNodegroupConfig
+                  - eks:UpdateNodegroupVersion
+                Resource:
+                  - !Sub arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:addon/*/*/*
+                  - !Sub arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:cluster/*
+                  - !Sub arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:fargateprofile/*/*/*
+                  - !Sub arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:identityproviderconfig/*/*/*/*
+                  - !Sub arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/*/*/*
+              - Effect: Allow
+                Action:
+                  - ec2:DescribeNetworkInterfaces
                   - ec2:DescribeSecurityGroups
                   - ec2:DescribeSubnets
                   - ec2:DescribeVpcs
-                  - lambda:InvokeFunction
-                  - s3:GetObject
                 Resource: '*'
+              - Effect: Allow
+                Action:
+                  - ec2:CreateNetworkInterface
+                  - ec2:DeleteNetworkInterface
+                Resource:
+                  - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:*/*
+                    # https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html#vpc-permissions
+              - Effect: Allow
+                Action:
+                  - events:DeleteRule
+                  - events:PutRule
+                  - events:PutTargets
+                  - events:RemoveTargets
+                Resource:
+                  - !Sub arn:${AWS::Partition}:events:${AWS::Region}:${AWS::AccountId}:rule/* # Default event bus
+                  - !Sub arn:${AWS::Partition}:events:${AWS::Region}:${AWS::AccountId}:rule/*/* # Custom event bus
+              - Effect: Allow
+                Action:
+                  - lambda:AddPermission
+                  - lambda:InvokeFunction
+                  - lambda:RemovePermission
+                Resource: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:*
               - Effect: Allow
                 Action:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                  - ec2:CreateNetworkInterface
-                  - ec2:DescribeNetworkInterfaces
-                  - ec2:DeleteNetworkInterface
                 Resource:
-                  - '*'
+                  - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*
+                  - !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:log-stream:*
               - Effect: Allow
-                Action:
-                  - lambda:AddPermission
-                  - lambda:RemovePermission
-                Resource:  '*'
-              - Effect: Allow
-                Action:
-                  - events:PutRule
-                  - events:DeleteRule
-                  - events:PutTargets
-                  - events:RemoveTargets
-                Resource:  '*'
+                Action: s3:GetObject
+                Resource: !Sub arn:${AWS::Partition}:s3:::*/*
   BastionRole:
     Condition: EnableBastionRole
     Type: AWS::IAM::Role
-    Metadata:
-      cfn-lint:
-        config:
-          ignore_checks: [EIAMPolicyWildcardResource]
-          ignore_reasons:
-            EIAMPolicyWildcardResource: >-
-              Resource does not exist at time of policy creation, so it's
-              address is unkown.
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
@@ -135,27 +150,32 @@ Resources:
             Version: 2012-10-17
             Statement:
               - Effect: Allow
+                Action:
+                  - ec2:DescribeAddresses
+                  - eks:ListClusters
+                Resource: '*'
+              - Effect: Allow
+                Action: ec2:AssociateAddress
+                Resource:
+                  - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:elastic-ip/*
+                  - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:instance/*
+                  - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:DescribeLogGroups
+                  - logs:DescribeLogStreams
+                  - logs:GetLogEvents
+                  - logs:PutLogEvents
+                  - logs:PutMetricFilter
+                  - logs:PutRetentionPolicy
+                Resource: !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*
+              - Effect: Allow
                 Action: s3:GetObject
                 Resource: !Sub
                   - arn:${AWS::Partition}:s3:::${BucketName}/*
                   - BucketName: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogStream
-                  - logs:GetLogEvents
-                  - logs:PutLogEvents
-                  - logs:DescribeLogGroups
-                  - logs:DescribeLogStreams
-                  - logs:PutRetentionPolicy
-                  - logs:PutMetricFilter
-                  - logs:CreateLogGroup
-                Resource: !Sub arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:*:*
-              - Effect: Allow
-                Action:
-                  - ec2:AssociateAddress
-                  - ec2:DescribeAddresses
-                  - eks:ListClusters
-                Resource: '*'
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEC2RoleforSSM
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore

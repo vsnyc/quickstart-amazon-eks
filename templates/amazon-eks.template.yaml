@@ -884,8 +884,6 @@ Resources:
         KubectlVersion: ~~/<ConfigSetName>/controlplane/KubectlVersion~~
   AmazonEksEbsCsiDriverRole:
     Type: AWS::IAM::Role
-    Metadata:
-      cfn-lint: { config: { ignore_checks: [EIAMPolicyWildcardResource] } }
     Properties:
       AssumeRolePolicyDocument: !Sub |
         {
