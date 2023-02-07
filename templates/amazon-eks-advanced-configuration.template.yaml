@@ -183,14 +183,18 @@ Parameters:
     Description: Name of the EKS node group.
     Default: Default
   NodeVolumeSize:
-    Type: String
+    Type: Number
     Description: Size of the node's root EBS volumes.
+    MinValue: 20
+    MaxValue: 16384
     Default: 20
   CustomAmiId:
     Type: String
     Description: >-
       (Optional) If an AMI ID is specified, it is used instead of the AMI from
       your OS/Region.
+    AllowedPattern: ^ami-([0-9a-f]{8}|[0-9a-f]{17})$|^$
+    ConstraintDescription: Must be a valid AMI ID or empty.
     Default: ''
   KubernetesVersion:
   # https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar
@@ -233,6 +237,8 @@ Parameters:
   BastionRootVolumeSize:
     Type: Number
     Description: Size in GB for the root EBS volume.
+    MinValue: 10
+    MaxValue: 16384
     Default: 10
   BastionIAMRoleName:
     Type: String
@@ -256,6 +262,10 @@ Parameters:
       (Optional) Comma-separated list of environment variables for
       bootstrapping. The variables must be in the format KEY=VALUE. VALUE
       cannot contain commas.
+    AllowedPattern: ^(.+=.+,)*.+=.+$|^$
+    ConstraintDescription: >-
+      Must be a comma-separated list in the format KEY=VALUE. VALUE cannot
+      contain commas.
     Default: ''
   EfsPerformanceMode:
     Type: String
@@ -338,6 +348,10 @@ Parameters:
       (Optional) Comma-separated list of key-value pairs that represent node
       labels to assign to the node group. Ignore this if "Custom launch
       template" is provided.
+    AllowedPattern: ^(.+=.+,)*.+=.+$|^$
+    ConstraintDescription: >-
+      Must be a comma-separated list in the format KEY=VALUE. VALUE cannot
+      contain commas.
     Default: ''
   Taints:
     Type: String
@@ -345,12 +359,18 @@ Parameters:
       (Optional) Comma-separated list of key-value pairs that represent node
       taints to assign to the node group. Ignore this if "Custom launch
       template" is provided.
+    AllowedPattern: ^(.+=.+,)*.+=.+$|^$
+    ConstraintDescription: >-
+      Must be a comma-separated list in the format KEY=VALUE. VALUE cannot
+      contain commas.
     Default: ''
   NodeSecurityGroupId:
     Type: String
     Description: >-
       (Optional) Provide the ID of a security group to use for this node group.
       If this is not specified, one is created.
+    AllowedPattern: ^sg-([0-9a-f]{8}|[0-9a-f]{17})$|^$
+    ConstraintDescription: Must be a valid security group ID or empty.
     Default: ''
   WindowsNodeEdition:
     Type: String
@@ -363,13 +383,14 @@ Parameters:
     AllowedValues: [2022]
     Default: 2022
   EC2MetadataPutResponseHopLimit:
-    Type: String
+    Type: Number
     Description: >-
       The desired HTTP PUT response hop limit for instance metadata requests
       from nodes. The larger the number, the further instance metadata requests
       can travel
       (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ModifyInstanceMetadataOptions.html#API_ModifyInstanceMetadataOptions_RequestParameters).
-    AllowedPattern: ^([1-9]|[1-5][0-9]|6[0-4])$
+    MinValue: 1
+    MaxValue: 64
     Default: 1
   EC2MetadataHttpTokens:
     Type: String
