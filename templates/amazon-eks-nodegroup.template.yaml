@@ -1021,6 +1021,15 @@ Resources:
         MaxBatchSize: 1
         WaitOnResourceSignals: !If [IsBottlerocket, false, true]
         PauseTime: !If [IsBottlerocket, PT3M, PT15M]
+  NodeTerminationHandlerHelmChart:
+  # https://artifacthub.io/packages/helm/aws/aws-node-termination-handler
+    Type: AWSQS::Kubernetes::Helm
+    Condition: CreateUnmanagedNodeGroup
+    Properties:
+      ClusterID: !Ref EKSClusterName
+      Namespace: kube-system
+      Chart: eks/aws-node-termination-handler
+      Repository: https://aws.github.io/eks-charts
   ManagedNodeGroup:
     Type: AWS::EKS::Nodegroup
     Condition: CreateManagedNodeGroup
