@@ -1,6 +1,8 @@
 import boto3
 import logging
-from crhelper import CfnResource # Provided through CrhelperLayer in amazon-eks-per-region-resources.template.yaml
+
+# Provided through CrhelperLayer in amazon-eks-per-region-resources.template.yaml
+from crhelper import CfnResource
 
 logger = logging.getLogger(__name__)
 helper = CfnResource(json_logging=True, log_level="DEBUG")

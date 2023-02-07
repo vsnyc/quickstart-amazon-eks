@@ -1,10 +1,12 @@
-import logging
-from crhelper import CfnResource # Provided through CrhelperLayer in amazon-eks-per-region-resources.template.yaml
-from time import sleep
-import json
 import boto3
-from semantic_version import Version
+import logging
+import json
+
+# Provided through CrhelperLayer in amazon-eks-per-region-resources.template.yaml
+from crhelper import CfnResource
 from random import choice
+from semantic_version import Version
+from time import sleep
 
 execution_trust_policy = {
     "Version": "2012-10-17",

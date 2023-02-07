@@ -8,7 +8,9 @@
 import boto3
 import json
 import logging
-from crhelper import CfnResource # Provided through CrhelperLayer in amazon-eks-per-region-resources.template.yaml
+
+# Provided through CrhelperLayer in amazon-eks-per-region-resources.template.yaml
+from crhelper import CfnResource
 from time import sleep
 
 logger = logging.getLogger(__name__)

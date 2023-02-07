@@ -1,8 +1,8 @@
 import boto3
 import logging
-from crhelper import (
-    CfnResource,
-)  # Provided through CrhelperLayer in amazon-eks-per-region-resources.template.yaml
+
+# Provided through CrhelperLayer in amazon-eks-per-region-resources.template.yaml
+from crhelper import CfnResource
 import random
 import string
 
