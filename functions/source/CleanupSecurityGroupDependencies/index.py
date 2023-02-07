@@ -8,7 +8,10 @@
 import boto3
 import json
 import logging
-from crhelper import CfnResource # Provided through CrhelperLayer in amazon-eks-per-region-resources.template.yaml
+import re
+
+# Provided through CrhelperLayer in amazon-eks-per-region-resources.template.yaml
+from crhelper import CfnResource
 from time import sleep
 
 logger = logging.getLogger(__name__)
@@ -79,25 +82,40 @@ def delete_dependencies(sg_id):
 def delete_handler(event, context):
     for sg_id in event["ResourceProperties"]["SecurityGroups"]:
         interval = 15  # seconds
-        retries = context.get_remaining_time_in_millis() / (interval * 1000)
 
-        while retries > 0:
+        if re.match(r"^sg-(?:[0-9a-f]{8}|[0-9a-f]{17})$", sg_id):
+            try:
+                ec2.describe_security_groups(GroupIds=[sg_id])
+            except:
+                logger.exception(f"ERROR: Failed to find {sg_id}. Skipping...")
+
+                continue
+        else:
+            raise ValueError(f"ERROR: Invalid security group ID: {sg_id}.")
+
+        while True:
             if delete_dependencies(sg_id):
                 try:
-                    ec2.delete_security_group(GroupId=sg_id, GroupName=sg_id)
+                    ec2.delete_security_group(GroupId=sg_id)
 
                     break
                 except Exception:
-                    logger.exception(f"ERROR: Failed to delete {sg_id}")
+                    logger.exception(f"ERROR: Failed to delete {sg_id}.")
 
-                    retries -= 120 / interval
-                    sleep(interval)
-                    continue
+                    if context.get_remaining_time_in_millis() <= (interval * 1000):
+                        raise ValueError(f"ERROR: Out of retries deleting {sg_id}.")
+                    else:
+                        sleep(interval)
+                        continue
+
+            elif context.get_remaining_time_in_millis() <= (interval * 1000):
+                raise ValueError(
+                    f"ERROR: Out of retries deleting {sg_id} dependencies."
+                )
             else:
-                logger.error(f"ERROR: Failed to delete {sg_id} dependencies")
+                logger.error(f"ERROR: Failed to delete {sg_id} dependencies.")
 
-            retries -= 1
-            sleep(interval)
+                sleep(interval)
 
 
 def handler(event, context):

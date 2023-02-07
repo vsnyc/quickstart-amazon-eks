@@ -185,15 +185,6 @@ Resources:
                 Resource: '*'
   CleanupSecurityGroupDependenciesRole:
     Type: AWS::IAM::Role
-    Metadata:
-      cfn-lint:
-        config:
-          ignore_checks: [EIAMPolicyWildcardResource]
-          ignore_reasons:
-            EIAMPolicyWildcardResource: >-
-              The roles in this template are re-used across more than 1 eks qs
-              deployment and as such resource names that will only be created
-              in the future are unknown.
     Properties:
       RoleName: !Sub
         - ${Prefix}-CleanupSecurityGroupDependencies
@@ -206,26 +197,31 @@ Resources:
               Service: [lambda.amazonaws.com]
         Version: 2012-10-17
       Path: /
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
         - PolicyName: LambdaRole
           PolicyDocument:
             Version: 2012-10-17
             Statement:
-              - Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Effect: Allow
-                Resource: !Sub arn:${AWS::Partition}:logs:*:*:*
-              - Action:
+              - Effect: Allow
+                Action:
                   - ec2:DescribeNetworkInterfaces
                   - ec2:DescribeSecurityGroups
-                  - ec2:RevokeSecurityGroupEgress
-                  - ec2:RevokeSecurityGroupIngress
+                Resource: '*'
+              - Effect: Allow
+                Action:
                   - ec2:DeleteNetworkInterface
                   - ec2:DetachNetworkInterface
-                Effect: Allow
-                Resource: '*'
+                Resource:
+                  - !Sub arn:${AWS::Partition}:ec2:*:${AWS::AccountId}:instance/*
+                  - !Sub arn:${AWS::Partition}:ec2:*:${AWS::AccountId}:network-interface/*
+              - Effect: Allow
+                Action:
+                  - ec2:DeleteSecurityGroup
+                  - ec2:RevokeSecurityGroupEgress
+                  - ec2:RevokeSecurityGroupIngress
+                Resource: !Sub arn:${AWS::Partition}:ec2:*:${AWS::AccountId}:security-group/*
   CleanupLambdasRole:
     Type: AWS::IAM::Role
     Metadata:
