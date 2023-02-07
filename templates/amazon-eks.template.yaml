@@ -396,6 +396,7 @@ Resources:
         HttpProxy: !Ref HttpProxy
         KeyPairName: !If [UseKeyPair, !Ref KeyPairName, !Ref AWS::NoValue]
         NodeGroupOS: !Ref NodeGroupOS
+        VPCID: !Ref VPCID
         Subnet1ID: !Ref PrivateSubnet1ID
         Subnet2ID: !If [2AZDeployment, !Ref PrivateSubnet2ID, !Ref AWS::NoValue]
         Subnet3ID: !If [3AZDeployment, !Ref PrivateSubnet3ID, !Ref AWS::NoValue]
@@ -434,6 +435,7 @@ Resources:
         HttpProxy: !Ref HttpProxy
         KeyPairName: !If [UseKeyPair, !Ref KeyPairName, !Ref AWS::NoValue]
         NodeGroupOS: Amazon Linux 2
+        VPCID: !Ref VPCID
         Subnet1ID: !Ref PrivateSubnet1ID
         Subnet2ID: !If [2AZDeployment, !Ref PrivateSubnet2ID, !Ref AWS::NoValue]
         Subnet3ID: !If [3AZDeployment, !Ref PrivateSubnet3ID, !Ref AWS::NoValue]

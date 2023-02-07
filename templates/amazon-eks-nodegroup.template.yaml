@@ -10,6 +10,7 @@ Metadata:
       - Label:
           default: Network configuration
         Parameters:
+          - VPCID
           - Subnet1ID
           - Subnet2ID
           - Subnet3ID
@@ -64,6 +65,8 @@ Metadata:
         default: Security group ID
       NodeGroupOS:
         default: Operating system
+      VPCID:
+        default: VPC ID
       Subnet1ID:
         default: Subnet 1 ID
       Subnet2ID:
@@ -137,6 +140,10 @@ Parameters:
       (Optional) If an AMI id is specified here it will be used in stead of the
       ami determined from the OS/region.
     Default: ''
+  VPCID:
+    Type: AWS::EC2::VPC::Id
+    Description: >-
+      ID of your existing VPC (example: vpc-0343606e).
   Subnet1ID:
     Type: AWS::EC2::Subnet::Id
     Description: >-
@@ -905,15 +912,6 @@ Conditions:
   CreateUnmanagedNodeGroup: !And [!Condition IsUnmanaged, !Condition CreateNodeGroup]
   UseKeyPair: !Not [!Equals [!Ref KeyPairName, '']]
 Resources:
-  VPCID:
-    Type: Custom::CliQuery
-    Properties:
-      ServiceToken: !Sub
-        - arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:${Prefix}-ResourceReader
-        - Prefix: !FindInMap [Config, Prefix, Value]
-      AwsCliCommand: !Sub >-
-        ec2 describe-subnets --subnet-ids ${Subnet1ID} --query 'Subnets[0].{VpcId: VpcId}'
-      IdField: VpcId
   VPCCIDR:
     Type: Custom::CliQuery
     Properties:
