@@ -106,7 +106,7 @@ Metadata:
         Parameters:
           - ALBIngressController
           - ClusterAutoScaler
-          - ProvisionMetricsServer
+          - MetricsServer
           - EfsStorageClass
           - PrometheusIntegration
           - GrafanaIntegration
@@ -152,8 +152,8 @@ Metadata:
         default: Additional EKS admin ARN (IAM role)
       ClusterAutoScaler:
         default: Cluster autoscaler
-      ProvisionMetricsServer:
-        default: Provision metrics server
+      MetricsServer:
+        default: Metrics server
       EfsStorageClass:
         default: EFS storage class
       ProvisionBastionHost:
@@ -949,7 +949,7 @@ Parameters:
     Description: Choose "Enabled" to enable Kubernetes cluster autoscaler.
     AllowedValues: [Enabled, Disabled]
     Default: Disabled
-  ProvisionMetricsServer:
+  MetricsServer:
     Type: String
     Description: >-
       Choose "Enabled" to enable Kubernetes metrics server. Use cases include
@@ -1362,7 +1362,7 @@ Resources:
         # Kubernetes add-ins
         ProvisionLoadBalancerController: !Ref ALBIngressController
         ProvisionClusterAutoScaler: !Ref ClusterAutoScaler
-        ProvisionMetricsServer: !Ref ProvisionMetricsServer
+        ProvisionMetricsServer: !Ref MetricsServer
         EfsStorageClass: !Ref EfsStorageClass
         PrometheusIntegration: !If [EnablePrometheus, Enabled, Disabled]
         GrafanaIntegration: !If [EnableGrafana, Enabled, Disabled]
