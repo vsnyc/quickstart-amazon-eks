@@ -8,15 +8,18 @@ Parameters:
   EksClusterName:
     Type: String
 Resources:
-  MetricsServer:
-  # https://github.com/kubernetes-sigs/metrics-server/
-    Type: AWSQS::Kubernetes::Resource
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Retain
+  MetricsServerHelmChart:
+    # https://github.com/kubernetes-sigs/metrics-server/
+    # https://artifacthub.io/packages/helm/metrics-server/metrics-server
+    Type: AWSQS::Kubernetes::Helm
     Properties:
-      ClusterName: !Ref EksClusterName
+      ClusterID: !Ref EksClusterName
       Namespace: kube-system
-      Url: https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+      Repository: https://kubernetes-sigs.github.io/metrics-server/
+      Chart: metrics-server/metrics-server
+      Values:
+        image.repository: public.ecr.aws/eks-distro/kubernetes-sigs/metrics-server
+        nodeSelector.kubernetes\.io/os: linux
 Outputs:
   MetricsServer:
     Value: !Ref MetricsServer

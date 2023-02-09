@@ -4,6 +4,7 @@ Metadata:
   QuickStartDocumentation:
     EntrypointName: Launch into an existing VPC
     Order: Index b
+  cfn-lint: { config: { ignore_checks: [E9101] } }
   LintSpellExclude:
     - Snyk
     - New Relic
@@ -11,6 +12,8 @@ Metadata:
     - Rancher
     - MuleSoft
     - Anypoint
+  SentenceCaseExclude:
+    - Memory
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -103,6 +106,7 @@ Metadata:
         Parameters:
           - ALBIngressController
           - ClusterAutoScaler
+          - ProvisionMetricsServer
           - EfsStorageClass
           - PrometheusIntegration
           - GrafanaIntegration
@@ -148,6 +152,8 @@ Metadata:
         default: Additional EKS admin ARN (IAM role)
       ClusterAutoScaler:
         default: Cluster autoscaler
+      ProvisionMetricsServer:
+        default: Provision metrics server
       EfsStorageClass:
         default: EFS storage class
       ProvisionBastionHost:
@@ -943,6 +949,16 @@ Parameters:
     Description: Choose "Enabled" to enable Kubernetes cluster autoscaler.
     AllowedValues: [Enabled, Disabled]
     Default: Disabled
+  ProvisionMetricsServer:
+    Type: String
+    Description: >-
+      Choose "Enabled" to enable Kubernetes metrics server. Use cases include
+      CPU/Memory based horizontal auto-scaling
+      (https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
+      and automatically adjusting/suggesting resources needed by containers
+      (https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler/).
+    AllowedValues: [Enabled, Disabled]
+    Default: Disabled
   EfsStorageClass:
     Type: String
     Description: Choose "Enabled" to enable EFS storage class.
@@ -1346,6 +1362,7 @@ Resources:
         # Kubernetes add-ins
         ProvisionLoadBalancerController: !Ref ALBIngressController
         ProvisionClusterAutoScaler: !Ref ClusterAutoScaler
+        ProvisionMetricsServer: !Ref ProvisionMetricsServer
         EfsStorageClass: !Ref EfsStorageClass
         PrometheusIntegration: !If [EnablePrometheus, Enabled, Disabled]
         GrafanaIntegration: !If [EnableGrafana, Enabled, Disabled]
