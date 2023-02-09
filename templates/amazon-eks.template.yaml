@@ -401,6 +401,7 @@ Resources:
         Subnet1ID: !Ref PrivateSubnet1ID
         Subnet2ID: !If [2AZDeployment, !Ref PrivateSubnet2ID, !Ref AWS::NoValue]
         Subnet3ID: !If [3AZDeployment, !Ref PrivateSubnet3ID, !Ref AWS::NoValue]
+        KubernetesVersion: ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
         NodeInstanceType: !Ref NodeInstanceType
         NumberOfNodes: !Ref NumberOfNodes
         MaxNumberOfNodes: !Ref MaxNumberOfNodes

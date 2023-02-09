@@ -19,6 +19,7 @@ Metadata:
           default: Amazon EKS basic node group configuration
         Parameters:
           - EKSClusterName
+          - KubernetesVersion
           - CreateNodeGroup
           - NodeGroupName
           - NodeGroupType
@@ -75,6 +76,8 @@ Metadata:
         default: Subnet 3 ID
       EKSClusterName:
         default: EKS cluster name
+      KubernetesVersion:
+        default: Kubernetes version
       NodeGroupType:
         default: Type
       OndemandPercentage:
@@ -784,6 +787,11 @@ Parameters:
   EKSClusterName:
     Type: String
     Description: Name of the EKS cluster to join.
+  KubernetesVersion:
+    Type: String
+    Description: Kubernetes control plane version.
+    AllowedValues: [1.24, 1.23, 1.22]
+    Default: 1.24
   HttpProxy:
     Type: String
     Description: >-
@@ -955,13 +963,6 @@ Resources:
       AwsCliCommand: !Sub >-
         eks describe-cluster --name ${EKSClusterName} --query '{SGID: cluster.resourcesVpcConfig.clusterSecurityGroupId}'
       IdField: SGID
-  KubernetesVersion:
-    Type: Custom::CliQuery
-    Properties:
-      ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
-      AwsCliCommand: !Sub >-
-        eks describe-cluster --name ${EKSClusterName} --query '{Version: cluster.version}'
-      IdField: Version
   CleanupNodeSecurityGroupDependencies:
     Type: Custom::CleanupSecurityGroupDependencies
     Condition: UseNodeSecurityGroup
