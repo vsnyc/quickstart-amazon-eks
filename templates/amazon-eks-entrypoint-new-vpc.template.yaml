@@ -1056,7 +1056,7 @@ Parameters:
   SnykIntegrationId:
     Type: String
     Description: >-
-      If the SnykIntegration parameter is set to "Enabled," a value must be
+      If the SnykIntegration parameter is set to "Enabled", a value must be
       provided. For more information, see
       https://support.snyk.io/hc/en-us/articles/360003916158-Install-the-Snyk-controller-with-Helm.
     AllowedPattern: ^[a-z0-9-]{36}$|^$
@@ -1194,7 +1194,7 @@ Parameters:
     Description: >-
       Operating system to use for node instances. Choose "Bottlerocket" for the
       Amazon purpose-built container OS (unmanaged node groups only). Note that
-      if you choose "Windows," an additional Amazon Linux node group is
+      if you choose "Windows", an additional Amazon Linux node group is
       created.
     AllowedValues: [Amazon Linux 2, Bottlerocket, Windows]
     Default: Amazon Linux 2
