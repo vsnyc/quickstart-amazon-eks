@@ -23,7 +23,7 @@ Conditions:
   NoProxy: !Equals [!Ref HttpProxy, '']
 Resources:
   LambdaSGCleanup:
-    Type: Custom::LambdaSGCleanup
+    Type: Custom::CleanupSecurityGroupDependencies
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-CleanupSecurityGroupDependencies
       Region: !Ref AWS::Region
@@ -45,25 +45,25 @@ Resources:
       ToPort: 443
       FromPort: 443
   GetVpcCidr:
-    Type: Custom::CliQuery
+    Type: Custom::ResourceReader
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
       AwsCliCommand: !Sub ec2 describe-vpcs --vpc-id ${VPCID} --query 'Vpcs[0].{CidrBlock:CidrBlock}'
       IdField: CidrBlock
   GetKubectlLayerArn:
-    Type: Custom::CliQuery
+    Type: Custom::ResourceReader
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
       AwsCliCommand: lambda list-layer-versions --layer-name eks-quickstart-Kubectl --query 'max_by(LayerVersions, &Version)'
       IdField: LayerVersionArn
   GetCrHelperLayerArn:
-    Type: Custom::CliQuery
+    Type: Custom::ResourceReader
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
       AwsCliCommand: lambda list-layer-versions --layer-name eks-quickstart-CrHelper --query 'max_by(LayerVersions, &Version)'
       IdField: LayerVersionArn
   GetAwsCliLayerArn:
-    Type: Custom::CliQuery
+    Type: Custom::ResourceReader
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
       AwsCliCommand: lambda list-layer-versions --layer-name eks-quickstart-AwsCli --query 'max_by(LayerVersions, &Version)'

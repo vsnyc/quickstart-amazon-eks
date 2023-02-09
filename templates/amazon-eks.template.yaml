@@ -470,7 +470,7 @@ Resources:
       ToPort: 443
       FromPort: 443
   CloudFormationKubernetesVPCRoleExists:
-    Type: Custom::CliQuery
+    Type: Custom::ResourceReader
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
       AwsCliCommand: >
@@ -565,13 +565,13 @@ Resources:
         EfsProvisionedThroughputInMibps: ~~/<ConfigSetName>/efs/EfsProvisionedThroughputInMibps~~
         ThroughputMode: ~~/<ConfigSetName>/efs/EfsThroughputMode~~
   CleanupLambdas:
-    Type: Custom::LambdaCleanup
+    Type: Custom::CleanupLambdas
     DependsOn: CleanupControlPlaneSecurityGroupDependencies
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-CleanupLambdas
       SecurityGroupId: !GetAtt ControlPlaneSecurityGroup.GroupId
   CleanupControlPlaneSecurityGroupDependencies:
-    Type: Custom::LambdaSGCleanup
+    Type: Custom::CleanupSecurityGroupDependencies
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-CleanupSecurityGroupDependencies
       Region: !Ref AWS::Region
@@ -862,7 +862,7 @@ Resources:
         QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-eks-mulesoft-runtime-fabric/
         QSS3BucketRegion: !Ref QSS3BucketRegion
   ConfigureProxy:
-    Type: Custom::EnableProxy
+    Type: Custom::KubeManifest
     Condition: EnableProxy
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:EKS-QuickStart-KubeManifest-${EKSControlPlane.Outputs.EKSName}

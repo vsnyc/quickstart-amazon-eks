@@ -912,14 +912,14 @@ Conditions:
   UseKeyPair: !Not [!Equals [!Ref KeyPairName, '']]
 Resources:
   VPCCIDR:
-    Type: Custom::CliQuery
+    Type: Custom::ResourceReader
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
       AwsCliCommand: !Sub >-
         ec2 describe-vpcs --vpc-id ${VPCID} --query 'Vpcs[0].{CidrBlock: CidrBlock}'
       IdField: CidrBlock
   NodeRoleArn:
-    Type: Custom::CliQuery
+    Type: Custom::ResourceReader
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
       AwsCliCommand: !Sub
@@ -929,8 +929,8 @@ Resources:
           - Suffix: !If [IsManaged, ManagedNodeInstance, UnmanagedNodeInstance]
       IdField: Arn
   NodeInstanceProfileArn:
+    Type: Custom::ResourceReader
     Condition: IsUnmanaged
-    Type: Custom::CliQuery
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
       AwsCliCommand: !Sub
@@ -941,14 +941,14 @@ Resources:
           - Suffix: !If [IsManaged, ManagedNodeInstance, UnmanagedNodeInstance]
       IdField: arn
   ClusterEndpoint:
-    Type: Custom::CliQuery
+    Type: Custom::ResourceReader
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
       AwsCliCommand: !Sub >-
         eks describe-cluster --name ${EKSClusterName} --query '{Endpoint: cluster.endpoint, CaData: cluster.certificateAuthority.data}'
       IdField: Endpoint
   ClusterNodeSecurityGroup:
-    Type: Custom::CliQuery
+    Type: Custom::ResourceReader
     Condition: UseClusterNodeSecurityGroup
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
@@ -963,13 +963,13 @@ Resources:
         eks describe-cluster --name ${EKSClusterName} --query '{Version: cluster.version}'
       IdField: Version
   CleanupSecurityGroupDependencies:
-    Type: Custom::Cleanup
+    Type: Custom::CleanupSecurityGroupDependencies
     Condition: UseNodeSecurityGroup
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-CleanupSecurityGroupDependencies
       SecurityGroups: [!Ref NodeSecurityGroupId]
   ManagedASG:
-    Type: Custom::CliQuery
+    Type: Custom::ResourceReader
     Condition: CreateManagedNodeGroup
     DependsOn: ManagedNodeGroup
     Properties:
