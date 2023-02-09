@@ -992,7 +992,7 @@ Resources:
           Value: 'true'
           PropagateAtLaunch: true
         - Key: !Sub k8s.io/cluster-autoscaler/${EKSClusterName}
-          Value: ''
+          Value: owned
           PropagateAtLaunch: true
       VPCZoneIdentifier: !If
         - 3AZDeployment

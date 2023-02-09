@@ -5,26 +5,28 @@ Description: >-
 Metadata:
   cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006, W7001] } }
 Parameters:
-  NodeAutoScalingGroup:
-    Type: String
   EksClusterName:
     Type: String
   KubernetesVersion:
-  # https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar
     Type: String
-    AllowedValues: [1.24, 1.23, 1.22, 1.21]
+    AllowedValues: [1.24, 1.23, 1.22]
     Default: 1.24
+  OIDCProviderArn:
+    Type: String
+  OIDCProviderEndpoint:
+    Type: String
+  PrometheusEnabled:
+    Type: String
+    AllowedValues: ['true', 'false']
+  PrometheusNamespace:
+    Type: String
 Conditions:
   NeedsStaticList: !Or
   # Workaround for https://github.com/kubernetes/autoscaler/issues/3372
-    - !Equals [!Ref AWS::Region, af-south-1]
-    - !Equals [!Ref AWS::Region, eu-south-1]
     - !Equals [!Ref AWS::Region, cn-north-1]
     - !Equals [!Ref AWS::Region, cn-northwest-1]
 Mappings:
-  Config:
-    Prefix: { Value: 'eks-quickstart' }
-  K8sVersionMap:
+  KubernetesVersion:
   # NOTE: The cluster autoscaler version number is dependant on the K8S version
   # it is being deployed into.
   # https://github.com/kubernetes/autoscaler/releases
@@ -37,51 +39,91 @@ Mappings:
     '1.24':
       ImageTag: v1.24.0
 Resources:
-  # Policy to apply to NodeInstanceRole
-  ClusterAutoScalerPolicy:
-    Type: AWS::IAM::Policy
+  ClusterAutoScalerIamRole:
+    Type: AWS::IAM::Role
     Properties:
-      PolicyName: !Sub '${NodeAutoScalingGroup}'
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Action:
-              - autoscaling:DescribeAutoScalingGroups
-              - autoscaling:DescribeAutoScalingInstances
-              - autoscaling:DescribeLaunchConfigurations
-              - autoscaling:DescribeTags
-            Resource: "*"
-          - Effect: Allow
-            Action:
-              - autoscaling:SetDesiredCapacity
-              - autoscaling:TerminateInstanceInAutoScalingGroup
-            Resource: !Sub "arn:${AWS::Partition}:autoscaling:${AWS::Region}:${AWS::AccountId}:autoScalingGroup:*:autoScalingGroupName/${NodeAutoScalingGroup}"
-      Roles:
-        - !Sub ['${Prefix}-ManagedNodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
-        - !Sub ['${Prefix}-UnManagedNodeInstance', {Prefix: !FindInMap [Config, Prefix, Value]}]
-  # Install auto-scaler helm chart
-  AutoScalerHelmChart:
-    DependsOn:
-      - ClusterAutoScalerPolicy
+      AssumeRolePolicyDocument: !Sub |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "${OIDCProviderArn}"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "${OIDCProviderEndpoint}:aud": "sts.amazonaws.com"
+                },
+                "StringLike": {
+                  "${OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:cluster-autoscaler-*"
+                }
+              }
+            }
+          ]
+        }
+      Policies:
+      # https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html#cluster-autoscaler
+        - PolicyName: AmazonEKSClusterAutoscalerPolicy
+          PolicyDocument: !Sub |
+            {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "autoscaling:DescribeAutoScalingGroups",
+                    "autoscaling:DescribeAutoScalingInstances",
+                    "autoscaling:DescribeLaunchConfigurations",
+                    "autoscaling:DescribeTags",
+                    "ec2:DescribeImages",
+                    "ec2:DescribeInstanceTypes",
+                    "ec2:DescribeLaunchTemplateVersions",
+                    "ec2:GetInstanceTypesFromInstanceRequirements"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "autoscaling:SetDesiredCapacity",
+                    "autoscaling:TerminateInstanceInAutoScalingGroup"
+                  ],
+                  "Resource": "arn:${AWS::Partition}:autoscaling:${AWS::Region}:${AWS::AccountId}:autoScalingGroup:*:autoScalingGroupName/*",
+                  "Condition": {
+                    "StringEquals": {
+                      "autoscaling:ResourceTag/k8s.io/cluster-autoscaler/enabled": "true",
+                      "aws:ResourceTag/k8s.io/cluster-autoscaler/${EksClusterName}": "owned"
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "eks:DescribeNodegroup"
+                  ],
+                  "Resource": "arn:${AWS::Partition}:eks:${AWS::Region}:${AWS::AccountId}:nodegroup/*/*/*"
+                }
+              ]
+            }
+  ClusterAutoScalerHelmChart:
+    # https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html#cluster-autoscaler
     Type: AWSQS::Kubernetes::Helm
     Properties:
       ClusterID: !Ref EksClusterName
       Namespace: kube-system
-      Chart: stable/cluster-autoscaler
-      Repository: https://charts.helm.sh/stable
+      Chart: cluster-autoscaler/cluster-autoscaler
+      Repository: https://kubernetes.github.io/autoscaler
       Values:
         awsRegion: !Ref AWS::Region
-        cloudProvider: aws
-        image.tag: !FindInMap [K8sVersionMap, !Ref KubernetesVersion, ImageTag]
-        image.repository: k8s.gcr.io/autoscaling/cluster-autoscaler
-        rbac.create: true
-        rbac.pspEnabled: true
         autoDiscovery.clusterName: !Ref EksClusterName
-        sslCertPath: /etc/ssl/certs/ca-bundle.crt
+        cloudProvider: aws
         extraArgs.aws-use-static-instance-list: !If [NeedsStaticList, true, !Ref AWS::NoValue]
         extraArgs.balance-similar-node-groups: false
         extraArgs.expander: random
-Outputs:
-  AutoScalerReleaseName:
-    Value: !Ref AutoScalerHelmChart
+        image.tag: !FindInMap [KubernetesVersion, !Ref KubernetesVersion, ImageTag]
+        nodeSelector.kubernetes\.io/os: linux
+        prometheusRule.enabled: !Ref PrometheusEnabled
+        prometheusRule.namespace: !Ref PrometheusNamespace
+        rbac.serviceAccount.annotations.eks\.amazonaws\.com/role-arn: !GetAtt ClusterAutoScalerIamRole.Arn
