@@ -537,9 +537,10 @@ Resources:
   MetricsServerStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableMetricsServer
-    DependsOn: [ControlPlaneSecurityGroupIngress]
+    DependsOn: [ControlPlaneSecurityGroupIngress, NodeGroupStack]
     Metadata:
       DependsOn:
+        - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
         - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
