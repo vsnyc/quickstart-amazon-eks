@@ -911,14 +911,14 @@ Conditions:
   CreateUnmanagedNodeGroup: !And [!Condition IsUnmanaged, !Condition CreateNodeGroup]
   UseKeyPair: !Not [!Equals [!Ref KeyPairName, '']]
 Resources:
-  VPCCIDR:
+  GetVpcCidr:
     Type: Custom::ResourceReader
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
       AwsCliCommand: !Sub >-
         ec2 describe-vpcs --vpc-id ${VPCID} --query 'Vpcs[0].{CidrBlock: CidrBlock}'
       IdField: CidrBlock
-  NodeRoleArn:
+  GetNodeRoleArn:
     Type: Custom::ResourceReader
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
@@ -928,7 +928,7 @@ Resources:
           - eks-quickstart-${Suffix}
           - Suffix: !If [IsManaged, ManagedNodeInstance, UnmanagedNodeInstance]
       IdField: Arn
-  NodeInstanceProfileArn:
+  GetNodeInstanceProfileArn:
     Type: Custom::ResourceReader
     Condition: IsUnmanaged
     Properties:
@@ -940,14 +940,14 @@ Resources:
           - eks-quickstart-${Suffix}
           - Suffix: !If [IsManaged, ManagedNodeInstance, UnmanagedNodeInstance]
       IdField: arn
-  ClusterEndpoint:
+  GetClusterEndpoint:
     Type: Custom::ResourceReader
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-ResourceReader
       AwsCliCommand: !Sub >-
         eks describe-cluster --name ${EKSClusterName} --query '{Endpoint: cluster.endpoint, CaData: cluster.certificateAuthority.data}'
       IdField: Endpoint
-  ClusterNodeSecurityGroup:
+  GetClusterNodeSecurityGroup:
     Type: Custom::ResourceReader
     Condition: UseClusterNodeSecurityGroup
     Properties:
@@ -962,13 +962,13 @@ Resources:
       AwsCliCommand: !Sub >-
         eks describe-cluster --name ${EKSClusterName} --query '{Version: cluster.version}'
       IdField: Version
-  CleanupSecurityGroupDependencies:
+  CleanupNodeSecurityGroupDependencies:
     Type: Custom::CleanupSecurityGroupDependencies
     Condition: UseNodeSecurityGroup
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-CleanupSecurityGroupDependencies
       SecurityGroups: [!Ref NodeSecurityGroupId]
-  ManagedASG:
+  GetManagedASG:
     Type: Custom::ResourceReader
     Condition: CreateManagedNodeGroup
     DependsOn: ManagedNodeGroup
@@ -1039,7 +1039,7 @@ Resources:
         Id: !If [CreateLaunchTemplate, !Ref NodeLaunchTemplate, !Ref LaunchTemplateId]
         Version: !If [CreateLaunchTemplate, !GetAtt NodeLaunchTemplate.LatestVersionNumber, !Ref LaunchTemplateVersion]
       NodegroupName: !Ref NodeGroupName
-      NodeRole: !Ref NodeRoleArn
+      NodeRole: !Ref GetNodeRoleArn
       ScalingConfig:
         DesiredSize: !Ref NumberOfNodes
         MaxSize: !If [MaxNodesDefined, !Ref MaxNumberOfNodes, !Ref NumberOfNodes]
@@ -1065,14 +1065,14 @@ Resources:
               VolumeSize: !Ref NodeVolumeSize
               VolumeType: gp2
               DeleteOnTermination: true
-        IamInstanceProfile: !If [IsUnmanaged, { Arn: !Ref NodeInstanceProfileArn }, !Ref AWS::NoValue]
+        IamInstanceProfile: !If [IsUnmanaged, { Arn: !Ref GetNodeInstanceProfileArn }, !Ref AWS::NoValue]
         KeyName: !If [UseKeyPair, !Ref KeyPairName, !Ref AWS::NoValue]
         NetworkInterfaces:
           - DeviceIndex: 0
             AssociatePublicIpAddress: false
             Description: String
             Groups:
-              - !If [UseClusterNodeSecurityGroup, !Ref ClusterNodeSecurityGroup, !Ref NodeSecurityGroupId]
+              - !If [UseClusterNodeSecurityGroup, !Ref GetClusterNodeSecurityGroup, !Ref NodeSecurityGroupId]
         ImageId: !If
           - UseCustomAmi
           - !Ref CustomAmiId
@@ -1101,7 +1101,7 @@ Resources:
                   [string]$EKSBootstrapScriptName = 'Start-EKSBootstrap.ps1'
                   [string]$EKSBootstrapScriptFile = "$EKSBinDir\$EKSBootstrapScriptName"
                   [string]$cfn_signal = "$env:ProgramFiles\Amazon\cfn-bootstrap\cfn-signal.exe"
-                  & $EKSBootstrapScriptFile -EKSClusterName ${EKSClusterName} -APIServerEndpoint ${ClusterEndpoint} -Base64ClusterCA  ${ClusterEndpoint.CaData} ${BootstrapArguments} 3>&1 4>&1 5>&1 6>&1
+                  & $EKSBootstrapScriptFile -EKSClusterName ${EKSClusterName} -APIServerEndpoint ${GetClusterEndpoint} -Base64ClusterCA  ${GetClusterEndpoint.CaData} ${BootstrapArguments} 3>&1 4>&1 5>&1 6>&1
                   $LastError = if ($?) { 0 } else { $Error[0].Exception.HResult }
                   & $cfn_signal --exit-code=$LastError `
                   --stack="${AWS::StackName}" `
@@ -1120,8 +1120,8 @@ Resources:
                 - !Sub
                     - |
                       [settings.kubernetes]
-                      api-server = "${ClusterEndpoint}"
-                      cluster-certificate = "${ClusterEndpoint.CaData}"
+                      api-server = "${GetClusterEndpoint}"
+                      cluster-certificate = "${GetClusterEndpoint.CaData}"
                       cluster-name = "${EKSClusterName}"
                       ${LabelsArg}
                       ${TaintsArg}
@@ -1154,8 +1154,8 @@ Resources:
                       }
                       ${ProxySetup}
                       /etc/eks/bootstrap.sh ${EKSClusterName} ${ExtraArgs} \
-                                        --b64-cluster-ca ${ClusterEndpoint.CaData} \
-                                        --apiserver-endpoint ${ClusterEndpoint}  || signal 1
+                                        --b64-cluster-ca ${GetClusterEndpoint.CaData} \
+                                        --apiserver-endpoint ${GetClusterEndpoint}  || signal 1
                       ${ProxyPostSetup}
                       signal $?
                     - ExtraArgs: !If
@@ -1173,8 +1173,8 @@ Resources:
                           HTTPS_PROXY=${HttpProxy}
                           http_proxy=${HttpProxy}
                           https_proxy=${HttpProxy}
-                          no_proxy=${VPCCIDR},localhost,127.0.0.1,169.254.169.254,.internal
-                          NO_PROXY=${VPCCIDR},localhost,127.0.0.1,169.254.169.254,.internal
+                          no_proxy=${GetVpcCidr},localhost,127.0.0.1,169.254.169.254,.internal
+                          NO_PROXY=${GetVpcCidr},localhost,127.0.0.1,169.254.169.254,.internal
                           EOF
                           set -a
                           source /etc/environment
@@ -1205,10 +1205,10 @@ Resources:
           HttpTokens: !Ref EC2MetadataHttpTokens
 Outputs:
   EKSNodeSecurityGroup:
-    Value: !If [UseClusterNodeSecurityGroup, !Ref ClusterNodeSecurityGroup, !Ref NodeSecurityGroupId]
+    Value: !If [UseClusterNodeSecurityGroup, !Ref GetClusterNodeSecurityGroup, !Ref NodeSecurityGroupId]
   NodeAutoScalingGroup:
     Condition: CreateNodeGroup
-    Value: !If [IsManaged, !Ref ManagedASG, !Ref UnmanagedASG]
+    Value: !If [IsManaged, !Ref GetManagedASG, !Ref UnmanagedASG]
 Rules:
   WindowsUnmanaged:
     Assertions:
