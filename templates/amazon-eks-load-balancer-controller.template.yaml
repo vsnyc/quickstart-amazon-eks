@@ -277,6 +277,3 @@ Resources:
         resources.limits.memory: !Ref ControllerMemoryLimit
         serviceAccount.annotations.eks\.amazonaws\.com/role-arn: !GetAtt LoadBalancerControllerIAMRole.Arn
         vpcId: !Ref VpcId
-Outputs:
-  LoadBalancerControllerHelmChart:
-    Value: !Ref LoadBalancerControllerHelmChart

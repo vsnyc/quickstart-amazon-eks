@@ -20,6 +20,3 @@ Resources:
       Values:
         image.repository: public.ecr.aws/eks-distro/kubernetes-sigs/metrics-server
         nodeSelector.kubernetes\.io/os: linux
-Outputs:
-  MetricsServer:
-    Value: !Ref MetricsServer
