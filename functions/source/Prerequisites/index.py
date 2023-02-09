@@ -27,7 +27,7 @@ def waiter(c, o, s):
         ):
             raise RuntimeError(f"Stack operation failed: {o} {status} {s}")
 
-        sleep(randint(1000, 1500) / 100)
+        sleep(randint(1000, 1500) / 100)  # nosec B311
 
     logger.info(f"waiter({o}, {s}) done")
 
@@ -62,7 +62,7 @@ def put_stack(name, region, template_url, parameters, key):
     logger.info(f"put_stack({name}, {region}, {template_url}, {parameters}, {key})")
 
     # jitter to reduce the chance of concurrent queries racing
-    sleep(randint(0, 6000) / 100)
+    sleep(randint(0, 6000) / 100)  # nosec B311
 
     if name == "AccountSharedResources":
         for r in [
@@ -148,7 +148,7 @@ def handler(event, context):
                     logger.exception("Error executing put_stack")
 
                     if retries > 0:
-                        sleep(randint(0, 3000) / 100)
+                        sleep(randint(0, 3000) / 100)  # nosec B311
                     else:
                         raise
     except Exception:

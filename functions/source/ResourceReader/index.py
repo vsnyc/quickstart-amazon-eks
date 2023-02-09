@@ -2,7 +2,7 @@ import json
 import logging
 import requests
 import shlex
-import subprocess
+import subprocess  # nosec B404
 from pathlib import Path
 from time import sleep
 from zipfile import ZipFile
@@ -55,7 +55,7 @@ def run_command(command):
 
     try:
         logger.debug("executing command: %s" % command)
-        output = subprocess.check_output(
+        output = subprocess.check_output(  # nosec B603
             shlex.split(command), stderr=subprocess.STDOUT
         ).decode("utf-8")
         logger.debug(output)
@@ -71,11 +71,11 @@ def run_command(command):
 
 
 with ZipFile("./awscliv2.zip") as zip:
-    zip.extractall("/tmp/cli-install/")
+    zip.extractall("/tmp/cli-install/")  # nosec B108
 
 run_command("chmod +x /tmp/cli-install/aws/dist/aws")
 run_command("chmod +x /tmp/cli-install/aws/install")
-c, r = run_command("/tmp/cli-install/aws/install -b /tmp/bin -i /tmp/aws-cli")
+c, r = run_command("/tmp/cli-install/aws/install -b /tmp/bin -i /tmp/aws-cli")  # nosec B108
 
 if c != 0:
     raise Exception(f"Failed to install cli. Code: {c} Message: {r}")
@@ -83,7 +83,7 @@ if c != 0:
 
 def execute_cli(properties):
     code, response = run_command(
-        f"/tmp/bin/aws {properties['AwsCliCommand']} --output json"
+        f"/tmp/bin/aws {properties['AwsCliCommand']} --output json"  # nosec B108
     )
 
     if code != 0 and ("NotFound" in response or "does not exist" in response):
@@ -108,7 +108,7 @@ def handler(event, context):
 
     try:
         if event["RequestType"] != "Delete":
-            while not Path("/tmp/bin/aws").is_file():
+            while not Path("/tmp/bin/aws").is_file():  # nosec B108
                 print("waiting for cli install to complete")
                 sleep(10)
 

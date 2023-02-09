@@ -1,7 +1,7 @@
 import json
 import logging
 import boto3
-import subprocess
+import subprocess  # nosec B404
 import shlex
 import time
 from hashlib import md5
@@ -21,7 +21,7 @@ except Exception as init_exception:
 def run_command(command):
     try:
         logger.info(f"executing command: {command}")
-        output = subprocess.check_output(
+        output = subprocess.check_output(  # nosec B603
             shlex.split(command), stderr=subprocess.STDOUT
         ).decode("utf-8")
         logger.info(output)
@@ -62,7 +62,7 @@ def create_handler(event, _):
     while True:
         try:
             outp = run_command(
-                f"kubectl get {name} -o jsonpath=\"{json_path}\" --namespace {namespace}"
+                f'kubectl get {name} -o jsonpath="{json_path}" --namespace {namespace}'
             )
             break
         except Exception:
@@ -81,7 +81,7 @@ def create_handler(event, _):
         response_data[event["ResourceProperties"]["ResponseKey"]] = outp
 
     if len(outp.encode("utf-8")) > 1000:
-        outp = "MD5-" + str(md5(outp.encode("utf-8")).hexdigest())
+        outp = "MD5-" + str(md5(outp.encode("utf-8")).hexdigest())  # nosec B324
 
     helper.Data.update(response_data)
 

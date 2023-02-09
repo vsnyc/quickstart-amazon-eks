@@ -130,7 +130,7 @@ def put_role(role_name, policy, trust_policy):
             if retries < 1:
                 raise
 
-            sleep(choice(range(1, 10)))
+            sleep(choice(range(1, 10)))  # nosec B311
 
 
 def get_current_version(type_name):

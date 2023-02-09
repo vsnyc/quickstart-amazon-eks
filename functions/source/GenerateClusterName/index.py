@@ -18,7 +18,9 @@ def handler(event, context):
 
     try:
         if event["RequestType"] == "Create":
-            physical_resource_id = "EKS-" + "".join((choice(ascii_uppercase + digits) for i in range(8)))
+            physical_resource_id = "EKS-" + "".join(
+                (choice(ascii_uppercase + digits) for i in range(8))  # nosec B311
+            )
         else:
             physical_resource_id = event["PhysicalResourceId"]
     except Exception:

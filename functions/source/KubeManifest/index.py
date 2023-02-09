@@ -1,7 +1,7 @@
 import json
 import logging
 import boto3
-import subprocess
+import subprocess  # nosec B404
 import shlex
 import re
 import requests
@@ -57,7 +57,7 @@ def run_command(command):
         try:
             try:
                 logger.debug("executing command: %s" % command)
-                output = subprocess.check_output(
+                output = subprocess.check_output(  # nosec B603
                     shlex.split(command), stderr=subprocess.STDOUT
                 ).decode("utf-8")
                 logger.debug(output)
@@ -221,7 +221,7 @@ def enable_proxy(proxy_host, vpc_id):
     vpc_cidr = ec2_client.describe_vpcs(VpcIds=[vpc_id])["Vpcs"][0]["CidrBlock"]
     configmap["data"]["NO_PROXY"] += f"{vpc_cidr},{cluster_cidr}"
 
-    write_manifest(configmap, "/tmp/proxy.json")
+    write_manifest(configmap, "/tmp/proxy.json")  # nosec B108
 
     run_command("kubectl apply -f /tmp/proxy.json")
 
@@ -258,7 +258,7 @@ def handler_init(event):
         )
 
     if "Manifest" in event["ResourceProperties"].keys():
-        manifest_file = "/tmp/manifest.json"
+        manifest_file = "/tmp/manifest.json"  # nosec B108
 
         if "PhysicalResourceId" in event.keys():
             physical_resource_id = event["PhysicalResourceId"]
@@ -273,7 +273,7 @@ def handler_init(event):
             "Applying manifest: %s" % json.dumps(manifest, default=json_serial)
         )
     elif "Url" in event["ResourceProperties"].keys():
-        manifest_file = "/tmp/manifest.json"
+        manifest_file = "/tmp/manifest.json"  # nosec B108
         url = event["ResourceProperties"]["Url"]
 
         if re.match(s3_scheme, url):

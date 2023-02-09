@@ -29,7 +29,7 @@ def stabilize(pid, cluster_name):
 def create(event, _):
     pid = "{}-{}".format(
         event["LogicalResourceId"],
-        "".join(random.choice(string.ascii_lowercase) for i in range(8)),
+        "".join(random.choice(string.ascii_lowercase) for i in range(8)),  # nosec B311
     )
     kwargs = {
         "fargateProfileName": pid,
