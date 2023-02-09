@@ -268,16 +268,14 @@ Resources:
       Chart: eks/aws-load-balancer-controller
       Values:
         clusterName: !Ref EksClusterName
+        hostNetwork: !If [HostNetworkEnabled, 'true', 'false']
+        nodeSelector.kubernetes\.io/os: linux
         region: !Ref AWS::Region
+        replicaCount: !Ref ControllerReplicaCount
         resources.limits.cpu: !Ref ControllerCPULimit
         resources.limits.memory: !Ref ControllerMemoryLimit
-        replicaCount: !Ref ControllerReplicaCount
-        hostNetwork: !If [HostNetworkEnabled, 'true', 'false']
-        vpcId: !Ref VpcId
         serviceAccount.annotations.eks\.amazonaws\.com/role-arn: !GetAtt LoadBalancerControllerIAMRole.Arn
-        nodeSelector.kubernetes\.io/os: linux
-      # NOTE: Leaving this commented as a reminder that this feature exists
-      # ValueYaml: !Sub |
+        vpcId: !Ref VpcId
 Outputs:
   LoadBalancerControllerHelmChart:
     Value: !Ref LoadBalancerControllerHelmChart
