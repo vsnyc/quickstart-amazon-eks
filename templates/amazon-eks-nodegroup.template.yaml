@@ -898,7 +898,6 @@ Conditions:
   IsArm: !Equals [!Ref NodeInstanceFamily, ARM]
   IsGpu: !Equals [!Ref NodeInstanceFamily, GPU]
   UseClusterNodeSecurityGroup: !Equals [!Ref NodeSecurityGroupId, '']
-  UseNodeSecurityGroup: !Not [!Condition UseClusterNodeSecurityGroup]
   MaxNodesDefined: !Not [!Equals [!Ref MaxNumberOfNodes, '']]
   1Type: !Equals [!Ref NodeInstanceType2, '']
   2Type: !Not [!Equals [!Ref NodeInstanceType2, '']]
@@ -965,10 +964,9 @@ Resources:
       IdField: SGID
   CleanupNodeSecurityGroupDependencies:
     Type: Custom::CleanupSecurityGroupDependencies
-    Condition: UseNodeSecurityGroup
     Properties:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-CleanupSecurityGroupDependencies
-      SecurityGroups: [!Ref NodeSecurityGroupId]
+      SecurityGroups: [!If [UseClusterNodeSecurityGroup, !Ref GetClusterNodeSecurityGroup, !Ref NodeSecurityGroupId]]
   GetManagedASG:
     Type: Custom::ResourceReader
     Condition: CreateManagedNodeGroup
