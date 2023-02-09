@@ -7,10 +7,10 @@ Parameters:
     Type: String
 Resources:
   # This resource creates a ConfigMap in the target cluster. It retrieves and decrypts a kms encrypted
-  # kubernetes config file, which is automatically created when customers deploy an EKS cluster with the quickstart,
-  # for bring-your-own-cluster the customer must encrypt and upload a config file prior to launching the stack.
+  # kubernetes config file, which is automatically created when customers deploy an EKS cluster with the Quick Start.
+  # For bring-your-own-cluster, the customer must encrypt and upload a config file prior to launching the stack.
   #
-  # The "URL" property is an exact representation of a regular kubernetes resource manifest, available by link
+  # The "URL" property is an exact representation of a regular kubernetes resource manifest, available by link.
   KubeManifestURLExample:
     Type: AWSQS::Kubernetes::Resource
     Properties:
@@ -26,7 +26,7 @@ Resources:
   # `kubectl create --save-config` is called, on stack update `kubectl apply` and on stack delete `kubectl delete`
   #
   # The following elements are available to be used in other cloudformation resources using !GetAtt:
-  # Name, Namespace, ResourceVersion, SelfLink, Uid
+  # ResourceVersion, SelfLink, Uid
   KubeManifestExample:
     Type: AWSQS::Kubernetes::Resource
     Properties:
@@ -51,20 +51,20 @@ Resources:
     Type: AWSQS::Kubernetes::Helm
     Properties:
       ClusterID: !Ref KubeClusterName
-      # If the chart is not in the stable repo then supply a repo url
-      # RepoUrl: https://svc-catalog-charts.storage.googleapis.com
-      # namespace is optional, in most cases it's best to leave this out so that a namespace is dynamically generated.
-      # If namespace does not exist it will be created
+      # Namespace is optional. In most cases it's best to leave this out so
+      # that a namespace is dynamically generated. If namespace does not exist
+      # it will be created.
       #
       # Namespace: example-ns
       #
-      # supply chart name in "repo-name/chart-name" or "https://repo-hostname/repo-path/chart-package.tgz"
-      Chart: stable/grafana
-      # Name can be specified, if not helm will generate one
+      Chart: grafana/grafana
+      Repository: https://grafana.github.io/helm-charts
+      #
+      # Name can be specified, if not helm will generate one.
       # Name: myRelease
-      # Version can be specified, if not latest will be used
+      # If Version isn't specified, latest will be used.
       # Version: 1.0.1
-      # Custom values can optionally be specified
+      # Custom values can optionally be specified.
       Values:
         testFramework.enabled: true
         imagePullPolicy: Always
@@ -78,7 +78,15 @@ Resources:
       #         - "1"
 Outputs:
   # Examples for using the outputs of the KubeManifestExample resource
+  ExampleResourceVersion:
+    Value: !GetAtt KubeManifestExample.ResourceVersion
+  ExampleReference:
+    Value: !Ref KubeManifestExample
+  ExampleResourceSelfLink:
+    Value: !GetAtt KubeManifestExample.SelfLink
   ExampleUid:
     Value: !GetAtt KubeManifestExample.Uid
-  ExampleSelfLink:
-    Value: !Ref KubeManifestExample
+  HelmExampleReference:
+    Value: !Ref HelmExample
+  HelmExampleID:
+    Value: !GetAtt HelmExample.ID
