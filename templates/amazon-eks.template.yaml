@@ -898,13 +898,13 @@ Resources:
             {
               "Effect": "Allow",
               "Principal": {
-                "Federated": "${EKSControlPlane.Outputs.OIDCProviderArn}"
+                "Federated": "${AwsNodeIrsaStack.Outputs.OIDCProviderArn}"
               },
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
-                  "${EKSControlPlane.Outputs.OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
-                  "${EKSControlPlane.Outputs.OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
+                  "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
                 }
               }
             }
@@ -942,7 +942,6 @@ Resources:
   # the EKS add-on implementation idea for the EBS CSI driver.
   # https://github.com/vmware-tap-on-public-cloud/quickstart-vmware-tanzu-application-platform/pull/15
     Type: AWS::EKS::Addon
-    DependsOn: [AwsNodeIrsaStack]
     Metadata:
       DependsOn:
         - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
@@ -982,13 +981,13 @@ Resources:
             {
               "Effect": "Allow",
               "Principal": {
-                "Federated": "${EKSControlPlane.Outputs.OIDCProviderArn}"
+                "Federated": "${AwsNodeIrsaStack.Outputs.OIDCProviderArn}"
               },
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
-                  "${EKSControlPlane.Outputs.OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
-                  "${EKSControlPlane.Outputs.OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:efs-csi-controller-sa"
+                  "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:efs-csi-controller-sa"
                 }
               }
             }
@@ -1019,7 +1018,6 @@ Resources:
     Type: AWSQS::Kubernetes::Resource
     UpdateReplacePolicy: Delete
     DeletionPolicy: Retain
-    DependsOn: [AwsNodeIrsaStack]
     Properties:
       ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
       Namespace: kube-system
