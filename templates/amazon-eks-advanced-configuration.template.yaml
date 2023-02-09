@@ -2,11 +2,13 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   Configure advanced options for the Amazon EKS Quick Start (qs-1r0q2rlel).
 Metadata:
+  cfn-lint: { config: { ignore_checks: [E9101] } }
   QuickStartDocumentation:
     EntrypointName: Configure advanced options
     Order: Index d
   ConfigSetName: !Ref ConfigSetName
   SentenceCaseExclude:
+    - If
     - This
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -389,9 +391,11 @@ Parameters:
       from nodes. The larger the number, the further instance metadata requests
       can travel
       (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ModifyInstanceMetadataOptions.html#API_ModifyInstanceMetadataOptions_RequestParameters).
+      If using cluster-autoscaler, 2 is the minimum value supported
+      (https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/README.md#common-notes-and-gotchas).
     MinValue: 1
     MaxValue: 64
-    Default: 1
+    Default: 2
   EC2MetadataHttpTokens:
     Type: String
     Description: >-
@@ -400,10 +404,9 @@ Parameters:
       to 1, pods will not be able to access the nodes IAM role. If set to
       "required" amd "EC2MetadataPutResponseHopLimit" is set greater than 1
       pods must send a signed token header with any instance metadata retrieval
-      requests. NOTE: This will default to "required" in the next major
       release.
     AllowedValues: [optional, required]
-    Default: optional
+    Default: required
 Mappings:
   KubernetesVersion:
   # https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html

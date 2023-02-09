@@ -877,7 +877,7 @@ Parameters:
     Description: >-
       The desired HTTP PUT response hop limit for instance metadata requests.
       The larger the number, the further instance metadata requests can travel.
-    Default: 1
+    Default: 2
   EC2MetadataHttpTokens:
     Type: String
     Description: >-
@@ -886,10 +886,9 @@ Parameters:
       to 1, pods will not be able to access the nodes IAM role. If set to
       "required" amd "EC2MetadataPutResponseHopLimit" is set greater than 1
       pods must send a signed token header with any instance metadata retrieval
-      requests. NOTE: This will default to "required" in the next major
-      release.
+      requests.
     AllowedValues: [optional, required]
-    Default: optional
+    Default: required
 Conditions:
   IsAL2: !Equals [!Ref NodeGroupOS, Amazon Linux 2]
   IsWindows: !Equals [!Ref NodeGroupOS, Windows]
