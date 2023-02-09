@@ -27,36 +27,54 @@ def get_attachment_id_for_eni(eni):
         return None
 
 
-def delete_dependencies(sg_id):
+def delete_dependencies(sg_id, security_groups):
     complete = True
-    filters = [{"Name": "ip-permission.group-id", "Values": [sg_id]}]
 
-    for sg in ec2.describe_security_groups(Filters=filters)["SecurityGroups"]:
+    logger.info(f"Deleting dependencies for {sg_id}...")
+
+    for sg in security_groups["SecurityGroups"]:
         for p in sg["IpPermissions"]:
             if "UserIdGroupPairs" in p.keys():
                 if sg_id in [x["GroupId"] for x in p["UserIdGroupPairs"]]:
                     try:
+                        logger.debug(
+                            "Revoking ingress rule %s from %s..." % (p, sg["GroupId"])
+                        )
                         ec2.revoke_security_group_ingress(
                             GroupId=sg["GroupId"], IpPermissions=[p]
                         )
+                        logger.debug(
+                            "Revoked ingress rule %s from %s." % (p, sg["GroupId"])
+                        )
                     except Exception:
                         complete = False
-                        logger.exception("ERROR: %s" % (sg["GroupId"]))
+                        logger.exception(
+                            "ERROR: Failed to revoke ingress rule %s from %s"
+                            % (p, sg["GroupId"])
+                        )
 
                         continue
 
-    filters = [{"Name": "egress.ip-permission.group-id", "Values": [sg_id]}]
-    for sg in ec2.describe_security_groups(Filters=filters)["SecurityGroups"]:
+    for sg in security_groups["SecurityGroups"]:
         for p in sg["IpPermissionsEgress"]:
             if "UserIdGroupPairs" in p.keys():
                 if sg_id in [x["GroupId"] for x in p["UserIdGroupPairs"]]:
                     try:
+                        logger.debug(
+                            "Revoking egress rule %s from %s..." % (p, sg["GroupId"])
+                        )
                         ec2.revoke_security_group_egress(
                             GroupId=sg["GroupId"], IpPermissions=[p]
                         )
+                        logger.debug(
+                            "Revoked egress rule %s from %s." % (p, sg["GroupId"])
+                        )
                     except Exception:
                         complete = False
-                        logger.exception("ERROR: %s" % (sg["GroupId"]))
+                        logger.exception(
+                            "ERROR: Failed to revoke ingress rule %s from %s"
+                            % (sg["GroupId"])
+                        )
 
                         continue
 
@@ -65,10 +83,19 @@ def delete_dependencies(sg_id):
         try:
             attachment_id = get_attachment_id_for_eni(eni)
             if attachment_id:
+                logger.debug(
+                    "Detaching ENI %s from %s..." % (eni["NetworkInterfaceId"], sg_id)
+                )
                 ec2.detach_network_interface(AttachmentId=attachment_id, Force=True)
+                logger.info(
+                    "Detached ENI %s from %s." % (eni["NetworkInterfaceId"], sg_id)
+                )
+
                 sleep(5)
 
+            logger.debug("Deleting ENI %s..." % (eni["NetworkInterfaceId"]))
             ec2.delete_network_interface(NetworkInterfaceId=eni["NetworkInterfaceId"])
+            logger.info("Deleted ENI %s." % (eni["NetworkInterfaceId"]))
         except Exception:
             complete = False
             logger.exception("ERROR: %s" % (eni["NetworkInterfaceId"]))
@@ -80,42 +107,59 @@ def delete_dependencies(sg_id):
 
 @helper.delete
 def delete_handler(event, context):
-    for sg_id in event["ResourceProperties"]["SecurityGroups"]:
+    for sg_id in event.get("ResourceProperties", {}).get("SecurityGroups", {}):
         interval = 15  # seconds
 
-        if re.match(r"^sg-(?:[0-9a-f]{8}|[0-9a-f]{17})$", sg_id):
-            try:
-                ec2.describe_security_groups(GroupIds=[sg_id])
-            except:
-                logger.exception(f"ERROR: Failed to find {sg_id}. Skipping...")
-
-                continue
-        else:
-            raise ValueError(f"ERROR: Invalid security group ID: {sg_id}.")
+        if not re.match(r"^sg-(?:[0-9a-f]{8}|[0-9a-f]{17})$", sg_id):
+            message = f"ERROR: Invalid security group ID: {sg_id}."
+            if len(str(sg_id)) == 1:
+                message += (
+                    " The SecurityGroups property appears to be configured " +
+                    "as a string instead of a list."
+                )
+            logger.error(message)
+            raise ValueError(message)
 
         while True:
-            if delete_dependencies(sg_id):
-                try:
-                    ec2.delete_security_group(GroupId=sg_id)
+            try:
+                logger.debug(f"Querying security group {sg_id}...")
+                security_groups = ec2.describe_security_groups(GroupIds=[sg_id])
+                logger.info(f"Found security group {sg_id}...")
+            except:
+                logger.warning(f"{sg_id} not found. Skipping...")
 
-                    break
+                break
+
+            if delete_dependencies(sg_id, security_groups):
+                try:
+                    logger.debug(f"Deleting security group {sg_id}...")
+                    ec2.delete_security_group(GroupId=sg_id)
+                    logger.info(f"Deleted security group {sg_id}.")
                 except Exception:
                     logger.exception(f"ERROR: Failed to delete {sg_id}.")
 
                     if context.get_remaining_time_in_millis() <= (interval * 1000):
-                        raise ValueError(f"ERROR: Out of retries deleting {sg_id}.")
+                        message = f"ERROR: Out of retries deleting {sg_id}."
+                        logger.error(message)
+                        raise RuntimeError(message)
                     else:
                         sleep(interval)
                         continue
 
             elif context.get_remaining_time_in_millis() <= (interval * 1000):
-                raise ValueError(
+                raise RuntimeError(
                     f"ERROR: Out of retries deleting {sg_id} dependencies."
                 )
             else:
-                logger.error(f"ERROR: Failed to delete {sg_id} dependencies.")
+                logger.error(
+                    f"ERROR: Failed to delete {sg_id} dependencies. Retrying..."
+                )
 
                 sleep(interval)
+
+        logger.info(f"Processed {sg_id} successfully.")
+
+    logger.info(f"Processed delete event successfully.")
 
 
 def handler(event, context):
