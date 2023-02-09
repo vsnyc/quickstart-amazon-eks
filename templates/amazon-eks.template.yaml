@@ -971,8 +971,6 @@ Resources:
         - FsType: !If [EnableWindows, ntfs, ext4]
   AmazonEksEfsCsiDriverRole:
     Type: AWS::IAM::Role
-    Metadata:
-      cfn-lint: { config: { ignore_checks: [EIAMPolicyWildcardResource] } }
     Properties:
       AssumeRolePolicyDocument: !Sub |
         {
@@ -1001,18 +999,24 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - elasticfilesystem:DescribeAccessPoints
-                  - elasticfilesystem:DescribeFileSystems
-                  - elasticfilesystem:DescribeMountTargets
                   - ec2:DescribeAvailabilityZones
                 Resource: '*'
               - Effect: Allow
-                Action: elasticfilesystem:CreateAccessPoint
-                Resource: '*'
+                Action:
+                  - elasticfilesystem:DescribeAccessPoints
+                  - elasticfilesystem:DescribeFileSystems
+                  - elasticfilesystem:DescribeMountTargets
+                Resource:
+                  - !Sub arn:${AWS::Partition}:elasticfilesystem:${AWS::Region}:${AWS::AccountId}:access-point/*
+                  - !Sub arn:${AWS::Partition}:elasticfilesystem:${AWS::Region}:${AWS::AccountId}:file-system/*
+              - Effect: Allow
+                Action:
+                  - elasticfilesystem:CreateAccessPoint
+                Resource: !Sub arn:${AWS::Partition}:elasticfilesystem:${AWS::Region}:${AWS::AccountId}:file-system/*
                 Condition: { StringLike: { aws:RequestTag/efs.csi.aws.com/cluster: 'true' } }
               - Effect: Allow
                 Action: elasticfilesystem:DeleteAccessPoint
-                Resource: '*'
+                Resource: !Sub arn:${AWS::Partition}:elasticfilesystem:${AWS::Region}:${AWS::AccountId}:access-point/*
                 Condition: { StringLike: { aws:ResourceTag/efs.csi.aws.com/cluster: 'true' } }
   AmazonEksEfsCsiDriverServiceAccount:
     Type: AWSQS::Kubernetes::Resource
