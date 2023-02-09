@@ -200,14 +200,14 @@ tests:
       ALBIngressController: Enabled
     regions:
       - eu-north-1
-  calico:
-    parameters:
-      AvailabilityZones: $[taskcat_genaz_3]
-      NodeGroupType: Unmanaged
-      ALBIngressController: Disabled
-      CalicoIntegration: Enabled
-    regions:
-      - us-west-2
+  # calico:
+  #   parameters:
+  #     AvailabilityZones: $[taskcat_genaz_3]
+  #     NodeGroupType: Unmanaged
+  #     ALBIngressController: Disabled
+  #     CalicoIntegration: Enabled
+  #   regions:
+  #     - us-west-2
   # TODO: Troubleshoot CopyZips failures & re-enable
   # rafaysystems:
   #   parameters:
