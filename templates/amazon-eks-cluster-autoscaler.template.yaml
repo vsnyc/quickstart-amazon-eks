@@ -30,8 +30,6 @@ Mappings:
   # NOTE: The cluster autoscaler version number is dependant on the K8S version
   # it is being deployed into.
   # https://github.com/kubernetes/autoscaler/releases
-    '1.21':
-      ImageTag: v1.21.3
     '1.22':
       ImageTag: v1.22.3
     '1.23':

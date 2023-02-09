@@ -200,7 +200,7 @@ Parameters:
   # https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar
     Type: String
     Description: Kubernetes control plane version.
-    AllowedValues: [1.24, 1.23, 1.22, 1.21]
+    AllowedValues: [1.24, 1.23, 1.22]
     Default: 1.24
   BastionOS:
     Type: String
@@ -410,8 +410,6 @@ Mappings:
   # You must use a kubectl version that is within one minor version
   # difference of your Amazon EKS cluster control plane. For example, a 1.23
   # kubectl client works with Kubernetes 1.22, 1.23 and 1.24 clusters.
-    '1.21':
-      KubectlVersion: 1.22.17/2023-01-11
     '1.22':
       KubectlVersion: 1.23.15/2023-01-11
     '1.23':
