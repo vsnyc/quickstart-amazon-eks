@@ -1,15 +1,14 @@
 FROM lambci/lambda:build-python3.8
 
-COPY ./requirements.txt .
+COPY ./requirements.txt ./
 
 # https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html#configuration-layers-path
-RUN mkdir -p python/ && \
+RUN mkdir -p ./python/ && \
     pip install -t python/ -r ./requirements.txt && \
     find . -name "*.dist-info"  -exec rm -rf {} \; | true && \
     find . -name "*.egg-info"  -exec rm -rf {} \; | true && \
     find . -name "*.pth"  -exec rm -rf {} \; | true && \
     find . -name "__pycache__"  -exec rm -rf {} \; | true && \
-    rm requirements.txt && \
     zip -X -r lambda.zip ./
 
 CMD mkdir -p /output/ && mv lambda.zip /output/
