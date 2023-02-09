@@ -1021,9 +1021,10 @@ Resources:
         WaitOnResourceSignals: !If [IsBottlerocket, false, true]
         PauseTime: !If [IsBottlerocket, PT3M, PT15M]
   NodeTerminationHandlerHelmChart:
-  # https://artifacthub.io/packages/helm/aws/aws-node-termination-handler
+    # https://artifacthub.io/packages/helm/aws/aws-node-termination-handler
     Type: AWSQS::Kubernetes::Helm
     Condition: CreateUnmanagedNodeGroup
+    DependsOn: [UnmanagedASG]
     Properties:
       ClusterID: !Ref EKSClusterName
       Namespace: kube-system
