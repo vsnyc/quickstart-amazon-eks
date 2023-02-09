@@ -11,6 +11,6 @@ RUN mkdir -p ./python/ && \
     find . -name "__pycache__"  -exec rm -rf {} \; | true && \
     mv ./python/bin ./ && \
     mv ./python/* ./bin/ && \
-    zip -X -r lambda.zip ./
+    zip -X -r ./lambda.zip ./
 
-CMD mkdir -p /output/ && mv lambda.zip /output/
+CMD mkdir -p /output/ && mv ./lambda.zip /output/
