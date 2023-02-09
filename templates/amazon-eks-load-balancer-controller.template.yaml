@@ -269,6 +269,7 @@ Resources:
       Values:
         clusterName: !Ref EksClusterName
         hostNetwork: !If [HostNetworkEnabled, 'true', 'false']
+        image.repository: public.ecr.aws/eks/aws-load-balancer-controller
         nodeSelector.kubernetes\.io/os: linux
         region: !Ref AWS::Region
         replicaCount: !Ref ControllerReplicaCount
