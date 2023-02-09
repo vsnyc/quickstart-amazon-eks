@@ -1025,6 +1025,9 @@ Resources:
       Namespace: kube-system
       Chart: aws-efs-csi-driver/aws-efs-csi-driver
       Repository: https://kubernetes-sigs.github.io/aws-efs-csi-driver/
+      Version: 2.3.6
+        # 20230207: Issues with pod deployment step in 2.3.7
+        # TODO: Remove version pin once resolved
       Values:
         controller.serviceAccount.annotations.eks\.amazonaws\.com/role-arn: !GetAtt AmazonEksEfsCsiDriverRole.Arn
         image.repository: public.ecr.aws/efs-csi-driver/amazon/aws-efs-csi-driver
