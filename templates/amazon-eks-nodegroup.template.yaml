@@ -979,6 +979,7 @@ Resources:
   UnmanagedASG:
     Type: AWS::AutoScaling::AutoScalingGroup
     Condition: CreateUnmanagedNodeGroup
+    DependsOn: [CleanupNodeSecurityGroupDependencies]
     Properties:
       DesiredCapacity: !Ref NumberOfNodes
       MaxSize: !If [MaxNodesDefined, !Ref MaxNumberOfNodes, !Ref NumberOfNodes]
@@ -1033,6 +1034,7 @@ Resources:
   ManagedNodeGroup:
     Type: AWS::EKS::Nodegroup
     Condition: CreateManagedNodeGroup
+    DependsOn: [CleanupNodeSecurityGroupDependencies]
     Properties:
       ClusterName: !Ref EKSClusterName
       LaunchTemplate:
