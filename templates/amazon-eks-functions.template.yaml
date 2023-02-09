@@ -94,7 +94,7 @@ Resources:
     Type: AWS::Lambda::Function
     DependsOn: [ClusterControlPlaneSecurityGroupIngress]
     Properties:
-      FunctionName: !Sub EKS-QuickStart-KubeManifest-${EKSClusterName}
+      FunctionName: !Sub eks-quickstart-KubeManifest-${EKSClusterName}
       Handler: index.handler
       MemorySize: 256
       Role: !Ref KubernetesAdminRoleArn
@@ -117,7 +117,7 @@ Resources:
     Type: AWS::Lambda::Function
     DependsOn: [ClusterControlPlaneSecurityGroupIngress]
     Properties:
-      FunctionName: !Sub EKS-QuickStart-KubeGet-${EKSClusterName}
+      FunctionName: !Sub eks-quickstart-KubeGet-${EKSClusterName}
       Handler: index.handler
       MemorySize: 256
       Role: !Ref KubernetesAdminRoleArn
