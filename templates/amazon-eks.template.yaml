@@ -1082,7 +1082,10 @@ Resources:
         # TODO: Remove version pin once resolved
       Values:
         controller.serviceAccount.annotations.eks\.amazonaws\.com/role-arn: !GetAtt AmazonEksEfsCsiDriverRole.Arn
+        controller.serviceAccount.create: 'true'
+        controller.serviceAccount.name: efs-csi-controller-sa
         image.repository: public.ecr.aws/efs-csi-driver/amazon/aws-efs-csi-driver
+        nodeSelector.kubernetes\.io/os: linux
 Outputs:
   BastionIP:
     Value: !If
