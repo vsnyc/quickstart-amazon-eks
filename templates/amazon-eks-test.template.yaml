@@ -7,6 +7,8 @@ Parameters:
     Type: String
   TestWindows:
     Type: String
+  WindowsVersion:
+    Type: String
   # ManifestUrl:
   #   Type: String
 Conditions:
@@ -53,7 +55,7 @@ Resources:
     Properties:
       ClusterName: !Ref ClusterName
       Namespace: default
-      Manifest: |
+      Manifest: !Sub |
         apiVersion: batch/v1
         kind: Job
         metadata:
@@ -66,7 +68,7 @@ Resources:
                 kubernetes.io/arch: amd64
               containers:
                 - name: windows-test-container
-                  image: mcr.microsoft.com/windows/servercore:ltsc2022
+                  image: mcr.microsoft.com/windows/servercore:ltsc${WindowsVersion}
                   command: ["powershell", "-command", "sleep 20; ping aws.amazon.com"]
               restartPolicy: OnFailure
           backoffLimit: 4

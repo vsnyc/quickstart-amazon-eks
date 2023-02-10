@@ -870,7 +870,7 @@ Parameters:
   WindowsVersion:
     Type: String
     Description: The version of windows to use for Windows Nodegroups.
-    AllowedValues: [2019, 2022]
+    AllowedValues: [2022]
     Default: 2022
   EC2MetadataPutResponseHopLimit:
     Type: String
