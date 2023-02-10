@@ -919,6 +919,7 @@ Resources:
         }
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
         - !If [Commercial, !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly', !Ref AWS::NoValue]
       Policies:
         - PolicyName: AmazonEbsCsiDeviceEncryption
@@ -982,6 +983,7 @@ Resources:
           ]
         }
       ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
         - !If [Commercial, !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly', !Ref AWS::NoValue]
   AwsNodeTerminationHandlerHelmChart:
     # https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html
@@ -1044,6 +1046,7 @@ Resources:
           ]
         }
       ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
         - !If [Commercial, !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly', !Ref AWS::NoValue]
       Policies:
         - PolicyName: AmazonEksEfsCsiDriverPolicy

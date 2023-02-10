@@ -62,6 +62,7 @@ Resources:
           ]
         }
       ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
         - !If [Commercial, !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly', !Ref AWS::NoValue]
       Policies:
         - PolicyName: AmazonEKSClusterAutoscalerPolicy

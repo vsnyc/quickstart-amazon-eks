@@ -40,6 +40,7 @@ Resources:
           ]
         }
       ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
         - !If [Commercial, !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly', !Ref AWS::NoValue]
   MetricsServerHelmChart:
     # https://github.com/kubernetes-sigs/metrics-server/
