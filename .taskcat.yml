@@ -77,10 +77,9 @@ tests:
       - eu-central-1
   metrics-server:
     parameters:
-      AvailabilityZones: $[taskcat_genaz_2]
-      NumberOfAZs: 2
-      ClusterAutoScaler: Enabled
+      AvailabilityZones: $[taskcat_genaz_3]
       MetricsServer: Enabled
+      ALBIngressController: Disabled
       ProvisionBastionHost: Disabled
     regions:
       - ap-northeast-1
