@@ -51,13 +51,13 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       KubernetesVersion: '1.23'
     regions:
-      - us-west-2
+      - eu-south-1
   v1-22:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       KubernetesVersion: '1.22'
     regions:
-      - us-east-1
+      - us-east-2
   public-endpoint:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
@@ -136,7 +136,7 @@ tests:
       ALBIngressController: Disabled
       ProvisionBastionHost: Disabled
     regions:
-      - us-west-2
+      - ap-southeast-1
   fargate:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
