@@ -99,6 +99,24 @@ Resources:
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKS_CNI_Policy
+      Policies:
+        - PolicyName: AmazonEKS_CNI_IPv6_Policy
+            # https://docs.aws.amazon.com/eks/latest/userguide/cni-iam-role.html#cni-iam-role-create-ipv6-policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:DescribeInstances
+                  - ec2:DescribeTags
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DescribeInstanceTypes
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - ec2:AssignIpv6Addresses
+                  - ec2:CreateTags
+                Resource: !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*
   JobResource:
     Type: AWSQS::Kubernetes::Resource
     UpdateReplacePolicy: Delete
