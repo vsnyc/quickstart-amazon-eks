@@ -316,6 +316,7 @@ Conditions:
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, aws-quickstart]
   GenerateClusterName: !Equals [!Ref EKSClusterName, '']
   UseKeyPair: !Not [!Equals [!Ref KeyPairName, '']]
+  UseUnmanagedNodeGroup: !Equals [!Ref NodeGroupType, Unmanaged]
 Resources:
   BastionEksPermissions:
     Type: AWS::IAM::Policy
@@ -955,6 +956,50 @@ Resources:
       ClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
       ResolveConflicts: NONE
       ServiceAccountRoleArn: !GetAtt AmazonEksEbsCsiDriverRole.Arn
+  AwsNodeTerminationHandlerRole:
+    Type: AWS::IAM::Role
+    Condition: UseUnmanagedNodeGroup
+    Properties:
+      AssumeRolePolicyDocument: !Sub |
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "${AwsNodeIrsaStack.Outputs.OIDCProviderArn}"
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:aws-node-termination-handler"
+                }
+              }
+            }
+          ]
+        }
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
+  AwsNodeTerminationHandlerHelmChart:
+    # https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html
+    # https://artifacthub.io/packages/helm/aws/aws-node-termination-handler
+    # https://github.com/aws/eks-charts/tree/master/stable/aws-node-termination-handler
+    Type: AWSQS::Kubernetes::Helm
+    Condition: UseUnmanagedNodeGroup
+    Properties:
+      ClusterID: !GetAtt EKSControlPlane.Outputs.EKSName
+      Namespace: kube-system
+      Chart: eks/aws-node-termination-handler
+      Repository: https://aws.github.io/eks-charts
+      Values:
+        enablePrometheusServer: !If [EnablePrometheus, 'true', 'false']
+        image.repository: public.ecr.aws/aws-ec2/aws-node-termination-handler
+        nodeSelector.kubernetes\.io/os: linux
+        rbac.pspEnabled: 'false'  # Pod Security Policy is officially deprecated in 1.25+
+        serviceAccount.annotations.eks\.amazonaws\.com/role-arn: !GetAtt AwsNodeTerminationHandlerRole.Arn
+        serviceAccount.create: 'true'
+        serviceAccount.name: aws-node-termination-handler
   EbsStorageClass:
     Type: AWSQS::Kubernetes::Resource
     DependsOn: [AmazonEksEbsCsiDriverAddon]
