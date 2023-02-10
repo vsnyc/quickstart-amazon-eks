@@ -2,6 +2,8 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   Shared resources required by all Amazon EKS Quick Start stacks in this
   account (qs-1r0qgtn7j).
+Conditions:
+  Commercial: !Equals [!Ref AWS::Partition, aws]
 Resources:
   CopyZipsRole:
     Type: AWS::IAM::Role
@@ -455,9 +457,9 @@ Resources:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKS_CNI_Policy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
-        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
         - !Sub arn:${AWS::Partition}:iam::aws:policy/CloudWatchAgentServerPolicy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
+        - !If [Commercial, !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly', !Ref AWS::NoValue]
   ManagedNodeInstanceRole:
     Type: AWS::IAM::Role
     Properties:
@@ -484,9 +486,9 @@ Resources:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKS_CNI_Policy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
-        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
         - !Sub arn:${AWS::Partition}:iam::aws:policy/CloudWatchAgentServerPolicy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
+        - !If [Commercial, !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly', !Ref AWS::NoValue]
   CloudFormationVPCRoleCreationRole:
     Type: AWS::IAM::Role
     Properties:

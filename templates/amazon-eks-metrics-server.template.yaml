@@ -14,6 +14,8 @@ Parameters:
     Type: String
   OIDCProviderEndpoint:
     Type: String
+Conditions:
+  Commercial: !Equals [!Ref AWS::Partition, aws]
 Resources:
   MetricsServerRole:
     Type: AWS::IAM::Role
@@ -38,7 +40,7 @@ Resources:
           ]
         }
       ManagedPolicyArns:
-        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
+        - !If [Commercial, !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly', !Ref AWS::NoValue]
   MetricsServerHelmChart:
     # https://github.com/kubernetes-sigs/metrics-server/
     # https://artifacthub.io/packages/helm/metrics-server/metrics-server

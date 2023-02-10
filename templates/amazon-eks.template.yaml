@@ -283,6 +283,7 @@ Mappings:
   #   us-west-2:
   #     Registry: 602401143452.dkr.ecr.us-west-2.amazonaws.com
 Conditions:
+  Commercial: !Equals [!Ref AWS::Partition, aws]
   EnableProxy: !Not [!Equals [!Ref HttpProxy, '']]
   DeployTestStack: !Equals [!Ref TestSuite, Enabled]
   EnableSnyk: !Equals [!Ref SnykIntegration, Enabled]
@@ -918,6 +919,7 @@ Resources:
         }
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
+        - !If [Commercial, !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly', !Ref AWS::NoValue]
       Policies:
         - PolicyName: AmazonEbsCsiDeviceEncryption
           # https://docs.aws.amazon.com/eks/latest/userguide/csi-iam-role.html#Prerequisites
@@ -980,7 +982,7 @@ Resources:
           ]
         }
       ManagedPolicyArns:
-        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
+        - !If [Commercial, !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly', !Ref AWS::NoValue]
   AwsNodeTerminationHandlerHelmChart:
     # https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html
     # https://artifacthub.io/packages/helm/aws/aws-node-termination-handler
@@ -1042,7 +1044,7 @@ Resources:
           ]
         }
       ManagedPolicyArns:
-        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
+        - !If [Commercial, !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly', !Ref AWS::NoValue]
       Policies:
         - PolicyName: AmazonEksEfsCsiDriverPolicy
           # https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html#efs-create-iam-resources
