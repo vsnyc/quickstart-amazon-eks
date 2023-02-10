@@ -40,6 +40,8 @@ project:
     QSS3BucketRegion: $[taskcat_current_region]
   lambda_source_path: functions/source
   lambda_zip_path: functions/packages
+  package_lambda: true
+  build_submodules: true
 tests:
   defaults:
     parameters:
