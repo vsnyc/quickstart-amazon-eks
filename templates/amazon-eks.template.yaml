@@ -537,7 +537,7 @@ Resources:
   MetricsServerStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableMetricsServer
-    DependsOn: [ControlPlaneSecurityGroupIngress, NodeGroupStack]
+    DependsOn: [ControlPlaneSecurityGroupIngress]
     Metadata:
       DependsOn:
         - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
@@ -549,6 +549,8 @@ Resources:
           S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
       Parameters:
         EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        OIDCProviderArn: !GetAtt AwsNodeIrsaStack.Outputs.OIDCProviderArn
+        OIDCProviderEndpoint: !GetAtt AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint
   EfsStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableEfs
