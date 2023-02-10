@@ -2,6 +2,7 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   Deploys the auto-scaler helm chart into an existing kubernetes cluster
   (qs-1ql475ceo).
+# https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html#cluster-autoscaler
 Metadata:
   cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006, W7001] } }
 Parameters:
@@ -52,10 +53,8 @@ Resources:
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
-                  "${OIDCProviderEndpoint}:aud": "sts.amazonaws.com"
-                },
-                "StringLike": {
-                  "${OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:cluster-autoscaler-*"
+                  "${OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:cluster-autoscaler"
                 }
               }
             }
@@ -64,7 +63,6 @@ Resources:
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
       Policies:
-      # https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html#cluster-autoscaler
         - PolicyName: AmazonEKSClusterAutoscalerPolicy
           PolicyDocument: !Sub |
             {
@@ -109,6 +107,7 @@ Resources:
             }
   ClusterAutoScalerHelmChart:
     # https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html#cluster-autoscaler
+    # https://artifacthub.io/packages/helm/cluster-autoscaler/cluster-autoscaler
     # https://github.com/kubernetes/autoscaler/tree/master/charts/cluster-autoscaler
     Type: AWSQS::Kubernetes::Helm
     Properties:
@@ -130,3 +129,5 @@ Resources:
         prometheusRule.enabled: !Ref PrometheusEnabled
         prometheusRule.namespace: !Ref PrometheusNamespace
         rbac.serviceAccount.annotations.eks\.amazonaws\.com/role-arn: !GetAtt ClusterAutoScalerIamRole.Arn
+        rbac.serviceAccount.create: 'true'
+        rbac.serviceAccount.name: cluster-autoscaler
