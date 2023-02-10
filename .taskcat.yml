@@ -125,12 +125,13 @@ tests:
       ALBIngressController: Disabled
     regions:
       - eu-west-2
-  with-hybrid:
+  efs:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      EKSPublicAccessEndpoint: Enabled
+      EfsStorageClass: Enabled
       NodeGroupType: Unmanaged
       ALBIngressController: Disabled
+      ProvisionBastionHost: Disabled
     regions:
       - us-west-2
   fargate:
