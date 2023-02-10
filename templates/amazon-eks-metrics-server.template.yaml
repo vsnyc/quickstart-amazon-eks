@@ -32,7 +32,10 @@ Resources:
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
-                  "${OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${OIDCProviderEndpoint}:aud": [
+                    "sts.amazonaws.com",
+                    "sts.${AWS::Region}.amazonaws.com"
+                  ],
                   "${OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:metrics-server"
                 }
               }

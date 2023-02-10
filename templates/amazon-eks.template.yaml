@@ -910,7 +910,10 @@ Resources:
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
-                  "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:aud": [
+                    "sts.amazonaws.com",
+                    "sts.${AWS::Region}.amazonaws.com"
+                  ],
                   "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:ebs-csi-controller-sa"
                 }
               }
@@ -975,7 +978,10 @@ Resources:
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
-                  "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:aud": [
+                    "sts.amazonaws.com",
+                    "sts.${AWS::Region}.amazonaws.com"
+                  ],
                   "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:aws-node-termination-handler"
                 }
               }
@@ -1038,7 +1044,10 @@ Resources:
               "Action": "sts:AssumeRoleWithWebIdentity",
               "Condition": {
                 "StringEquals": {
-                  "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:aud": "sts.amazonaws.com",
+                  "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:aud": [
+                    "sts.amazonaws.com",
+                    "sts.${AWS::Region}.amazonaws.com"
+                  ],
                   "${AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint}:sub": "system:serviceaccount:kube-system:efs-csi-controller-sa"
                 }
               }
