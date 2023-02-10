@@ -109,6 +109,7 @@ Resources:
             }
   ClusterAutoScalerHelmChart:
     # https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html#cluster-autoscaler
+    # https://github.com/kubernetes/autoscaler/tree/master/charts/cluster-autoscaler
     Type: AWSQS::Kubernetes::Helm
     Properties:
       ClusterID: !Ref EksClusterName
@@ -122,6 +123,8 @@ Resources:
         extraArgs.aws-use-static-instance-list: !If [NeedsStaticList, true, !Ref AWS::NoValue]
         extraArgs.balance-similar-node-groups: false
         extraArgs.expander: random
+        image.repository: k8s.gcr.io/autoscaling/cluster-autoscaler
+          # TODO: Switch to ECR Public Gallery image repository once available
         image.tag: !FindInMap [KubernetesVersion, !Ref KubernetesVersion, ImageTag]
         nodeSelector.kubernetes\.io/os: linux
         prometheusRule.enabled: !Ref PrometheusEnabled
