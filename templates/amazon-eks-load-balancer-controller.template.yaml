@@ -2,6 +2,8 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   Deploys the aws load balancer controller to an existing kubernetes cluster
   (qs-1qnl6p00n).
+# https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
+# https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html
 Metadata:
   cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
 Parameters:
@@ -260,7 +262,9 @@ Resources:
                   - !Sub arn:${AWS::Partition}:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:listener-rule/net/*/*/*
                   - !Sub arn:${AWS::Partition}:elasticloadbalancing:${AWS::Region}:${AWS::AccountId}:listener-rule/app/*/*/*
   LoadBalancerControllerHelmChart:
-  # https://artifacthub.io/packages/helm/aws/aws-load-balancer-controller
+    # https://artifacthub.io/packages/helm/aws/aws-load-balancer-controller
+    # https://github.com/aws/eks-charts/tree/master/stable/aws-load-balancer-controller
+    # https://github.com/kubernetes-sigs/aws-load-balancer-controller
     Type: AWSQS::Kubernetes::Helm
     Properties:
       ClusterID: !Ref EksClusterName
@@ -278,4 +282,6 @@ Resources:
         resources.limits.cpu: !Ref ControllerCPULimit
         resources.limits.memory: !Ref ControllerMemoryLimit
         serviceAccount.annotations.eks\.amazonaws\.com/role-arn: !GetAtt LoadBalancerControllerIAMRole.Arn
+        serviceAccount.create: 'true'
+        serviceAccount.name: aws-load-balancer-controller
         vpcId: !Ref VpcId
