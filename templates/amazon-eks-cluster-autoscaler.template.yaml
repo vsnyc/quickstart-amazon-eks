@@ -61,6 +61,8 @@ Resources:
             }
           ]
         }
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
       Policies:
       # https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html#cluster-autoscaler
         - PolicyName: AmazonEKSClusterAutoscalerPolicy

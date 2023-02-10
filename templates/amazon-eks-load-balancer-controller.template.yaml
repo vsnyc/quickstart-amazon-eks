@@ -60,6 +60,8 @@ Resources:
             }
           ]
         }
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
       Policies:
         - PolicyName: load-balancer-controller-policy
           # https://raw.githubusercontent.com/kubernetes-sigs/aws-alb-ingress-controller/main/docs/install/iam_policy.json

@@ -97,6 +97,7 @@ Resources:
         }
       Path: /
       ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKS_CNI_Policy
   JobResource:
     Type: AWSQS::Kubernetes::Resource
@@ -120,6 +121,8 @@ Resources:
               containers:
                 - name: aws-node-enable-irsa
                   image: amazonlinux:2
+                    # TODO: Use public.ecr.aws/amazonlinux/amazonlinux:2 if a
+                    # ARM tagging solution becomes viable
                   command: ["/bin/bash","-c"]
                   args:
                     - >
