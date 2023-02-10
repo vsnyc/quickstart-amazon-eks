@@ -455,7 +455,7 @@ Resources:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKS_CNI_Policy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
-        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticFileSystemReadOnlyAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
         - !Sub arn:${AWS::Partition}:iam::aws:policy/CloudWatchAgentServerPolicy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
   ManagedNodeInstanceRole:
@@ -484,7 +484,7 @@ Resources:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKSWorkerNodePolicy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEKS_CNI_Policy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
-        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticFileSystemReadOnlyAccess
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly
         - !Sub arn:${AWS::Partition}:iam::aws:policy/CloudWatchAgentServerPolicy
         - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy
   CloudFormationVPCRoleCreationRole:
