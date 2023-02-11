@@ -339,8 +339,6 @@ Resources:
   BastionStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableBastion
-    Metadata:
-      cfn-lint: { config: { ignore_checks: [W1011] } }
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion-entrypoint-existing-vpc.template.yaml
@@ -883,8 +881,6 @@ Resources:
   AwsNodeIrsaStack:
     Type: AWS::CloudFormation::Stack
     DependsOn: NodeGroupStack
-    Metadata:
-      cfn-lint: { config: { ignore_checks: [W1011] } }
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/workloads/aws-node-daemonset-IRSA.template.yaml
