@@ -170,6 +170,7 @@ Parameters:
       must be symmetric, created in the same Region as the cluster, and if the
       CMK was created in a different account, the user must have access to the
       CMK.
+    AllowedPattern: ^arn:(aws|aws-cn|aws-us-gov):kms:\S+:[0-9]{12}:key/\S+$|^$
     Default: ''
   EKSPublicAccessCIDRs:
     Type: List<String>
