@@ -11,7 +11,6 @@ Parameters:
   KubernetesVersion:
     Type: String
     AllowedValues: [1.24, 1.23, 1.22]
-    Default: 1.24
   OIDCProviderArn:
     Type: String
   OIDCProviderEndpoint:
@@ -121,13 +120,13 @@ Resources:
       Chart: cluster-autoscaler/cluster-autoscaler
       Repository: https://kubernetes.github.io/autoscaler
       Values:
-        awsRegion: !Ref AWS::Region
         autoDiscovery.clusterName: !Ref EksClusterName
+        awsRegion: !Ref AWS::Region
         cloudProvider: aws
         extraArgs.aws-use-static-instance-list: !If [NeedsStaticList, true, !Ref AWS::NoValue]
         extraArgs.balance-similar-node-groups: false
         extraArgs.expander: random
-        image.repository: k8s.gcr.io/autoscaling/cluster-autoscaler
+        image.repository: registry.k8s.io/autoscaling/cluster-autoscaler
           # TODO: Switch to ECR Public Gallery image repository once available
         image.tag: !FindInMap [KubernetesVersion, !Ref KubernetesVersion, ImageTag]
         nodeSelector.kubernetes\.io/os: linux

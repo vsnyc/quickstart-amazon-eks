@@ -55,7 +55,7 @@ Resources:
       Repository: https://kubernetes-sigs.github.io/metrics-server/
       Chart: metrics-server/metrics-server
       Values:
-        image.repository: k8s.gcr.io/metrics-server/metrics-server
+        image.repository: registry.k8s.io/metrics-server/metrics-server
           # TODO: Use public.ecr.aws/eks-distro/kubernetes-sigs/metrics-server
           # if they switch to a viable tagging strategy or equivalent AWS
           # image repository in ECR Public Gallery if one becomes available.
