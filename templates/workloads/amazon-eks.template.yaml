@@ -218,8 +218,8 @@ Mappings:
     Namespace:
       Prometheus: prometheus
   # RegionMap:
-  # # Retained in case needed at a future point.
-  # # https://docs.aws.amazon.com/eks/latest/userguide/add-ons-images.html
+  #   # Retained in case needed at a future point.
+  #   # https://docs.aws.amazon.com/eks/latest/userguide/add-ons-images.html
   #   af-south-1:
   #     Registry: 877085696533.dkr.ecr.af-south-1.amazonaws.com
   #   ap-east-1:
@@ -232,8 +232,8 @@ Mappings:
   #     Registry: 602401143452.dkr.ecr.ap-northeast-3.amazonaws.com
   #   ap-south-1:
   #     Registry: 602401143452.dkr.ecr.ap-south-1.amazonaws.com
-  #   # ap-south-2:
-  #   #   Registry:
+  #   ap-south-2:
+  #     Registry: 900889452093.dkr.ecr.ap-south-2.amazonaws.com
   #   ap-southeast-1:
   #     Registry: 602401143452.dkr.ecr.ap-southeast-1.amazonaws.com
   #   ap-southeast-2:
@@ -250,14 +250,14 @@ Mappings:
   #     Registry: 961992271922.dkr.ecr.cn-northwest-1.amazonaws.com.cn
   #   eu-central-1:
   #     Registry: 602401143452.dkr.ecr.eu-central-1.amazonaws.com
-  #   # eu-central-2:
-  #   #   Registry:
+  #   eu-central-2:
+  #     Registry: 900612956339.dkr.ecr.eu-central-2.amazonaws.com
   #   eu-north-1:
   #     Registry: 602401143452.dkr.ecr.eu-north-1.amazonaws.com
   #   eu-south-1:
   #     Registry: 590381155156.dkr.ecr.eu-south-1.amazonaws.com
-  #   # eu-south-2:
-  #   #   Registry:
+  #   eu-south-2:
+  #     Registry: 455263428931.dkr.ecr.eu-south-2.amazonaws.com
   #   eu-west-1:
   #     Registry: 602401143452.dkr.ecr.eu-west-1.amazonaws.com
   #   eu-west-2:
