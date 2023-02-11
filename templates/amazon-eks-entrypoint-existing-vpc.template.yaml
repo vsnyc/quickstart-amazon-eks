@@ -921,6 +921,15 @@ Rules:
         AssertDescription: >-
           AutDetect must be set/unset for both PerRegionSharedResources and
           PerAccountSharedResources.
+  China:
+    RuleCondition: !Or
+      - !Equals [!Ref ClusterAutoScaler, Enabled]
+      - !Equals [!Ref MetricsServer, Enabled]
+    Assertions:
+      - Assert: !Not [!Equals [!Ref AWS::Partition, aws-cn]]
+        AssertDescription: >-
+          The Cluster Autoscaler and Metrics Server features are not currently
+          supported in the Greater China Region partition.
   LablesNeedNamespaces:
     RuleCondition: !Not [!Equals [!Ref FargateLabels, '']]
     Assertions:

@@ -822,23 +822,11 @@ Resources:
         # Network configuration
         VPCID: !GetAtt VPCStack.Outputs.VPCID
         PrivateSubnet1ID: !GetAtt VPCStack.Outputs.PrivateSubnet1AID
-        PrivateSubnet2ID: !If
-          - 2AZDeployment
-          - !GetAtt VPCStack.Outputs.PrivateSubnet2AID
-          - !Ref AWS::NoValue
-        PrivateSubnet3ID: !If
-          - 3AZDeployment
-          - !GetAtt VPCStack.Outputs.PrivateSubnet3AID
-          - !Ref AWS::NoValue
+        PrivateSubnet2ID: !If [2AZDeployment, !GetAtt VPCStack.Outputs.PrivateSubnet2AID, !Ref AWS::NoValue]
+        PrivateSubnet3ID: !If [3AZDeployment, !GetAtt VPCStack.Outputs.PrivateSubnet3AID, !Ref AWS::NoValue]
         PublicSubnet1ID: !GetAtt VPCStack.Outputs.PublicSubnet1ID
-        PublicSubnet2ID: !If
-          - 2AZDeployment
-          - !GetAtt VPCStack.Outputs.PublicSubnet2ID
-          - !Ref AWS::NoValue
-        PublicSubnet3ID: !If
-          - 3AZDeployment
-          - !GetAtt VPCStack.Outputs.PublicSubnet3ID
-          - !Ref AWS::NoValue
+        PublicSubnet2ID: !If [2AZDeployment, !GetAtt VPCStack.Outputs.PublicSubnet2ID, !Ref AWS::NoValue]
+        PublicSubnet3ID: !If [3AZDeployment, !GetAtt VPCStack.Outputs.PublicSubnet3ID, !Ref AWS::NoValue]
         # Bastion host configuration
         ProvisionBastionHost: !Ref ProvisionBastionHost
         OnDemandBastionPercentage: !Ref OnDemandBastionPercentage
@@ -935,6 +923,15 @@ Rules:
     Assertions:
       - Assert: !Not [!Equals [!Ref FargateNamespaces, '']]
         AssertDescription: You must specify at least one Fargate namespace to enable Fargate.
+  China:
+    RuleCondition: !Or
+      - !Equals [!Ref ClusterAutoScaler, Enabled]
+      - !Equals [!Ref MetricsServer, Enabled]
+    Assertions:
+      - Assert: !Not [!Equals [!Ref AWS::Partition, aws-cn]]
+        AssertDescription: >-
+          The Cluster Autoscaler and Metrics Server features are not currently
+          supported in the Greater China Region partition.
   WindowsUnmanaged:
     RuleCondition: !Equals [!Ref NodeGroupType, Managed]
     Assertions:
