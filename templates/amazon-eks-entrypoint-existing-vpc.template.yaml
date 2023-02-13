@@ -104,7 +104,7 @@ Metadata:
       - Label:
           default: Kubernetes add-ins
         Parameters:
-          - ALBIngressController
+          - LoadBalancerController
           - ClusterAutoScaler
           - MetricsServer
           - EfsStorageClass
@@ -160,7 +160,7 @@ Metadata:
         default: Provision bastion host
       OnDemandBastionPercentage:
         default: Bastion host on-demand percentage
-      ALBIngressController:
+      LoadBalancerController:
         default: AWS load balancer controller
       EKSClusterName:
         default: EKS cluster name
@@ -503,9 +503,10 @@ Parameters:
     MinValue: 0
     MaxValue: 100
     Default: 100
-  ALBIngressController:
+  LoadBalancerController:
     Type: String
-    Description: Choose "Enabled" to deploy the AWS load balancer controller.
+    Description: >-
+      Choose "Disabled" to skip deploying the AWS load balancer controller.
     AllowedValues: [Enabled, Disabled]
     Default: Enabled
   EKSClusterName:
@@ -879,7 +880,7 @@ Resources:
         Password: !Ref Password
         MuleLicenseKeyinbase64: !Ref MuleLicenseKeyinbase64
         # Kubernetes add-ins
-        ProvisionLoadBalancerController: !Ref ALBIngressController
+        ProvisionLoadBalancerController: !Ref LoadBalancerController
         ProvisionClusterAutoScaler: !Ref ClusterAutoScaler
         ProvisionMetricsServer: !Ref MetricsServer
         EfsStorageClass: !Ref EfsStorageClass

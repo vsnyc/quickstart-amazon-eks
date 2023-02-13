@@ -65,7 +65,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
       ProvisionBastionHost: Disabled
-      ALBIngressController: Disabled
+      LoadBalancerController: Disabled
     regions:
       - ap-northeast-2
   cluster-autoscaler:
@@ -73,7 +73,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       ClusterAutoScaler: Enabled
       NodeGroupType: Unmanaged
-      ALBIngressController: Disabled
+      LoadBalancerController: Disabled
       ProvisionBastionHost: Disabled
     regions:
       - eu-central-1
@@ -81,7 +81,7 @@ tests:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
       MetricsServer: Enabled
-      ALBIngressController: Disabled
+      LoadBalancerController: Disabled
       ProvisionBastionHost: Disabled
     regions:
       - ap-northeast-1
@@ -90,7 +90,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       ClusterAutoScaler: Disabled
       EKSPublicAccessEndpoint: Enabled
-      ALBIngressController: Disabled
+      LoadBalancerController: Disabled
       ProvisionBastionHost: Disabled
     regions:
       - ap-south-1
@@ -101,7 +101,7 @@ tests:
       GrafanaIntegration: Enabled
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: Unmanaged
-      ALBIngressController: Disabled
+      LoadBalancerController: Disabled
       ProvisionBastionHost: Disabled
     regions:
       - ap-southeast-2
@@ -127,7 +127,7 @@ tests:
       EKSClusterLoggingTypes: ''
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: Unmanaged
-      ALBIngressController: Disabled
+      LoadBalancerController: Disabled
     regions:
       - eu-west-2
   efs:
@@ -135,7 +135,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       EfsStorageClass: Enabled
       NodeGroupType: Unmanaged
-      ALBIngressController: Disabled
+      LoadBalancerController: Disabled
       ProvisionBastionHost: Disabled
     regions:
       - ap-southeast-1
@@ -147,7 +147,7 @@ tests:
       FargateLabels: app.kubernetes.io/name=aws-cluster-autoscaler
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: Unmanaged
-      ALBIngressController: Enabled
+      LoadBalancerController: Enabled
     regions:
       - us-east-1
   bottlerocket:
@@ -158,7 +158,7 @@ tests:
       NodeInstanceFamily: ARM
       NodeInstanceType: c6g.medium
       NodeGroupType: Unmanaged
-      ALBIngressController: Enabled
+      LoadBalancerController: Enabled
       ProvisionBastionHost: Disabled
     regions:
       - eu-west-1
@@ -168,7 +168,7 @@ tests:
       EKSPublicAccessEndpoint: Enabled
       SnykIntegration: Enabled
       SnykIntegrationId: ---overridden---
-      ALBIngressController: Enabled
+      LoadBalancerController: Enabled
       ProvisionBastionHost: Disabled
     regions:
       - eu-west-3
@@ -179,7 +179,7 @@ tests:
   #     EKSPublicAccessEndpoint: Enabled
   #     NewRelicIntegration: Enabled
   #     NewRelicLicenseKey: ---overridden---
-  #     ALBIngressController: Enabled
+  #     LoadBalancerController: Enabled
   #     ProvisionBastionHost: Disabled
   #   regions:
   #     - sa-east-1
@@ -188,7 +188,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       EKSPublicAccessEndpoint: Enabled
       RancherIntegration: Enabled
-      ALBIngressController: Enabled
+      LoadBalancerController: Enabled
       ProvisionBastionHost: Disabled
     regions:
       - ap-east-1
@@ -198,7 +198,7 @@ tests:
       ClusterAutoScaler: Enabled
       TestSuite: Enabled
       ProvisionBastionHost: Disabled
-      ALBIngressController: Enabled
+      LoadBalancerController: Enabled
     regions:
       - af-south-1
   windows:
@@ -207,14 +207,14 @@ tests:
       TestSuite: Enabled
       NodeGroupOS: Windows
       NodeGroupType: Unmanaged
-      ALBIngressController: Enabled
+      LoadBalancerController: Enabled
     regions:
       - eu-north-1
   # calico:
   #   parameters:
   #     AvailabilityZones: $[taskcat_genaz_3]
   #     NodeGroupType: Unmanaged
-  #     ALBIngressController: Disabled
+  #     LoadBalancerController: Disabled
   #     ProvisionBastionHost: Disabled
   #     CalicoIntegration: Enabled
   #   regions:
@@ -224,7 +224,7 @@ tests:
   #   parameters:
   #     AvailabilityZones: $[taskcat_genaz_3]
   #     NodeGroupType: Unmanaged
-  #     ALBIngressController: Disabled
+  #     LoadBalancerController: Disabled
   #     ProvisionBastionHost: Disabled
   #     RafaySysIntegration: Enabled
   #     RafaySysFirstName: override

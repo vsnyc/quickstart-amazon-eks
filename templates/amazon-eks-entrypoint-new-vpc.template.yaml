@@ -109,7 +109,7 @@ Metadata:
       - Label:
           default: Kubernetes add-ins
         Parameters:
-          - ALBIngressController
+          - LoadBalancerController
           - ClusterAutoScaler
           - MetricsServer
           - EfsStorageClass
@@ -173,7 +173,7 @@ Metadata:
         default: Bastion host on-demand percentage
       EKSPublicAccessEndpoint:
         default: EKS public access endpoint
-      ALBIngressController:
+      LoadBalancerController:
         default: AWS load balancer controller
       FargateNamespaces:
         default: Fargate namespaces
@@ -553,7 +553,7 @@ Parameters:
     MinValue: 0
     MaxValue: 100
     Default: 100
-  ALBIngressController:
+  LoadBalancerController:
     Type: String
     Description: >-
       Choose "Disabled" to skip deploying the AWS load balancer controller.
@@ -876,7 +876,7 @@ Resources:
         Password: !Ref Password
         MuleLicenseKeyinbase64: !Ref MuleLicenseKeyinbase64
         # Kubernetes add-ins
-        ALBIngressController: !Ref ALBIngressController
+        LoadBalancerController: !Ref LoadBalancerController
         ClusterAutoScaler: !Ref ClusterAutoScaler
         MetricsServer: !Ref MetricsServer
         EfsStorageClass: !Ref EfsStorageClass
