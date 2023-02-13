@@ -718,11 +718,9 @@ Resources:
   TestSuiteStack:
     Type: AWS::CloudFormation::Stack
     Condition: DeployTestStack
+    DependsOn: [ControlPlaneSecurityGroupIngress, NodeGroupStack]
     Metadata:
       DependsOn:
-        - !Ref ControlPlaneSecurityGroupIngress
-        - !Ref NodeGroupStack
-        - !Ref EbsStorageClass
         - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
         - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
@@ -740,12 +738,9 @@ Resources:
   NewRelicStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableNewRelic
+    DependsOn: [ControlPlaneSecurityGroupIngress, FunctionStack, NodeGroupStack, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !Ref FunctionStack
-        - !Ref ControlPlaneSecurityGroupIngress
-        - !Ref NodeGroupStack
-        - !Ref EbsStorageClass
         - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -757,13 +752,10 @@ Resources:
         NewRelicLicenseKey: !Ref NewRelicLicenseKey
   SnykStack:
     Type: AWS::CloudFormation::Stack
-    DependsOn: FunctionStack
+    DependsOn: [ControlPlaneSecurityGroupIngress, FunctionStack, NodeGroupStack, EbsStorageClass]
     Condition: EnableSnyk
     Metadata:
       DependsOn:
-        - !Ref ControlPlaneSecurityGroupIngress
-        - !Ref NodeGroupStack
-        - !Ref EbsStorageClass
         - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
