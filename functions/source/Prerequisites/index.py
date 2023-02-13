@@ -9,14 +9,18 @@ from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
+CONFIG = Config(retries={"max_attempts": 10, "mode": "standard"})
 
-def waiter(c, o, s):
-    logger.info(f"waiter({o}, {s}) started")
+
+def waiter(cfn_client, operation, stack_id):
+    logger.info(f"waiter({operation}, {stack_id}) started")
     retries = 50
 
     while True:
         retries -= 1
-        status = c.describe_stacks(StackName=s)["Stacks"][0]["StackStatus"]
+        response = cfn_client.describe_stacks(StackName=stack_id)
+        stack = response["Stacks"][0]
+        status = stack["StackStatus"]
         if status in ["CREATE_COMPLETE", "UPDATE_COMPLETE"]:
             break
 
@@ -25,34 +29,35 @@ def waiter(c, o, s):
             or status in ["DELETE_COMPLETE", "UPDATE_ROLLBACK_COMPLETE"]
             or retries == 0
         ):
-            raise RuntimeError(f"Stack operation failed: {o} {status} {s}")
+            raise RuntimeError(
+                f"Stack operation failed: {operation} {status} {stack_id}"
+            )
 
         sleep(randint(1000, 1500) / 100)  # nosec B311
 
-    logger.info(f"waiter({o}, {s}) done")
+    logger.info(f"waiter({operation}, {stack_id}) done")
 
 
-def get_stacks(key, val, region=None):
-    C = Config(retries={"max_attempts": 10, "mode": "standard"})
-    cfn = boto3.client("cloudformation", region_name=region, config=C)
+def get_stacks(key, value, region=None):
+    cfn_client = boto3.client("cloudformation", region_name=region, config=CONFIG)
     stacks = []
 
-    for p in cfn.get_paginator("describe_stacks").paginate():
-        stacks += p["Stacks"]
-    s = [s for s in stacks if {"Key": key, "Value": val} in s["Tags"]]
+    for page in cfn_client.get_paginator("describe_stacks").paginate():
+        stacks += page["Stacks"]
+    stack = [stack for stack in stacks if {"Key": key, "Value": value} in stack["Tags"]]
 
-    if not len(s):
+    if not len(stack):
         return None
 
-    stack_id = s[0]["StackId"]
-    status = s[0]["StackStatus"]
+    stack_id = stack[0]["StackId"]
+    status = stack[0]["StackStatus"]
 
     if status.endswith("_IN_PROGRESS"):
-        op = status.split("_")[0].lower()
+        operation = status.split("_")[0].lower()
 
-        waiter(cfn, op, stack_id)
+        waiter(cfn_client, operation, stack_id)
 
-        if op == "delete":
+        if operation == "delete":
             return None
 
     return stack_id
