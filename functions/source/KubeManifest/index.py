@@ -193,11 +193,11 @@ def to_path(path):
 
 def set_type(input_str):
     if type(input_str) == str:
-        if input_str.lower() == "false":
-            return False
+        # if input_str.lower() == "false":
+        #     return False
 
-        if input_str.lower() == "true":
-            return True
+        # if input_str.lower() == "true":
+        #     return True
 
         if input_str.isdigit():
             return int(input_str)
