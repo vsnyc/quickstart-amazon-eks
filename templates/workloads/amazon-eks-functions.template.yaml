@@ -18,7 +18,7 @@ Parameters:
     Type: String
   HttpProxy:
     Type: String
-    Default: ""
+    Default: ''
 Conditions:
   NoProxy: !Equals [!Ref HttpProxy, '']
 Resources:
@@ -38,7 +38,7 @@ Resources:
     Type: AWS::EC2::SecurityGroupIngress
     DependsOn: [CleanupLambdaSecurityGroupDependencies]
     Properties:
-      Description: Allow lambda to communicate with the cluster API Server
+      Description: Allow lambda to communicate with the cluster API Server.
       GroupId: !Ref ControlPlaneSecurityGroup
       SourceSecurityGroupId: !Ref EKSLambdaSecurityGroup
       IpProtocol: tcp
