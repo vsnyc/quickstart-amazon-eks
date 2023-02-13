@@ -991,7 +991,7 @@ Resources:
     Properties:
       ClusterID: !GetAtt EKSControlPlane.Outputs.EKSName
       Namespace: kube-system
-      Chart: eks/aws-node-termination-handler
+      Chart: aws/aws-node-termination-handler
       Repository: https://aws.github.io/eks-charts
       Values:
         enablePrometheusServer: !If [EnablePrometheus, 'true', 'false']
