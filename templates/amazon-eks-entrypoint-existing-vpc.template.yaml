@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Deploys an EKS cluster into an existing VPC (qs-1p7nknoht).
+Description: Deploys an EKS cluster into an existing VPC (qs-1tsp45g9l).
 Metadata:
   QuickStartDocumentation:
     EntrypointName: Launch into an existing VPC

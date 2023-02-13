@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Enables IRSA for the aws-node daemonset (qs-1r15gqig4).
+Description: Enables IRSA for the aws-node daemonset (qs-1tsonl5rk).
 # https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
 # https://docs.aws.amazon.com/eks/latest/userguide/cni-iam-role.html
 Metadata:

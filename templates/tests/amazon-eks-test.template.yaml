@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Test suite for EKS Quick Start (qs-1r0qgtna3).
+Description: Test suite for EKS Quick Start (qs-1tsp3udb4).
 Metadata:
   cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
 Parameters:
