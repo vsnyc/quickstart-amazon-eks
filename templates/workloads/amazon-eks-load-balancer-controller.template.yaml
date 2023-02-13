@@ -276,7 +276,7 @@ Resources:
       Namespace: kube-system
       Name: aws-load-balancer-controller
       Repository: https://aws.github.io/eks-charts
-      Chart: eks/aws-load-balancer-controller
+      Chart: aws/aws-load-balancer-controller
       Values:
         clusterName: !Ref EksClusterName
         hostNetwork: !If [HostNetworkEnabled, 'true', 'false']
