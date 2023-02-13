@@ -523,7 +523,7 @@ Resources:
     DependsOn: [ControlPlaneSecurityGroupIngress]
     Metadata:
       DependsOn:
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/workloads/amazon-eks-cluster-autoscaler.template.yaml
@@ -543,7 +543,7 @@ Resources:
     Metadata:
       DependsOn:
         - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/workloads/amazon-eks-metrics-server.template.yaml
@@ -559,7 +559,7 @@ Resources:
     DependsOn: [AmazonEksEfsCsiDriverHelmChart]
     Metadata:
       DependsOn:
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/workloads/amazon-eks-efs.template.yaml
@@ -649,7 +649,7 @@ Resources:
     DependsOn: [ControlPlaneSecurityGroupIngress, NodeGroupStack, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-prometheus/templates/eks-prometheus.template.yaml
@@ -664,7 +664,7 @@ Resources:
     DependsOn: [ControlPlaneSecurityGroupIngress, NodeGroupStack, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-grafana/templates/eks-grafana.template.yaml
@@ -698,7 +698,7 @@ Resources:
     DependsOn: [ControlPlaneSecurityGroupIngress, NodeGroupStack]
     Metadata:
       DependsOn:
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/workloads/amazon-eks-load-balancer-controller.template.yaml
@@ -723,7 +723,7 @@ Resources:
         - !Ref NodeGroupStack
         - !Ref EbsStorageClass
         - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/tests/amazon-eks-test.template.yaml
@@ -745,7 +745,7 @@ Resources:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !Ref EbsStorageClass
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-newrelic-infrastructure/templates/new-relic-infrastructure.template.yaml
@@ -763,7 +763,7 @@ Resources:
         - !Ref ControlPlaneSecurityGroupIngress
         - !Ref NodeGroupStack
         - !Ref EbsStorageClass
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-snyk/templates/eks-snyk.template.yaml
@@ -779,7 +779,7 @@ Resources:
     DependsOn: [FunctionStack, ControlPlaneSecurityGroupIngress, NodeGroupStack, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-tigera-calico/templates/eks-calico-entrypoint.template.yaml
@@ -796,7 +796,7 @@ Resources:
     DependsOn: [FunctionStack, ControlPlaneSecurityGroupIngress, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-rafay-systems/templates/eks-rafay.template.yaml
@@ -832,7 +832,7 @@ Resources:
     DependsOn: [FunctionStack, ControlPlaneSecurityGroupIngress, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-rancher/templates/rancher.template.yaml
@@ -853,7 +853,7 @@ Resources:
     DependsOn: [FunctionStack, ControlPlaneSecurityGroupIngress, EbsStorageClass]
     Metadata:
       DependsOn:
-        - !If [EnableFargate, !Ref FargateNamespaces, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
         - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-eks-mulesoft-runtime-fabric/templates/mule-rtf-template.yaml
