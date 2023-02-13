@@ -141,9 +141,12 @@ def delete_handler(event, context):
                     if context.get_remaining_time_in_millis() <= (interval * 1000):
                         message = f"ERROR: Out of retries deleting {sg_id}."
                         logger.error(message)
-                        raise RuntimeError(message)
+
+                        # raise RuntimeError(message)
+                        pass
                     else:
                         sleep(interval)
+
                         continue
 
             elif context.get_remaining_time_in_millis() <= (interval * 1000):
