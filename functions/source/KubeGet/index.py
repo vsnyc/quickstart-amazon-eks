@@ -1,6 +1,7 @@
+import boto3
 import json
 import logging
-import boto3
+import math
 import subprocess  # nosec B404
 import shlex
 import time
@@ -25,12 +26,12 @@ def run_command(command):
             shlex.split(command), stderr=subprocess.STDOUT
         ).decode("utf-8")
         logger.info(output)
-    except subprocess.CalledProcessError as exc:
+    except subprocess.CalledProcessError as e:
         logger.exception(
             "Command failed with exit code %s, stderr: %s"
-            % (exc.returncode, exc.output.decode("utf-8"))
+            % (e.returncode, e.output.decode("utf-8"))
         )
-        raise Exception(exc.output.decode("utf-8"))
+        raise Exception(e.output.decode("utf-8"))
 
     return output
 
@@ -44,20 +45,16 @@ def create_kubeconfig(cluster_name):
 
 @helper.create
 @helper.update
-def create_handler(event, _):
+def create_handler(event, context):
     create_kubeconfig(event["ResourceProperties"]["ClusterName"])
 
-    name = event["ResourceProperties"]["Name"]
-    retry_timeout = 0
+    props = event.get("ResourceProperties", {})
+    name = props["Name"]
+    interval = 5
+    retry_timeout = math.floor(context.get_remaining_time_in_millis() / interval / 1000) - 1
 
-    if "Timeout" in event["ResourceProperties"]:
-        retry_timeout = int(event["ResourceProperties"]["Timeout"])
-
-    if retry_timeout > 600:
-        retry_timeout = 600
-
-    namespace = event["ResourceProperties"]["Namespace"]
-    json_path = event["ResourceProperties"]["JsonPath"]
+    namespace = props["Namespace"]
+    json_path = props["JsonPath"]
 
     while True:
         try:
@@ -67,13 +64,14 @@ def create_handler(event, _):
             break
         except Exception:
             if retry_timeout < 1:
-                logger.error("Out of retries")
-                raise
+                message = "Out of retries"
+                logger.error(message)
+                raise RuntimeError(message)
             else:
                 logger.info("Retrying until timeout...")
 
-                time.sleep(5)
-                retry_timeout = retry_timeout - 5
+                time.sleep(interval)
+                retry_timeout = retry_timeout - interval
 
     response_data = {}
 
@@ -81,7 +79,9 @@ def create_handler(event, _):
         response_data[event["ResourceProperties"]["ResponseKey"]] = outp
 
     if len(outp.encode("utf-8")) > 1000:
-        outp = "MD5-" + str(md5(outp.encode("utf-8")).hexdigest())  # nosec B324
+        outp_utf8 = outp.encode("utf-8")
+        md5_digest = md5(outp_utf8).hexdigest()  # nosec B324, B303
+        outp = "MD5-" + str(md5_digest)
 
     helper.Data.update(response_data)
 

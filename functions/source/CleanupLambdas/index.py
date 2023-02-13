@@ -7,24 +7,23 @@ from crhelper import CfnResource
 
 logger = logging.getLogger(__name__)
 helper = CfnResource(json_logging=True, log_level="DEBUG")
-lmbd = boto3.client("lambda")
+lambda_client = boto3.client("lambda")
 
 
 @helper.delete
 def delete_handler(event, _):
     security_group_id = event["ResourceProperties"]["SecurityGroupId"]
-    paginator = lmbd.get_paginator("list_functions")
+    paginator = lambda_client.get_paginator("list_functions")
 
     for page in paginator.paginate():
-        for func in page["Functions"]:
-            if security_group_id not in func.get("VpcConfig", {}).get(
-                "SecurityGroupIds", []
-            ):
-                continue
+        for function in page["Functions"]:
+            vpc_config = function.get("VpcConfig", {})
+            security_group_ids = vpc_config.get("SecurityGroupIds", [])
 
-            logger.info(f"deleting {func['FunctionName']}")
+            if security_group_id in security_group_ids:
+                logger.info(f"deleting {function['FunctionName']}")
 
-            lmbd.delete_function(FunctionName=func["FunctionName"])
+                lambda_client.delete_function(FunctionName=function["FunctionName"])
 
 
 def handler(event, context):

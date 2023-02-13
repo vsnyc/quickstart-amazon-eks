@@ -5,9 +5,9 @@ import subprocess  # nosec B404
 import shlex
 import re
 import requests
-from ruamel import yaml
 from datetime import date, datetime
 from crhelper import CfnResource
+from ruamel import yaml
 from time import sleep
 
 logger = logging.getLogger(__name__)
@@ -22,20 +22,18 @@ except Exception as init_exception:
     helper.init_failure(init_exception)
 
 
-def s3_get(url):
+def s3_get(url: str):
     try:
-        return (
-            s3_client.get_object(
-                Bucket=url.split("/")[2], Key="/".join(url.split("/")[3:])
-            )["Body"]
-            .read()
-            .decode("utf8")
-        )
+        bucket = url.split("/")[2]
+        key = "/".join(url.split("/")[3:])
+        response = s3_client.get_object(Bucket=bucket, Key=key)
+
+        return response["Body"].read().decode("utf8")
     except Exception as e:
         raise RuntimeError(f"Failed to fetch CustomValueYaml {url} from S3. {e}")
 
 
-def http_get(url):
+def http_get(url: str):
     try:
         response = requests.get(url)
     except requests.exceptions.RequestException as e:
@@ -50,13 +48,13 @@ def http_get(url):
     return response.text
 
 
-def run_command(command):
+def run_command(command: str):
     retries = 0
 
     while True:
         try:
             try:
-                logger.debug("executing command: %s" % command)
+                logger.debug(f"Executing command: {command}")
                 output = subprocess.check_output(  # nosec B603
                     shlex.split(command), stderr=subprocess.STDOUT
                 ).decode("utf-8")
@@ -83,7 +81,7 @@ def run_command(command):
             retries += 1
 
 
-def create_kubeconfig(cluster_name):
+def create_kubeconfig(cluster_name: str):
     run_command(
         f"aws eks update-kubeconfig --name {cluster_name} --alias {cluster_name}"
     )
@@ -97,7 +95,7 @@ def json_serial(o):
     raise TypeError("Object of type '%s' is not JSON serializable" % type(o))
 
 
-def write_manifest(manifest, path):
+def write_manifest(manifest: str, path: str):
     f = open(path, "w")
     f.write(json.dumps(manifest, default=json_serial))
     f.close()
@@ -227,9 +225,10 @@ def enable_proxy(proxy_host, vpc_id):
     vpc_cidr = ec2_client.describe_vpcs(VpcIds=[vpc_id])["Vpcs"][0]["CidrBlock"]
     configmap["data"]["NO_PROXY"] += f"{vpc_cidr},{cluster_cidr}"
 
-    write_manifest(configmap, "/tmp/proxy.json")  # nosec B108
+    file_path = "/tmp/proxy.json"  # nosec B108
+    write_manifest(configmap, file_path)
 
-    run_command("kubectl apply -f /tmp/proxy.json")
+    run_command(f"kubectl apply -f {file_path}")
 
     patch_cmd = (
         """kubectl patch -n kube-system -p '{ "spec": {"template": { "spec": { """
@@ -247,29 +246,22 @@ def enable_proxy(proxy_host, vpc_id):
 
 
 def handler_init(event):
-    logger.debug("Received event: %s" % json.dumps(event, default=json_serial))
-
     physical_resource_id = None
     manifest_file = None
 
-    create_kubeconfig(event["ResourceProperties"]["ClusterName"])
+    props = event.get("ResourceProperties", {})
+    create_kubeconfig(props["ClusterName"])
 
-    if (
-        "HttpProxy" in event["ResourceProperties"].keys()
-        and event["RequestType"] != "Delete"
-    ):
-        enable_proxy(
-            event["ResourceProperties"]["HttpProxy"],
-            event["ResourceProperties"]["VpcId"],
-        )
+    if "HttpProxy" in props.keys() and event["RequestType"] != "Delete":
+        enable_proxy(props["HttpProxy"], props["VpcId"])
 
-    if "Manifest" in event["ResourceProperties"].keys():
+    if "Manifest" in props.keys():
         manifest_file = "/tmp/manifest.json"  # nosec B108
 
         if "PhysicalResourceId" in event.keys():
             physical_resource_id = event["PhysicalResourceId"]
 
-        if type(event["ResourceProperties"]["Manifest"]) == str:
+        if type(props["Manifest"]) == str:
             manifest = generate_name(event, physical_resource_id)
         else:
             manifest = fix_types(generate_name(event, physical_resource_id))
@@ -278,9 +270,9 @@ def handler_init(event):
         logger.debug(
             "Applying manifest: %s" % json.dumps(manifest, default=json_serial)
         )
-    elif "Url" in event["ResourceProperties"].keys():
+    elif "Url" in props.keys():
         manifest_file = "/tmp/manifest.json"  # nosec B108
-        url = event["ResourceProperties"]["Url"]
+        url = props["Url"]
 
         if re.match(s3_scheme, url):
             response = s3_get(url)
@@ -320,12 +312,11 @@ def create_handler(event, _):
     if not manifest_file:
         return physical_resource_id
 
-    outp = run_command("kubectl create --save-config -o json -f %s" % manifest_file)
+    outp = run_command(f"kubectl create --save-config -o json -f {manifest_file}")
     helper.Data = build_output(json.loads(outp))
 
-    if helper.Data.get("selfLink", "").startswith(
-        "/apis/batch"
-    ) and "cronjobs" not in helper.Data.get("selfLink", ""):
+    self_link = helper.Data.get("selfLink", "")
+    if self_link.startswith("/apis/batch") and "cronjobs" not in self_link:
         stabilize_job(helper.Data["namespace"], helper.Data["name"])
 
     return helper.Data.get("selfLink", physical_resource_id)
@@ -334,18 +325,23 @@ def create_handler(event, _):
 @helper.update
 def update_handler(event, _):
     physical_resource_id, manifest_file = handler_init(event)
+
     if not manifest_file:
         return physical_resource_id
+
     outp = run_command("kubectl apply -o json -f %s" % manifest_file)
     helper.Data = build_output(json.loads(outp))
+
     return helper.Data.get("selfLink", physical_resource_id)
 
 
 @helper.delete
 def delete_handler(event, _):
     physical_resource_id, manifest_file = handler_init(event)
+
     if not manifest_file:
         return physical_resource_id
+
     run_command("kubectl delete -f %s" % manifest_file)
 
 
