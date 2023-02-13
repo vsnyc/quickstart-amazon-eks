@@ -59,6 +59,8 @@ Metadata:
           - Taints
           - EC2MetadataPutResponseHopLimit
           - EC2MetadataHttpTokens
+          - MaxNodesUnavailable
+          - MaxNodesUnavailablePercentage
     ParameterLabels:
       KeyPairName:
         default: SSH key name
@@ -122,6 +124,10 @@ Metadata:
         defaults: Amazon EC2 metadata put response hop limit
       EC2MetadataHttpTokens:
         defaults: Amazon EC2 metadata HTTP tokens
+      MaxNodesUnavailable:
+        default: Max nodes unavailable
+      MaxNodesUnavailablePercentage:
+        default: Max nodes unavailable percentage
 Parameters:
   KeyPairName:
     Description: >-
@@ -889,6 +895,25 @@ Parameters:
       requests.
     AllowedValues: [optional, required]
     Default: required
+  MaxNodesUnavailable:
+    Type: Number
+    Description: >-
+      The maximum number of nodes unavailable at once during a version update.
+      Nodes will be updated in parallel. If the "max nodes unavailable
+      percentage" parameter is set to a value greater than 0, this parameter is
+      ignored.
+    MinValue: 1
+    MaxValue: 100
+    Default: 1
+  MaxNodesUnavailablePercentage:
+    Type: Number
+    Description: >-
+      The maximum percentage of nodes unavailable during a version update. This
+      percentage of nodes will be updated in parallel. If set to 0, this
+      parameter is ignored.
+    MinValue: 0
+    MaxValue: 100
+    Default: 0
 Conditions:
   IsAL2: !Equals [!Ref NodeGroupOS, Amazon Linux 2]
   IsWindows: !Equals [!Ref NodeGroupOS, Windows]
@@ -916,6 +941,11 @@ Conditions:
   CreateManagedNodeGroup: !And [!Condition IsManaged, !Condition CreateNodeGroup]
   CreateUnmanagedNodeGroup: !And [!Condition IsUnmanaged, !Condition CreateNodeGroup]
   UseKeyPair: !Not [!Equals [!Ref KeyPairName, '']]
+  UseMaxNodesUnavailablePercentage: !Not [!Equals [!Ref MaxNodesUnavailablePercentage, 0]]
+  UseMaxNodesUnavailable: !And
+    - !Not [!Condition UseMaxNodesUnavailablePercentage]
+    - !Not [!Equals [!Ref MaxNodesUnavailable, 0]]
+
 Resources:
   GetVpcCidr:
     Type: Custom::ResourceReader
@@ -1039,6 +1069,12 @@ Resources:
         - 3AZDeployment
         - [!Ref Subnet1ID, !Ref Subnet2ID, !Ref Subnet3ID]
         - !If [2AZDeployment, [!Ref Subnet1ID, !Ref Subnet2ID], [!Ref Subnet1ID]]
+      UpdateConfig:
+        MaxUnavailable: !If [UseMaxNodesUnavailable, !Ref MaxNodesUnavailable, !Ref AWS::NoValue]
+        MaxUnavailablePercentage: !If
+          - UseMaxNodesUnavailablePercentage
+          - !Ref MaxNodesUnavailablePercentage
+          - !Ref AWS::NoValue
   NodeLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Condition: CreateNodeGroup

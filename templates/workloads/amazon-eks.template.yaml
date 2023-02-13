@@ -425,6 +425,8 @@ Resources:
         WindowsEdition: ~~/<ConfigSetName>/windows-nodegroup/WindowsNodeEdition~~
         EC2MetadataPutResponseHopLimit: ~~/<ConfigSetName>/default-nodegroup/EC2MetadataPutResponseHopLimit~~
         EC2MetadataHttpTokens: ~~/<ConfigSetName>/default-nodegroup/EC2MetadataHttpTokens~~
+        MaxNodesUnavailable: ~~/<ConfigSetName>/default-nodegroup/MaxNodesUnavailable~~
+        MaxNodesUnavailablePercentage: ~~/<ConfigSetName>/default-nodegroup/MaxNodesUnavailablePercentage~~
   WindowsSupportNodeGroupStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableWindows

@@ -44,6 +44,8 @@ Metadata:
           - WindowsNodeVersion
           - EC2MetadataPutResponseHopLimit
           - EC2MetadataHttpTokens
+          - MaxNodesUnavailable
+          - MaxNodesUnavailablePercentage
       - Label:
           default: Bastion configuration
         Parameters:
@@ -133,6 +135,10 @@ Metadata:
         default: Amazon EC2 metadata put response hop limit
       EC2MetadataHttpTokens:
         default: Amazon EC2 metadata HTTP tokens
+      MaxNodesUnavailable:
+        default: Max nodes unavailable
+      MaxNodesUnavailablePercentage:
+        default: Max nodes unavailable percentage
 Parameters:
   ConfigSetName:
     Type: String
@@ -408,6 +414,25 @@ Parameters:
       release.
     AllowedValues: [optional, required]
     Default: required
+  MaxNodesUnavailable:
+    Type: Number
+    Description: >-
+      The maximum number of nodes unavailable at once during a version update.
+      Nodes will be updated in parallel. If the "max nodes unavailable
+      percentage" parameter is set to a value greater than 0, this parameter is
+      ignored.
+    MinValue: 1
+    MaxValue: 100
+    Default: 1
+  MaxNodesUnavailablePercentage:
+    Type: Number
+    Description: >-
+      The maximum percentage of nodes unavailable during a version update. This
+      percentage of nodes will be updated in parallel. If set to 0, this
+      parameter is ignored.
+    MinValue: 0
+    MaxValue: 100
+    Default: 0
 Mappings:
   KubernetesVersion:
   # https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
@@ -637,6 +662,18 @@ Resources:
       Type: String
       Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/EC2MetadataHttpTokens
       Value: !Sub '{ "Value": "${EC2MetadataHttpTokens}" }'
+  MaxNodesUnavailableParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/MaxNodesUnavailable
+      Value: !Sub '{ "Value": "${MaxNodesUnavailable}" }'
+  MaxNodesUnavailablePercentageParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Type: String
+      Name: !Sub /quickstart/amazon-eks/${ConfigSetName}/default-nodegroup/MaxNodesUnavailablePercentage
+      Value: !Sub '{ "Value": "${MaxNodesUnavailablePercentage}" }'
 Outputs:
   ConfigSetName:
     Description: Config set name.
