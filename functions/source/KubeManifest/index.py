@@ -61,17 +61,23 @@ def run_command(command):
                     shlex.split(command), stderr=subprocess.STDOUT
                 ).decode("utf-8")
                 logger.debug(output)
-            except subprocess.CalledProcessError as exc:
-                logger.error(
+            except subprocess.CalledProcessError as e:
+                logger.exception(
                     "Command failed with exit code %s, stderr: %s"
-                    % (exc.returncode, exc.output.decode("utf-8"))
+                    % (e.returncode, e.output.decode("utf-8"))
                 )
 
-                raise Exception(exc.output.decode("utf-8"))
+                if "NotFound" in str(e):
+                    logger.info("Continuing...")
+
+                    pass
+                else:
+                    raise RuntimeError(e.output.decode("utf-8"))
             return output
         except Exception as e:
             if "Unable to connect to the server" not in str(e) or retries >= 5:
-                raise
+                raise RuntimeError(e)
+
             logger.debug("{}, retrying in 5 seconds".format(e))
             sleep(5)
             retries += 1
