@@ -698,6 +698,7 @@ Resources:
     DependsOn: [ControlPlaneSecurityGroupIngress, NodeGroupStack]
     Metadata:
       DependsOn:
+        - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
         - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
