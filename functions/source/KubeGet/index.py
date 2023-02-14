@@ -73,7 +73,7 @@ def create_handler(event, context):
                 time.sleep(interval)
                 retry_timeout = retry_timeout - interval
 
-    response_data = {}
+    response_data = {"id": ""}
 
     if "ResponseKey" in event["ResourceProperties"]:
         response_data[event["ResourceProperties"]["ResponseKey"]] = outp

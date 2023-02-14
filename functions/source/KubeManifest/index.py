@@ -122,7 +122,13 @@ def generate_name(event, physical_resource_id):
 
 
 def build_output(kube_response):
-    outp = {}
+    outp = {
+        "uid": "",
+        "selfLink": "",
+        "resourceVersion": "",
+        "namespace": "",
+        "name": "",
+    }
 
     for key in ["uid", "selfLink", "resourceVersion", "namespace", "name"]:
         if key in kube_response["metadata"].keys():
