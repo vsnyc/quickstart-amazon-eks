@@ -54,3 +54,7 @@
 	path = submodules/quickstart-linux-bastion
 	url = https://github.com/aws-quickstart/quickstart-linux-bastion.git
 	branch = main
+[submodule "submodules/quickstart-amazon-eks-nodegroup"]
+	path = submodules/quickstart-amazon-eks-nodegroup
+	url = https://github.com/aws-quickstart/quickstart-amazon-eks-nodegroup.git
+	branch = main
