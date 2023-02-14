@@ -90,7 +90,7 @@ def create_handler(event, context):
 
 def handler(event, context):
     props = event.get("ResourceProperties", {})
-    logger.setLevel(props.get("LogLevel", logger.INFO))
+    logger.setLevel(props.get("LogLevel", logging.INFO))
 
     logger.debug(json.dumps(event))
 
