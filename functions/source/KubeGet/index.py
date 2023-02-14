@@ -51,7 +51,9 @@ def create_handler(event, context):
     props = event.get("ResourceProperties", {})
     name = props["Name"]
     interval = 5
-    retry_timeout = math.floor(context.get_remaining_time_in_millis() / interval / 1000) - 1
+    retry_timeout = (
+        math.floor(context.get_remaining_time_in_millis() / interval / 1000) - 1
+    )
 
     namespace = props["Namespace"]
     json_path = props["JsonPath"]
