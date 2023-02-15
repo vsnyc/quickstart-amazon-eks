@@ -85,12 +85,11 @@ tests:
       ProvisionBastionHost: Disabled
     regions:
       - ap-northeast-1
-  managed-node-group:
+  cert-manager:
     parameters:
       AvailabilityZones: $[taskcat_genaz_3]
-      ClusterAutoScaler: Disabled
-      EKSPublicAccessEndpoint: Enabled
-      LoadBalancerController: Disabled
+      CertManager: Enabled
+      LoadBalancerController: Enabled
       ProvisionBastionHost: Disabled
     regions:
       - ap-south-1

@@ -110,6 +110,7 @@ Metadata:
           default: Kubernetes add-ins
         Parameters:
           - LoadBalancerController
+          - CertManager
           - ClusterAutoScaler
           - MetricsServer
           - EfsStorageClass
@@ -175,6 +176,8 @@ Metadata:
         default: EKS public access endpoint
       LoadBalancerController:
         default: AWS load balancer controller
+      CertManager:
+        default: Certificate manager
       FargateNamespaces:
         default: Fargate namespaces
       FargateLabels:
@@ -559,6 +562,12 @@ Parameters:
       Choose "Disabled" to skip deploying the AWS load balancer controller.
     AllowedValues: [Enabled, Disabled]
     Default: Enabled
+  CertManager:
+    Type: String
+    Description: >-
+      Choose "Disabled" to skip deploying the certificate manager.
+    AllowedValues: [Enabled, Disabled]
+    Default: Disabled
   FargateNamespaces:
     Type: String
     Description: >-
@@ -877,6 +886,7 @@ Resources:
         MuleLicenseKeyinbase64: !Ref MuleLicenseKeyinbase64
         # Kubernetes add-ins
         LoadBalancerController: !Ref LoadBalancerController
+        CertManager: !Ref CertManager
         ClusterAutoScaler: !Ref ClusterAutoScaler
         MetricsServer: !Ref MetricsServer
         EfsStorageClass: !Ref EfsStorageClass
