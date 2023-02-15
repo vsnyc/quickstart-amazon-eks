@@ -1,15 +1,13 @@
 FROM lambci/lambda:build-python3.8
 
-COPY . .
+COPY ./index.py ./requirements.txt ./
 
-RUN pip install -t . -r ./requirements.txt && \
+RUN pip install -t ./ -r ./requirements.txt && \
     find . -name "*.dist-info"  -exec rm -rf {} \; | true && \
     find . -name "*.egg-info"  -exec rm -rf {} \; | true && \
     find . -name "*.pth"  -exec rm -rf {} \; | true && \
     find . -name "__pycache__"  -exec rm -rf {} \; | true && \
-    rm Dockerfile requirements.txt && \
-    curl -o awscli-exe-linux-x86_64.zip https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip && \
-    find . -exec touch -t 202007010000.00 {} + && \
-    zip -X -r lambda.zip ./
+    curl -sSo awscliv2.zip https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip && \
+    zip -X -r ./lambda.zip ./
 
-CMD mkdir -p /output/ && mv lambda.zip /output/
+CMD mkdir -p /output/ && mv ./lambda.zip /output/

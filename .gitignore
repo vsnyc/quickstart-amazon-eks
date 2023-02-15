@@ -21,6 +21,9 @@ venv/
 .venv/
 env/
 
+# asdf
+.tool-versions
+
 # macOS
 .DS_Store
 

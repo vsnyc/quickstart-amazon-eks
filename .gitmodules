@@ -26,10 +26,6 @@
 	path = docs/boilerplate
 	url = https://github.com/aws-quickstart/quickstart-documentation-base-common.git
 	branch = main
-[submodule "submodules/quickstart-amazon-eks-nodegroup"]
-	path = submodules/quickstart-amazon-eks-nodegroup
-	url = https://github.com/aws-quickstart/quickstart-amazon-eks-nodegroup.git
-	branch = main
 [submodule "submodules/quickstart-eks-tigera-calico"]
 	path = submodules/quickstart-eks-tigera-calico
 	url = https://github.com/aws-quickstart/quickstart-eks-tigera-calico.git
@@ -57,4 +53,8 @@
 [submodule "submodules/quickstart-linux-bastion"]
 	path = submodules/quickstart-linux-bastion
 	url = https://github.com/aws-quickstart/quickstart-linux-bastion.git
+	branch = main
+[submodule "submodules/quickstart-amazon-eks-nodegroup"]
+	path = submodules/quickstart-amazon-eks-nodegroup
+	url = https://github.com/aws-quickstart/quickstart-amazon-eks-nodegroup.git
 	branch = main
