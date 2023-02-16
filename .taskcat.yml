@@ -98,6 +98,7 @@ tests:
       AvailabilityZones: $[taskcat_genaz_3]
       PrometheusIntegration: Enabled
       GrafanaIntegration: Enabled
+      ClusterAutoScaler: Enabled
       EKSPublicAccessEndpoint: Enabled
       NodeGroupType: Unmanaged
       LoadBalancerController: Disabled
