@@ -9,8 +9,8 @@ Parameters:
     Type: String
   WindowsVersion:
     Type: String
-  # ManifestUrl:
-  #   Type: String
+  ManifestUrl:
+    Type: String
 Conditions:
   EnableWindows: !Equals [!Ref TestWindows, Enabled]
 Resources:
@@ -21,12 +21,12 @@ Resources:
       Namespace: kube-system
       Name: cm/aws-auth
       JsonPath: '{.data.mapRoles}'
-  # TestKubeApplyFromS3:
-  #   Type: AWSQS::Kubernetes::Resource
-  #   Properties:
-  #     ClusterName: !Ref ClusterName
-  #     Namespace: default
-  #     Url: !Ref ManifestUrl
+  TestKubeApplyFromS3:
+    Type: AWSQS::Kubernetes::Resource
+    Properties:
+      ClusterName: !Ref ClusterName
+      Namespace: default
+      Url: !Ref ManifestUrl
   TestKubeApply:
     Type: AWSQS::Kubernetes::Resource
     Properties:
