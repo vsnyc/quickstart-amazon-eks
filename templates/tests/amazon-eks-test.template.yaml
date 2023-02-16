@@ -45,7 +45,7 @@ Resources:
                 kubernetes.io/arch: amd64
               containers:
                 - name: test-job
-                  image: amazonlinux:2
+                  image: public.ecr.aws/amazonlinux/amazonlinux:2
                   command: [/bin/bash, -c, yum install -y iputils; sleep 120; ping -c 1 aws.amazon.com]
               restartPolicy: OnFailure
           backoffLimit: 4

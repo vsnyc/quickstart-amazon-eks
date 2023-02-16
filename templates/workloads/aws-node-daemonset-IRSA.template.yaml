@@ -137,9 +137,7 @@ Resources:
                 kubernetes.io/os: linux
               containers:
                 - name: aws-node-enable-irsa
-                  image: amazonlinux:2
-                    # TODO: Use public.ecr.aws/amazonlinux/amazonlinux:2 if a
-                    # ARM tagging solution becomes viable
+                  image: public.ecr.aws/amazonlinux/amazonlinux:2
                   command: [/bin/bash, -c]
                   args:
                     - >
