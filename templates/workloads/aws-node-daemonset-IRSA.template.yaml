@@ -126,8 +126,6 @@ Resources:
                 Resource: !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*
   JobResource:
     Type: AWSQS::Kubernetes::Resource
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Retain
     DependsOn: ServiceClusterRoleBinding
     Properties:
       ClusterName: !Ref ClusterName
