@@ -15,11 +15,6 @@ Parameters:
     Type: String
   OIDCProviderEndpoint:
     Type: String
-  PrometheusEnabled:
-    Type: String
-    AllowedValues: ['true', 'false']
-  PrometheusNamespace:
-    Type: String
 Conditions:
   Commercial: !Equals [!Ref AWS::Partition, aws]
   NeedsStaticList: !Or
@@ -130,8 +125,6 @@ Resources:
           # TODO: Switch to ECR Public Gallery image repository once available
         image.tag: !FindInMap [KubernetesVersion, !Ref KubernetesVersion, ImageTag]
         nodeSelector.kubernetes\.io/os: linux
-        prometheusRule.enabled: !Ref PrometheusEnabled
-        prometheusRule.namespace: !Ref PrometheusNamespace
         rbac.serviceAccount.annotations.eks\.amazonaws\.com/role-arn: !GetAtt ClusterAutoScalerIamRole.Arn
         rbac.serviceAccount.create: 'true'
         rbac.serviceAccount.name: cluster-autoscaler

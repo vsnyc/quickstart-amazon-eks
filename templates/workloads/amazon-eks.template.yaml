@@ -528,7 +528,6 @@ Resources:
     DependsOn: [ControlPlaneSecurityGroupIngress]
     Metadata:
       DependsOn:
-        - !If [EnablePrometheus, !Ref PrometheusStack, !Ref AWS::NoValue]
         - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -540,8 +539,6 @@ Resources:
         KubernetesVersion: ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
         OIDCProviderArn: !GetAtt AwsNodeIrsaStack.Outputs.OIDCProviderArn
         OIDCProviderEndpoint: !GetAtt AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint
-        PrometheusEnabled: !If [EnablePrometheus, 'true', 'false']
-        PrometheusNamespace: !FindInMap [Config, Namespace, Prometheus]
   MetricsServerStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableMetricsServer
