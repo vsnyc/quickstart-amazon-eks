@@ -82,6 +82,10 @@ Parameters:
     Type: String
     AllowedValues: [Enabled, Disabled]
     Default: Disabled
+  ProvisionCertManager:
+    Type: String
+    AllowedValues: [Enabled, Disabled]
+    Default: Disabled
   GrafanaIntegration:
     Type: String
     AllowedValues: [Enabled, Disabled]
@@ -310,6 +314,7 @@ Conditions:
   EnableClusterAutoScaler: !Equals [!Ref ProvisionClusterAutoScaler, Enabled]
   EnableMetricsServer: !Equals [!Ref ProvisionMetricsServer, Enabled]
   EnableLoadBalancerController: !Equals [!Ref ProvisionLoadBalancerController, Enabled]
+  EnableCertManager: !Equals [!Ref ProvisionCertManager, Enabled]
   EnableGrafana: !Equals [!Ref GrafanaIntegration, Enabled]
   EnablePrometheus: !Equals [!Ref PrometheusIntegration, Enabled]
   EnableEfs: !Equals [!Ref EfsStorageClass, Enabled]
@@ -692,12 +697,32 @@ Resources:
               - 2AZDeployment
               - !Sub ${PrivateSubnet1ID},${PrivateSubnet2ID}
               - !Ref PrivateSubnet1ID
+  CertManagerStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: EnableCertManager
+    DependsOn: [ControlPlaneSecurityGroupIngress, NodeGroupStack]
+    Metadata:
+      DependsOn:
+        - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
+        - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/workloads/amazon-eks-cert-manager.template.yaml
+        - S3Region: !If [UsingDefaultBucket, !Ref AWS::Region, !Ref QSS3BucketRegion]
+          S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
+      Parameters:
+        EksClusterName: !GetAtt EKSControlPlane.Outputs.EKSName
+        OIDCProviderArn: !GetAtt AwsNodeIrsaStack.Outputs.OIDCProviderArn
+        OIDCProviderEndpoint: !GetAtt AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint
+        PrometheusEnabled: !If [EnablePrometheus, 'true', 'false']
+        FargateEnabled: !If [EnableFargate, 'true', 'false']
   LoadBalancerStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableLoadBalancerController
     DependsOn: [ControlPlaneSecurityGroupIngress, NodeGroupStack]
     Metadata:
       DependsOn:
+        - !If [EnableCertManager, !Ref CertManagerStack, !Ref AWS::NoValue]
         - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
         - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:

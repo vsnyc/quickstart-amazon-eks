@@ -105,6 +105,7 @@ Metadata:
           default: Kubernetes add-ins
         Parameters:
           - LoadBalancerController
+          - CertManager
           - ClusterAutoScaler
           - MetricsServer
           - EfsStorageClass
@@ -162,6 +163,8 @@ Metadata:
         default: Bastion host on-demand percentage
       LoadBalancerController:
         default: AWS load balancer controller
+      CertManager:
+        default: Certificate manager
       EKSClusterName:
         default: EKS cluster name
       KubernetesVersion:
@@ -509,6 +512,12 @@ Parameters:
       Choose "Disabled" to skip deploying the AWS load balancer controller.
     AllowedValues: [Enabled, Disabled]
     Default: Enabled
+  CertManager:
+    Type: String
+    Description: >-
+      Choose "Disabled" to skip deploying the certificate manager.
+    AllowedValues: [Enabled, Disabled]
+    Default: Disabled
   EKSClusterName:
     Type: String
     Description: >-
@@ -881,6 +890,7 @@ Resources:
         MuleLicenseKeyinbase64: !Ref MuleLicenseKeyinbase64
         # Kubernetes add-ins
         ProvisionLoadBalancerController: !Ref LoadBalancerController
+        ProvisionCertManager: !Ref CertManager
         ProvisionClusterAutoScaler: !Ref ClusterAutoScaler
         ProvisionMetricsServer: !Ref MetricsServer
         EfsStorageClass: !Ref EfsStorageClass
