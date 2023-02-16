@@ -46,7 +46,7 @@ Resources:
               containers:
                 - name: test-job
                   image: amazonlinux:2
-                  command: ["/bin/bash", "-c", "yum install -y iputils; sleep 120; ping -c 1 aws.amazon.com"]
+                  command: [/bin/bash, -c, yum install -y iputils; sleep 120; ping -c 1 aws.amazon.com]
               restartPolicy: OnFailure
           backoffLimit: 4
   TestApplyOnWindows:
@@ -69,7 +69,7 @@ Resources:
               containers:
                 - name: windows-test-container
                   image: mcr.microsoft.com/windows/servercore:ltsc${WindowsVersion}
-                  command: ["powershell", "-command", "sleep 20; ping aws.amazon.com"]
+                  command: [powershell, -command, sleep 20; ping aws.amazon.com]
               restartPolicy: OnFailure
           backoffLimit: 4
 Outputs:

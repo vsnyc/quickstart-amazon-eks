@@ -29,18 +29,12 @@ Resources:
         metadata:
           name: aws-node-enable-irsa
         rules:
-          - apiGroups: ["apps"]
-            resources:
-              - daemonsets
-            verbs:
-              - patch
-              - get
-          - apiGroups: [""]
-            resources:
-              - serviceaccounts
-            verbs:
-              - patch
-              - get
+          - apiGroups: [apps]
+            resources: [daemonsets]
+            verbs: [patch, get]
+          - apiGroups: ['']
+            resources: [serviceaccounts]
+            verbs: [patch, get]
   ServiceAccount:
     Type: AWSQS::Kubernetes::Resource
     UpdateReplacePolicy: Delete
@@ -146,7 +140,7 @@ Resources:
                   image: amazonlinux:2
                     # TODO: Use public.ecr.aws/amazonlinux/amazonlinux:2 if a
                     # ARM tagging solution becomes viable
-                  command: ["/bin/bash","-c"]
+                  command: [/bin/bash, -c]
                   args:
                     - >
                       sleep 10;
