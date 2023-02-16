@@ -539,8 +539,6 @@ Resources:
         KubernetesVersion: ~~/<ConfigSetName>/controlplane/KubernetesVersion~~
         OIDCProviderArn: !GetAtt AwsNodeIrsaStack.Outputs.OIDCProviderArn
         OIDCProviderEndpoint: !GetAtt AwsNodeIrsaStack.Outputs.OIDCProviderEndpoint
-        PrometheusEnabled: !If [EnablePrometheus, 'true', 'false']
-        PrometheusNamespace: !FindInMap [Config, Namespace, Prometheus]
   MetricsServerStack:
     Type: AWS::CloudFormation::Stack
     Condition: EnableMetricsServer
@@ -704,6 +702,7 @@ Resources:
     Metadata:
       DependsOn:
         - !If [EnableWindows, !Ref WindowsSupportStack, !Ref AWS::NoValue]
+        - !If [EnablePrometheus, !Ref PrometheusStack, !Ref AWS::NoValue]
         - !If [EnableFargate, !Ref FargateStack, !Ref AWS::NoValue]
     Properties:
       TemplateURL: !Sub
@@ -1013,6 +1012,9 @@ Resources:
     # https://github.com/aws/eks-charts/tree/master/stable/aws-node-termination-handler
     Type: AWSQS::Kubernetes::Helm
     Condition: UseUnmanagedNodeGroup
+    Metadata:
+      DependsOn:
+        - !If [EnablePrometheus, !Ref PrometheusStack, !Ref AWS::NoValue]
     Properties:
       ClusterID: !GetAtt EKSControlPlane.Outputs.EKSName
       Namespace: kube-system
