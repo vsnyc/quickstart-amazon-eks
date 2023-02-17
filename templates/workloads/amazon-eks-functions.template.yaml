@@ -8,6 +8,8 @@ Parameters:
     Type: String
   KubernetesAdminRoleArn:
     Type: String
+  KubernetesResourceVPCProxyRoleArn:
+    Type: String
   VPCID:
     Type: AWS::EC2::VPC::Id
   ControlPlaneSecurityGroup:
@@ -75,7 +77,7 @@ Resources:
       FunctionName: !Sub awsqs-kubernetes-resource-proxy-${EKSClusterName}
       Handler: awsqs_kubernetes_resource.utils.proxy_wrap
       MemorySize: 256
-      Role: !Ref KubernetesAdminRoleArn
+      Role: !Ref KubernetesResourceVPCProxyRoleArn
       Runtime: python3.8
       Timeout: 900
       Code:

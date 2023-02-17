@@ -195,6 +195,7 @@ Resources:
       Parameters:
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
+        KubernetesResourceVPCProxyRoleArn: !GetAtt IamStack.Outputs.KubernetesResourceVPCProxyRoleArn
         KubernetesAdminRoleArn: !GetAtt IamStack.Outputs.KubernetesAdminRoleArn
         ControlPlaneSecurityGroup: !Ref ControlPlaneSecurityGroup
         VPCID: !Ref VPCID
