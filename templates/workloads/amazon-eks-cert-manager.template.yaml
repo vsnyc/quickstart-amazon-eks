@@ -2,7 +2,6 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: >-
   Deploys the cert-manager helm chart into an existing kubernetes cluster
   (qs-1tshard8j).
-# https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html#cluster-autoscaler
 Metadata:
   cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
 Parameters:
