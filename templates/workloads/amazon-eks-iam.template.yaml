@@ -159,6 +159,13 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
+                  - ec2:CreateNetworkInterface
+                  - ec2:DeleteNetworkInterface
+                Resource:
+                  - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:*/*
+                  # https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html#vpc-permissions
+              - Effect: Allow
+                Action:
                   - sts:GetCallerIdentity
                   - eks:CreateCluster
                   - eks:DeleteCluster
