@@ -510,6 +510,7 @@ Resources:
       Parameters:
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
         KubernetesAdminRoleArn: !GetAtt IamStack.Outputs.KubernetesAdminRoleArn
+        KubernetesResourceVPCProxyRoleArn: !GetAtt IamStack.Outputs.KubernetesResourceVPCProxyRoleArn
         ControlPlaneSecurityGroup: !Ref ControlPlaneSecurityGroup
         VPCID: !Ref VPCID
         EKSSubnetIds: !If
