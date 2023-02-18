@@ -23,12 +23,14 @@ Resources:
       JsonPath: '{.data.mapRoles}'
   TestKubeApplyFromS3:
     Type: AWSQS::Kubernetes::Resource
+    DependsOn: TestKubeGet
     Properties:
       ClusterName: !Ref ClusterName
       Namespace: default
       Url: !Ref ManifestUrl
   TestKubeApply:
     Type: AWSQS::Kubernetes::Resource
+    DependsOn: TestKubeApplyFromS3
     Properties:
       ClusterName: !Ref ClusterName
       Namespace: default
@@ -52,6 +54,7 @@ Resources:
   TestApplyOnWindows:
     Type: AWSQS::Kubernetes::Resource
     Condition: EnableWindows
+    DependsOn: TestKubeApply
     Properties:
       ClusterName: !Ref ClusterName
       Namespace: default

@@ -120,7 +120,7 @@ def delete_handler(event, context):
             logger.error(message)
             raise ValueError(message)
 
-        while True:
+        while context.get_remaining_time_in_millis() > (interval * 1000):
             try:
                 logger.debug(f"Querying security group {sg_id}...")
                 security_groups = ec2.describe_security_groups(GroupIds=[sg_id])
@@ -150,9 +150,10 @@ def delete_handler(event, context):
                         continue
 
             elif context.get_remaining_time_in_millis() <= (interval * 1000):
-                raise RuntimeError(
-                    f"ERROR: Out of retries deleting {sg_id} dependencies."
-                )
+                message = f"ERROR: Out of retries deleting {sg_id} dependencies."
+                logger.error(message)
+
+                # raise RuntimeError(message)
             else:
                 logger.error(
                     f"ERROR: Failed to delete {sg_id} dependencies. Retrying..."

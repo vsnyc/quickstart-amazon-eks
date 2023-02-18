@@ -414,6 +414,7 @@ Resources:
         NodeGroupName: ~~/<ConfigSetName>/default-nodegroup/NodeGroupName~~
         NodeVolumeSize: ~~/<ConfigSetName>/default-nodegroup/NodeVolumeSize~~
         CustomAmiId: ~~/<ConfigSetName>/default-nodegroup/CustomAmiId~~
+        AmiRootVolumeDeviceName: ~~/<ConfigSetName>/default-nodegroup/AmiRootVolumeDeviceName~~
         EKSClusterName: !If [GenerateClusterName, !Ref GenerateClusterName, !Ref EKSClusterName]
         NodeInstanceFamily: !Ref NodeInstanceFamily
         NodeGroupType: !Ref NodeGroupType

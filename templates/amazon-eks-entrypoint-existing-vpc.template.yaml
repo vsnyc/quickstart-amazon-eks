@@ -815,6 +815,7 @@ Resources:
         ConfigSetName: !Ref AWS::StackName
         KubernetesVersion: !Ref KubernetesVersion
         NodeVolumeSize: !If [WindowsNodes, 50, !Ref AWS::NoValue]
+        AmiRootVolumeDeviceName: !If [WindowsNodes, /dev/sda1, !Ref AWS::NoValue]
         OnDemandPercentage: !Ref OnDemandPercentage
         OnDemandBastionPercentage: !Ref OnDemandBastionPercentage
   EKSStack:
