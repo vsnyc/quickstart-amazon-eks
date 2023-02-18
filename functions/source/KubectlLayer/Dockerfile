@@ -1,4 +1,4 @@
-FROM lambci/lambda:build-python3.8
+FROM public.ecr.aws/sam/build-python3.9:latest
 
 # https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
 # N-1 version strategy for maximum interop coverage
