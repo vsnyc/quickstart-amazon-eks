@@ -147,9 +147,8 @@ Resources:
           ignore_checks: [EIAMPolicyWildcardResource]
           ignore_reasons:
             EIAMPolicyWildcardResource: >-
-              Action eks:DescribeAddonConfiguration requires a wildcard
-              resource. As of 2023-02-05, cfn-lint falsely reports this as an
-              issue.
+              Resources are created after stack is created by k8s/helm/eks
+              resource types, and as such are unknown at role creation time.
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
