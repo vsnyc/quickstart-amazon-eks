@@ -178,12 +178,12 @@ def register(event, _):
     version = Version(event["ResourceProperties"].get("Version", "0.0.0"))
 
     if version != Version("0.0.0") and version <= get_current_version(type_name):
-        print("version already registered is greater than this version, leaving as is.")
+        logger.info("registered version is greater than this version, leaving as is.")
 
         if not cfn.list_type_versions(
             Type="RESOURCE", TypeName=event["ResourceProperties"]["TypeName"]
         )["TypeVersionSummaries"]:
-            print("resource missing, re-registering...")
+            logger.info("resource missing, re-registering...")
         else:
             try:
                 arn = cfn.describe_type(
@@ -192,7 +192,7 @@ def register(event, _):
 
                 return arn
             except cfn.exceptions.TypeNotFoundException:
-                print("resource missing, re-registering...")
+                logger.info("resource missing, re-registering...")
 
     execution_role_arn = put_role(
         type_name, event["ResourceProperties"]["IamPolicy"], execution_trust_policy
@@ -257,7 +257,7 @@ def delete_oldest(name):
                 raise
             cfn.deregister_type(Arn=versions[1]["Arn"])
     except cfn.exceptions.TypeNotFoundException:
-        print("version already deleted...")
+        logger.info("version already deleted...")
 
 
 @helper.delete

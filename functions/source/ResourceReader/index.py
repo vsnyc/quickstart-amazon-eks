@@ -109,7 +109,7 @@ def handler(event, context):
     try:
         if event["RequestType"] != "Delete":
             while not Path("/tmp/bin/aws").is_file():  # nosec B108
-                print("waiting for cli install to complete")
+                logger.info("waiting for cli install to complete")
                 sleep(10)
 
             resp = execute_cli(props)
