@@ -144,7 +144,7 @@ Resources:
     Metadata:
       cfn-lint:
         config:
-          ignore_checks: [ EIAMPolicyWildcardResource ]
+          ignore_checks: [EIAMPolicyWildcardResource]
           ignore_reasons:
             EIAMPolicyWildcardResource: >-
               Action eks:DescribeAddonConfiguration requires a wildcard
@@ -167,41 +167,40 @@ Resources:
                 Action:
                   - ec2:CreateNetworkInterface
                   - ec2:DeleteNetworkInterface
-                Resource:
-                  - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:*/*
+                Resource: !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:*/*
                   # https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html#vpc-permissions
               - Effect: Allow
                 Action:
-                  - sts:GetCallerIdentity
+                  - cloudwatch:ListMetrics
+                  - cloudwatch:PutMetricData
+                  - ec2:DescribeSecurityGroups
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeVpcs
                   - eks:CreateCluster
                   - eks:DeleteCluster
                   - eks:DescribeCluster
                   - eks:ListTagsForResource
-                  - eks:UpdateClusterVersion
-                  - eks:UpdateClusterConfig
                   - eks:TagResource
                   - eks:UntagResource
+                  - eks:UpdateClusterConfig
+                  - eks:UpdateClusterVersion
                   - iam:PassRole
-                  - sts:AssumeRole
-                  - lambda:UpdateFunctionConfiguration
-                  - lambda:GetFunctionConfiguration
+                  - kms:CreateGrant
+                  - kms:DescribeKey
                   - lambda:DeleteFunction
                   - lambda:GetFunction
+                  - lambda:GetFunctionConfiguration
                   - lambda:InvokeFunction
                   - lambda:CreateFunction
                   - lambda:UpdateFunctionCode
-                  - ec2:DescribeVpcs
-                  - ec2:DescribeSubnets
-                  - ec2:DescribeSecurityGroups
-                  - kms:CreateGrant
-                  - kms:DescribeKey
+                  - lambda:UpdateFunctionConfiguration
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:DescribeLogGroups
                   - logs:DescribeLogStreams
                   - logs:PutLogEvents
-                  - cloudwatch:ListMetrics
-                  - cloudwatch:PutMetricData
+                  - sts:AssumeRole
+                  - sts:GetCallerIdentity
                 Resource: '*'
   BastionRole:
     Condition: EnableBastionRole
