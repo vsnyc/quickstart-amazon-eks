@@ -174,36 +174,35 @@ def stabilize(token):
 @helper.create
 @helper.update
 def register(event, _):
-    type_name = event["ResourceProperties"]["TypeName"].replace("::", "-").lower()
-    version = Version(event["ResourceProperties"].get("Version", "0.0.0"))
+    props = event["ResourceProperties"]
+    type_name = props["TypeName"].replace("::", "-").lower()
+    version = Version(props.get("Version", "0.0.0"))
 
     if version != Version("0.0.0") and version <= get_current_version(type_name):
         logger.info("registered version is greater than this version, leaving as is.")
 
-        if not cfn.list_type_versions(
-            Type="RESOURCE", TypeName=event["ResourceProperties"]["TypeName"]
-        )["TypeVersionSummaries"]:
+        versions = cfn.list_type_versions(Type="RESOURCE", TypeName=props["TypeName"])
+        if not versions["TypeVersionSummaries"]:
             logger.info("resource missing, re-registering...")
         else:
             try:
-                arn = cfn.describe_type(
-                    Type="RESOURCE", TypeName=event["ResourceProperties"]["TypeName"]
-                )["Arn"]
+                resource = cfn.describe_type(
+                    Type="RESOURCE", TypeName=props["TypeName"]
+                )
+                arn = resource["Arn"]
 
                 return arn
             except cfn.exceptions.TypeNotFoundException:
                 logger.info("resource missing, re-registering...")
 
-    execution_role_arn = put_role(
-        type_name, event["ResourceProperties"]["IamPolicy"], execution_trust_policy
-    )
+    execution_role_arn = put_role(type_name, props["IamPolicy"], execution_trust_policy)
     log_role_arn = put_role(
         "CloudFormationRegistryResourceLogRole", log_policy, log_trust_policy
     )
     kwargs = {
         "Type": "RESOURCE",
-        "TypeName": event["ResourceProperties"]["TypeName"],
-        "SchemaHandlerPackage": event["ResourceProperties"]["SchemaHandlerPackage"],
+        "TypeName": props["TypeName"],
+        "SchemaHandlerPackage": props["SchemaHandlerPackage"],
         "LoggingConfig": {
             "LogRoleArn": log_role_arn,
             "LogGroupName": f"/cloudformation/registry/{type_name}",
@@ -220,7 +219,7 @@ def register(event, _):
                 if "Maximum number of versions exceeded" not in str(e):
                     raise
 
-                delete_oldest(event["ResourceProperties"]["TypeName"])
+                delete_oldest(props["TypeName"])
 
                 continue
 
@@ -237,7 +236,7 @@ def register(event, _):
             sleep(60)
     if version_arn:
         cfn.set_type_default_version(Arn=version_arn)
-        set_version(type_name, event["ResourceProperties"].get("Version", "0.0.0"))
+        set_version(type_name, props.get("Version", "0.0.0"))
 
     return version_arn
 
