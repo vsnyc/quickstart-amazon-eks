@@ -235,7 +235,8 @@ Resources:
       MemorySize: 128
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-RegisterType
       Layers: [!Ref CrHelperLayer]
-      Runtime: python3.9
+      Runtime: python3.8
+        # Bumping this requires CloudFormation Registry interop support
       Timeout: 900
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
