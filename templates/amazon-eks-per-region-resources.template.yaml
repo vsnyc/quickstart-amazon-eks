@@ -67,7 +67,7 @@ Resources:
             Action:
               - s3:PutObject
               - s3:DeleteObject
-            Resource: !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/*
+            Resource: !Sub ${LambdaZipsBucket.Arn}/*
   DeleteBucketContentsRolePolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -90,8 +90,8 @@ Resources:
               - s3:GetBucketLocation
               - s3:GetObjectVersion
             Resource:
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/*
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}
+              - !Sub ${LambdaZipsBucket.Arn}/*
+              - !GetAtt LambdaZipsBucket.Arn
   CopyZipsFunction:
     Type: AWS::Lambda::Function
     DependsOn: CopyZipsRolePolicy
@@ -153,11 +153,11 @@ Resources:
               - s3:ListBucket
               - s3:GetObject
             Resource:
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}functions/packages/EksClusterResource/awsqs-eks-cluster.zip
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_get.zip
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_apply.zip
+              - !GetAtt LambdaZipsBucket.Arn
+              - !Sub ${LambdaZipsBucket.Arn}/${QSS3KeyPrefix}functions/packages/EksClusterResource/awsqs-eks-cluster.zip
+              - !Sub ${LambdaZipsBucket.Arn}/${QSS3KeyPrefix}functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip
+              - !Sub ${LambdaZipsBucket.Arn}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_get.zip
+              - !Sub ${LambdaZipsBucket.Arn}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_apply.zip
   KubectlLayer:
     Type: AWS::Lambda::LayerVersion
     DependsOn: CopyZips
