@@ -8,8 +8,6 @@ Parameters:
     Type: String
   KubernetesAdminRoleArn:
     Type: String
-  KubernetesResourceVPCProxyRoleArn:
-    Type: String
   VPCID:
     Type: AWS::EC2::VPC::Id
   ControlPlaneSecurityGroup:
