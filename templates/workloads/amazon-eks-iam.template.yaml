@@ -118,14 +118,8 @@ Resources:
                   - !Sub arn:${AWS::Partition}:events:${AWS::Region}:${AWS::AccountId}:rule/*/* # Custom event bus
               - Effect: Allow
                 Action:
-                  - lambda:UpdateFunctionConfiguration
-                  - lambda:GetFunctionConfiguration
-                  - lambda:DeleteFunction
-                  - lambda:GetFunction
-                  - lambda:InvokeFunction
-                  - lambda:CreateFunction
-                  - lambda:UpdateFunctionCode
                   - lambda:AddPermission
+                  - lambda:InvokeFunction
                   - lambda:RemovePermission
                 Resource: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:*
               - Effect: Allow
@@ -139,70 +133,6 @@ Resources:
               - Effect: Allow
                 Action: s3:GetObject
                 Resource: !Sub arn:${AWS::Partition}:s3:::*/*
-  KubernetesResourceVPCProxyRole:
-    Type: AWS::IAM::Role
-    Metadata:
-      cfn-lint:
-        config:
-          ignore_checks: [ EIAMPolicyWildcardResource ]
-          ignore_reasons:
-            EIAMPolicyWildcardResource: >-
-              Action eks:DescribeAddonConfiguration requires a wildcard
-              resource. As of 2023-02-05, cfn-lint falsely reports this as an
-              issue.
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: eksStackPolicy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - ec2:CreateNetworkInterface
-                  - ec2:DeleteNetworkInterface
-                Resource:
-                  - !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:*/*
-                  # https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html#vpc-permissions
-              - Effect: Allow
-                Action:
-                  - sts:GetCallerIdentity
-                  - eks:CreateCluster
-                  - eks:DeleteCluster
-                  - eks:DescribeCluster
-                  - eks:ListTagsForResource
-                  - eks:UpdateClusterVersion
-                  - eks:UpdateClusterConfig
-                  - eks:TagResource
-                  - eks:UntagResource
-                  - iam:PassRole
-                  - sts:AssumeRole
-                  - lambda:UpdateFunctionConfiguration
-                  - lambda:GetFunctionConfiguration
-                  - lambda:DeleteFunction
-                  - lambda:GetFunction
-                  - lambda:InvokeFunction
-                  - lambda:CreateFunction
-                  - lambda:UpdateFunctionCode
-                  - ec2:DescribeVpcs
-                  - ec2:DescribeSubnets
-                  - ec2:DescribeSecurityGroups
-                  - kms:CreateGrant
-                  - kms:DescribeKey
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:DescribeLogGroups
-                  - logs:DescribeLogStreams
-                  - logs:PutLogEvents
-                  - cloudwatch:ListMetrics
-                  - cloudwatch:PutMetricData
-                Resource: '*'
   BastionRole:
     Condition: EnableBastionRole
     Type: AWS::IAM::Role
@@ -257,8 +187,6 @@ Resources:
       ServiceToken: !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:${AWS::AccountId}:function:eks-quickstart-CloudFormationVPCRoleCreation
       Partition: !Ref AWS::Partition
 Outputs:
-  KubernetesResourceVPCProxyRoleArn:
-    Value: !GetAtt KubernetesResourceVPCProxyRole.Arn
   KubernetesAdminRoleArn:
     Value: !GetAtt KubernetesAdminRole.Arn
   BastionRole:
