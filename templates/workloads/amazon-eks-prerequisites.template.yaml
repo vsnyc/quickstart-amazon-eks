@@ -63,7 +63,7 @@ Resources:
           Checks whether the per-region and per-account EKS Quick Start stacks
           are present and up to date.
       Handler: index.handler
-      Runtime: python3.8
+      Runtime: python3.9
       Role: !GetAtt PrerequisitesRole.Arn
       Timeout: 900
       Code:

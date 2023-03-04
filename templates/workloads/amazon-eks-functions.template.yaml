@@ -98,7 +98,7 @@ Resources:
       Handler: index.handler
       MemorySize: 256
       Role: !Ref KubernetesAdminRoleArn
-      Runtime: python3.8
+      Runtime: python3.9
       Timeout: 900
       Layers: [!Ref GetKubectlLayerArn, !Ref GetCrHelperLayerArn, !Ref GetAwsCliLayerArn]
       Code:
@@ -121,7 +121,7 @@ Resources:
       Handler: index.handler
       MemorySize: 256
       Role: !Ref KubernetesAdminRoleArn
-      Runtime: python3.8
+      Runtime: python3.9
       Timeout: 900
       Layers: [!Ref GetKubectlLayerArn, !Ref GetCrHelperLayerArn, !Ref GetAwsCliLayerArn]
       Environment:

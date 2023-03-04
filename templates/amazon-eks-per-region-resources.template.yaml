@@ -67,7 +67,7 @@ Resources:
             Action:
               - s3:PutObject
               - s3:DeleteObject
-            Resource: !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/*
+            Resource: !Sub ${LambdaZipsBucket.Arn}/*
   DeleteBucketContentsRolePolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -90,8 +90,8 @@ Resources:
               - s3:GetBucketLocation
               - s3:GetObjectVersion
             Resource:
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/*
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}
+              - !Sub ${LambdaZipsBucket.Arn}/*
+              - !GetAtt LambdaZipsBucket.Arn
   CopyZipsFunction:
     Type: AWS::Lambda::Function
     DependsOn: CopyZipsRolePolicy
@@ -99,7 +99,7 @@ Resources:
       FunctionName: eks-quickstart-CopyZips
       Description: Copies objects from a source S3 bucket to a destination.
       Handler: index.handler
-      Runtime: python3.8
+      Runtime: python3.9
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-CopyZips
       Timeout: 900
       Code:
@@ -153,18 +153,17 @@ Resources:
               - s3:ListBucket
               - s3:GetObject
             Resource:
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}functions/packages/EksClusterResource/awsqs-eks-cluster.zip
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_get.zip
-              - !Sub arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_apply.zip
+              - !GetAtt LambdaZipsBucket.Arn
+              - !Sub ${LambdaZipsBucket.Arn}/${QSS3KeyPrefix}functions/packages/EksClusterResource/awsqs-eks-cluster.zip
+              - !Sub ${LambdaZipsBucket.Arn}/${QSS3KeyPrefix}functions/packages/HelmReleaseResource/awsqs-kubernetes-helm.zip
+              - !Sub ${LambdaZipsBucket.Arn}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_get.zip
+              - !Sub ${LambdaZipsBucket.Arn}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_apply.zip
   KubectlLayer:
     Type: AWS::Lambda::LayerVersion
     DependsOn: CopyZips
     Properties:
       LayerName: eks-quickstart-Kubectl
       Description: !Sub kubectl layer - ${RandomStr}
-      CompatibleRuntimes: [python3.7, python3.8]
       Content:
         S3Bucket: !Ref LambdaZipsBucket
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/KubectlLayer/lambda.zip
@@ -183,7 +182,7 @@ Resources:
     Properties:
       LayerName: eks-quickstart-CrHelper
       Description: !Sub crhelper layer - ${RandomStr}
-      CompatibleRuntimes: [python3.7, python3.8]
+      CompatibleRuntimes: [python3.7, python3.8, python3.9]
       Content:
         S3Bucket: !Ref LambdaZipsBucket
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/CrHelperLayer/lambda.zip
@@ -194,7 +193,7 @@ Resources:
       Handler: index.handler
       MemorySize: 128
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-CleanupLoadBalancers
-      Runtime: python3.8
+      Runtime: python3.9
       Timeout: 900
       Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
@@ -208,7 +207,7 @@ Resources:
       Handler: index.handler
       MemorySize: 128
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-CleanupLambdas
-      Runtime: python3.8
+      Runtime: python3.9
       Timeout: 900
       Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
@@ -221,7 +220,7 @@ Resources:
     Properties:
       FunctionName: eks-quickstart-GenerateClusterName
       Handler: index.handler
-      Runtime: python3.8
+      Runtime: python3.9
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-GenerateClusterName
       Timeout: 900
       Code:
@@ -236,6 +235,7 @@ Resources:
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-RegisterType
       Layers: [!Ref CrHelperLayer]
       Runtime: python3.8
+        # Bumping this requires CloudFormation Registry interop support
       Timeout: 900
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
@@ -357,7 +357,7 @@ Resources:
     Properties:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       TypeName: AWSQS::Kubernetes::Get
-      Version: 3.2.1
+      Version: 3.2.3
       RandomStr: !Ref RandomStr
       SchemaHandlerPackage: !Sub s3://eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_get.zip
       IamPolicy:
@@ -414,7 +414,7 @@ Resources:
     Properties:
       ServiceToken: !GetAtt RegisterTypeFunction.Arn
       TypeName: AWSQS::Kubernetes::Resource
-      Version: 3.2.1
+      Version: 3.2.3
       RandomStr: !Ref RandomStr
       SchemaHandlerPackage: !Sub s3://eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}/${QSS3KeyPrefix}functions/packages/kubernetesResources/awsqs_kubernetes_apply.zip
       IamPolicy:
@@ -462,7 +462,7 @@ Resources:
       MemorySize: 128
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-CleanupSecurityGroupDependencies
       Layers: [!Ref CrHelperLayer]
-      Runtime: python3.8
+      Runtime: python3.9
       Timeout: 900
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
       Code:
@@ -475,7 +475,7 @@ Resources:
       Handler: index.handler
       MemorySize: 128
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-DeleteBucketContents
-      Runtime: python3.8
+      Runtime: python3.9
       Timeout: 900
       Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
@@ -489,7 +489,7 @@ Resources:
       Handler: index.handler
       MemorySize: 128
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-GetCallerArn
-      Runtime: python3.8
+      Runtime: python3.9
       Timeout: 900
       Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
@@ -502,7 +502,7 @@ Resources:
       FunctionName: eks-quickstart-NodeSG
       Description: Fetches the Security Group ID for a given EKS Managed Node Group
       Handler: index.handler
-      Runtime: python3.8
+      Runtime: python3.9
       Role:  !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-NodeSG
       Timeout: 900
       Layers: [!Ref CrHelperLayer]
@@ -516,7 +516,7 @@ Resources:
       Handler: index.handler
       MemorySize: 512
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-FargateProfile
-      Runtime: python3.8
+      Runtime: python3.9
       Timeout: 900
       Layers: [!Ref CrHelperLayer]
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
@@ -533,7 +533,7 @@ Resources:
         Performs an AWS CLI command and returns the json result. Used to get
         the state of existing resources.
       Handler: index.handler
-      Runtime: python3.8
+      Runtime: python3.9
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-ResourceReader
       Timeout: 900
       Tags: [{ Key: RandomStr, Value: !Ref RandomStr }]
@@ -549,7 +549,7 @@ Resources:
         S3Bucket: !Sub eks-quickstart-lambdazips-${AWS::Region}-${AWS::AccountId}
         S3Key: !Sub ${QSS3KeyPrefix}functions/packages/QuickStartParameterResolver/lambda.zip
       Handler: index.handler
-      Runtime: python3.8
+      Runtime: python3.9
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-QuickStartParameterResolver
       Timeout: 900
   QuickStartParameterResolverFunctionPermissions:
@@ -572,7 +572,7 @@ Resources:
       Description: >-
         Creates the CloudFormationVPCRoleCreation if it does not yet exist.
       Handler: index.handler
-      Runtime: python3.8
+      Runtime: python3.9
       Role: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:role/eks-quickstart-CloudFormationVPCRoleCreation
       Timeout: 900
       Code:
