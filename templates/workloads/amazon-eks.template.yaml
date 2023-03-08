@@ -1105,6 +1105,7 @@ Resources:
                 Condition: { StringLike: { aws:ResourceTag/efs.csi.aws.com/cluster: 'true' } }
   AmazonEksEfsCsiDriverHelmChart:
     Type: AWSQS::Kubernetes::Helm
+    Condition: EnableEfs
     Properties:
       ClusterID: !GetAtt EKSControlPlane.Outputs.EKSName
       Namespace: kube-system
