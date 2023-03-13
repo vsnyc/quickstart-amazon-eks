@@ -1,7 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
-  Checks for Shared resources required by all Amazon EKS Quick Start stacks
-  (qs-1tsp403dd).
+  Checks for Shared resources required by all Amazon EKS Quick Start stacks (qs-1tsp403dd).
 Metadata:
   cfn-lint: { config: { ignore_checks: [W9002, W9003, W9004, W9006] } }
 Parameters:
